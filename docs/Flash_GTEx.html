@@ -321,7 +321,7 @@ div.section {
 <p><strong>Last updated:</strong> 2018-02-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 154283b</p>
+<p><strong>Code version:</strong> dd20a02</p>
 <p>GTEx data</p>
 <pre class="r"><code>data = readRDS(&#39;../data/MatrixEQTLSumStats.Portable.Z.rds&#39;)
 Z = data$test.z</code></pre>
@@ -331,11 +331,13 @@ f_greedy = flash_add_greedy(flash.data, K=30)
 f_b = flash_backfit(flash.data, f_greedy)
 
 saveRDS(list(backfit = f_b, greedy = f_greedy), &#39;../output/GTExVarCol.rds&#39;)</code></pre>
+<p><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Flash again on the loading matrix</p>
 <pre class="r"><code>flash.loading = flash_set_data(flash_get_l(f_b)[,1:23])
 fl_greedy = flash_add_greedy(flash.loading, K=30)
 fl_b = flash_backfit(flash.loading, fl_greedy)
 saveRDS(list(backfit = fl_b, greedy = fl_greedy), &#39;../output/GTExVarColLoaing_Flash.rds&#39;)</code></pre>
+<p><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-4.png" width="672" style="display: block; margin: auto;" /></p>
 <p>There is no latent structure in the flashr loadings matrix.</p>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
