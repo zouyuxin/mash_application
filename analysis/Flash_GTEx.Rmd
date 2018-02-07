@@ -1,0 +1,98 @@
+---
+title: "GTEx-Flash"
+author: "Yuxin Zou"
+date: 2018-2-6
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+```{r echo=FALSE}
+library(flashr)
+```
+
+GTEx data
+```{r}
+data = readRDS('../data/MatrixEQTLSumStats.Portable.Z.rds')
+Z = data$test.z
+```
+
+Flash:
+```{r, eval=FALSE}
+flash.data = flash_set_data(Z)
+f_greedy = flash_add_greedy(flash.data, K=30)
+f_b = flash_backfit(flash.data, f_greedy)
+
+saveRDS(list(backfit = f_b, greedy = f_greedy), '../output/GTExVarCol.rds')
+```
+
+```{r, echo=FALSE}
+FlashRes = readRDS('../output/GTExVarCol.rds')
+missing.tissues <- c(7,8,19,20,24,25,31,34,37)
+gtex.colors <- read.table('../data/GTExColors.txt', sep = '\t', comment.char = '')[-missing.tissues,2]
+```
+
+```{r, echo=FALSE}
+f_b = FlashRes$backfit
+Factors = flash_get_f(f_b)
+row.names(Factors) = colnames(Z)
+graphics.off()
+par(mar=c(1,1,1,1))
+par(mfrow=c(3,2))
+# layout(matrix(seq(1,12), 6, 2, byrow = TRUE))
+for(i in 1:23){
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(f_b)[i],3)), las=2, cex.names = 0.4, col=as.character(gtex.colors), names="")
+}
+```
+
+Flash again on the loading matrix
+```{r, eval=FALSE}
+flash.loading = flash_set_data(flash_get_l(f_b)[,1:23])
+fl_greedy = flash_add_greedy(flash.loading, K=30)
+fl_b = flash_backfit(flash.loading, fl_greedy)
+saveRDS(list(backfit = fl_b, greedy = fl_greedy), '../output/GTExVarColLoaing_Flash.rds')
+```
+
+```{r, echo=FALSE}
+FlashRes.loading = readRDS('../output/GTExVarColLoaing_Flash.rds')
+```
+
+```{r, echo=FALSE}
+fl_b = FlashRes.loading$backfit
+Factors = flash_get_f(fl_b)
+graphics.off()
+par(mar=c(1,1,1,1))
+par(mfrow=c(3,2))
+# layout(matrix(seq(1,12), 6, 2, byrow = TRUE))
+for(i in 1:23){
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fl_b)[i],3)), las=2, cex.names = 0.4, col=as.character(gtex.colors), names="")
+}
+```
+
+There is no latent structure in the flashr loadings matrix.
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
