@@ -318,10 +318,10 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-02-06</p>
+<p><strong>Last updated:</strong> 2018-02-27</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> e0588e8</p>
+<p><strong>Code version:</strong> 3a28bc6</p>
 <pre><code>gdata: read.xls support for &#39;XLS&#39; (Excel 97-2004) files ENABLED.</code></pre>
 <pre><code></code></pre>
 <pre><code>gdata: read.xls support for &#39;XLSX&#39; (Excel 2007+) files ENABLED.</code></pre>
@@ -345,20 +345,18 @@ Attaching package: &#39;mclust&#39;</code></pre>
 
     dens</code></pre>
 <pre><code>corrplot 0.84 loaded</code></pre>
+<pre><code>Loading required package: magrittr</code></pre>
 <div id="read-table-2" class="section level1">
 <h1>Read Table 2</h1>
 <p>There are missing value in the data. I guess this is caused by the 0 count, since the effect is <span class="math inline">\(\log_{2} (X_{1}/X_{2})\)</span>. We set these NAs to 0 with huge variance.</p>
 <p>Since the sample size is large, we assume the p value is from normal distribution.</p>
-<pre class="r"><code># some p values are exactly 1, z = 0, 
-# make them a little smaller
-data$pval[data$pval == 1] = 0.999999
-
-mash.data = mash_set_data(Bhat = data$logFC, pval = data$pval)
+<pre class="r"><code>mash.data = mash_set_data(Bhat = data$logFC, pval = data$pval)
 # set large variance to missing data
-mash.data$Shat[data$missing] = 1000
+mash.data$Shat[is.na(mash.data$Shat)] = 1000
+mash.data$Shat[is.infinite(mash.data$Shat)] = 1000
 
 # find strong genes
-m.1by1 = mash_1by1(mash.data, alpha=1)
+m.1by1 = mash_1by1(mash.data, alpha=0)
 strong = get_significant_results(m.1by1, 0.01)
 # estimate cor V on non strong genes
 Z = mash.data$Bhat/mash.data$Shat
@@ -372,30 +370,20 @@ Z.center = apply(Z.strong, 2, function(x) x - mean(x))</code></pre>
 <div id="flash" class="section level2">
 <h2>Flash</h2>
 <p><span class="math display">\[ \tilde{Z} = LF&#39; + E \]</span> where F is <span class="math inline">\(29 \times K\)</span>, L is <span class="math inline">\(n \times K\)</span>, E is <span class="math inline">\(n\times 29\)</span>.</p>
-<pre class="r"><code>K = 10
-mash_data_flash = flash_set_data(as.matrix(Z.center))
-f_greedy = flash_add_greedy(mash_data_flash, Kmax=K, var_type = &#39;by_column&#39;)
+<pre class="r"><code>mash_data_flash = flash_set_data(as.matrix(Z.center))
+fmodel = flash(mash_data_flash, greedy = TRUE, backfit = TRUE)
 
-# Backfitting
-f_greedy_bf = flash_backfit(mash_data_flash,f_greedy, var_type = &#39;by_column&#39;)
-F_flash = flash_get_f(f_greedy_bf)
-L_flash = flash_get_l(f_greedy_bf)
-
-FlashResult = list(f_greedy = f_greedy,
-             f = f_greedy_bf,
-             F_flash = F_flash,
-             L_flash = L_flash)
-saveRDS(FlashResult, &#39;../output/Flash_T2_0.rds&#39;)</code></pre>
+saveRDS(fmodel, &#39;../output/Flash_T2_0.rds&#39;)</code></pre>
 <div id="flash-result" class="section level3">
 <h3>Flash result</h3>
 <p>The first factor explains the main proportion of variance in effects.</p>
-<pre class="r"><code>flash_get_pve(FlashResult$f)</code></pre>
-<pre><code>[1] 0.804143582 0.010058410 0.013051801 0.007891996 0.003997616 0.000000000</code></pre>
+<pre class="r"><code>flash_get_pve(fmodel)</code></pre>
+<pre><code>[1] 0.786204732 0.009596396 0.011735441 0.008650019 0.003879352</code></pre>
 <p>The first factor is the overall summary of treatment effects. <img src="figure/sexbias_Table2.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="clustering-loadings" class="section level3">
 <h3>Clustering loadings</h3>
-<pre class="r"><code>loading = FlashResult$L_flash[,1:5]
+<pre class="r"><code>loading = fmodel$EL[,1:5]
 row.names(loading) = rownames(Z.strong)
 colnames(loading) = paste0(&#39;F&#39;,seq(1,5))
 
@@ -406,26 +394,25 @@ saveRDS(mod, &#39;../output/Flash_T2_0_mclust.rds&#39;)</code></pre>
 <p><span class="math display">\[l_{i}\sim \sum_{i=1}^{m}N(\mu_{i}, \Sigma_{i})\]</span> We estimate the covariance as <span class="math inline">\(F(\Sigma_i + \mu_{i}\mu_{i}&#39;)F&#39;\)</span>.</p>
 <pre class="r"><code>U_list = alply(mod$parameters$variance$sigma,3)
 mu_list = alply(mod$parameters$mean,2)
-Factors = FlashResult$F_flash[,1:5]
 ll = list()
 for (i in 1:length(U_list)){
   ll[[i]] = U_list[[i]] + mu_list[[i]] %*% t(mu_list[[i]])
 }
 
-U.loading = lapply(ll, function(U){Factors %*% (U %*% t(Factors))})
+U.loading = lapply(ll, function(U){factors %*% (U %*% t(factors))})
 names(U.loading) = paste0(&#39;Load&#39;, &quot;_&quot;, (1:length(U.loading)))
 
 # rank 1
 
-Flash_res = flash_get_lf(FlashResult$f)
+Flash_res = flash_get_lf(fmodel)
 
-U.Flash = c(mashr::cov_from_factors(t(as.matrix(FlashResult$F_flash[,1:5])), &quot;Flash&quot;), 
+U.Flash = c(mashr::cov_from_factors(t(as.matrix(factors)), &quot;Flash&quot;), 
             list(&quot;tFlash&quot; = t(Flash_res) %*% Flash_res / nrow(Z.center)))</code></pre>
 </div>
 </div>
 <div id="pca" class="section level2">
 <h2>PCA</h2>
-<pre class="r"><code>U.pca = cov_pca(mash_set_data(Z.center), 8)</code></pre>
+<pre class="r"><code>U.pca = cov_pca(mash_set_data(Z.center), 7)</code></pre>
 </div>
 <div id="canonical" class="section level2">
 <h2>Canonical</h2>
@@ -435,7 +422,11 @@ U.Flash = c(mashr::cov_from_factors(t(as.matrix(FlashResult$F_flash[,1:5])), &qu
 <h2>Extreme Deconvolution</h2>
 <pre class="r"><code>U.dd = c(U.pca, U.loading, U.Flash, list(&#39;XX&#39; = t(Z.center) %*% Z.center / nrow(Z.center) ))
 
-saveRDS(cov_ed(mash_set_data(Bhat = Z.strong), U.dd), &#39;../output/Mash_EZ_Cov_0_plusR1.rds&#39;)</code></pre>
+mash.data.ed = mash.data
+mash.data.ed$Bhat = mash.data$Bhat[strong,]
+mash.data.ed$Shat = mash.data$Shat[strong,]
+mash.data.ed$Shat_alpha = mash.data$Shat_alpha[strong,]
+saveRDS(cov_ed(mash.data.ed, U.dd), &#39;../output/Mash_EE_Cov_0_plusR1.rds&#39;)</code></pre>
 </div>
 </div>
 <div id="mash-model" class="section level1">
@@ -448,39 +439,34 @@ if (vhat == 1) {
   V = diag(ncol(Z.null))
 }
 
-mash_data = mash_set_data(Bhat = mash.data$Bhat, Shat = mash.data$Shat, V = V, alpha = 1)
+mash_data = mash_set_data(Bhat = mash.data$Bhat, Shat = mash.data$Shat, V = V, alpha = 0)
 
 saveRDS(mash(mash_data, c(U.c, U.ed)), &#39;../output/Mash_model_0_plusR1.rds&#39;) </code></pre>
-<pre><code> - Computing 959 x 1141 likelihood matrix.
- - Likelihood calculations took 1.00 seconds.
- - Fitting model with 1141 mixture components.</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.0332918608225943,
-0.00111695729545662, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre><code> - Model fitting took 7.68 seconds.
+<pre><code> - Computing 959 x 1711 likelihood matrix.
+ - Likelihood calculations took 20.35 seconds.
+ - Fitting model with 1711 mixture components.
+ - Model fitting took 16.96 seconds.
  - Computing posterior matrices.
- - Computation allocated took 1.41 seconds.</code></pre>
-<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
+ - Computation allocated took 4.29 seconds.</code></pre>
 </div>
-<div id="v1-ez-result" class="section level1">
-<h1>V1 EZ result</h1>
+<div id="v1-ee-result" class="section level1">
+<h1>V1 EE result</h1>
 <p>The log-likelihood of fit is</p>
 <pre class="r"><code>get_loglik(mash.model)</code></pre>
-<pre><code>[1] -81718.99</code></pre>
+<pre><code>[1] -80852.06</code></pre>
 <p>Here is a plot of weights learned.</p>
 <p><img src="figure/sexbias_Table2.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Check <code>ED_XX</code> and <code>ED_tPCA</code>: <img src="figure/sexbias_Table2.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>Among the 959 genes, <code>MASH</code> found 292 to be significant in at least one treatment. The result is similar as condition by condition analysis.</p>
-<pre class="r"><code>Missing.lfsr = mash.model$result$lfsr * data$missing
-Missing.lfsr[Missing.lfsr == 0] = NA
-sum(Missing.lfsr &lt; 0.01, na.rm = TRUE)</code></pre>
-<pre><code>[1] 10</code></pre>
-<p>Some effects are estimated as significant, even though they are originally missing!</p>
-<p>For example, the original data is missing for gene RP11-706O15.3 at tissue ADRNLG. In the <code>mash.data</code>, it has Bhat = 0 with Shat = <code>mash.data$Shat[880,3]</code>. The posterior mean from the mash model is 636.3798056 with sd 154.0879983.</p>
+<p>Check <code>ED_XX</code> and <code>ED_tPCA</code>: <img src="figure/sexbias_Table2.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/sexbias_Table2.Rmd/unnamed-chunk-24-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Among the 959 genes, <code>MASH</code> found 372 to be significant in at least one treatment.</p>
+<p>There are 84 effects are estimated as significant, even though they are originally missing! This is caused by the borrowing information from other samples.</p>
+<p>The plot below compares the data with the <code>mash</code> output. The gene ASMT has lots of missing vales in tissues. The <code>mash</code> model estimates all effects as significant.</p>
+<pre><code>Warning: Removed 24 rows containing missing values (geom_point).</code></pre>
+<pre><code>Warning: Removed 24 rows containing missing values (geom_errorbar).</code></pre>
+<pre><code>Warning: Removed 24 rows containing missing values (geom_point).</code></pre>
+<pre><code>Warning: Removed 24 rows containing missing values (geom_errorbar).</code></pre>
 <p><img src="figure/sexbias_Table2.Rmd/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Proportion of significantly biased (FDR &lt; 1%) genes in each tissue by reported XCI status. <img src="figure/sexbias_Table2.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Sex biased expression is enriched in escape genes.</p>
 </div>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
@@ -501,21 +487,27 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] corrplot_0.84 plyr_1.8.4    mclust_5.4    flashr_0.4-3  mashr_0.2-4  
-[6] ashr_2.2-3    gdata_2.18.0 
+ [1] ggpubr_0.1.6  magrittr_1.5  ggplot2_2.2.1 corrplot_0.84 plyr_1.8.4   
+ [6] mclust_5.4    flashr_0.5-1  mashr_0.2-4   ashr_2.2-4    gdata_2.18.0 
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.15      knitr_1.17        magrittr_1.5     
- [4] REBayes_1.2       MASS_7.3-47       pscl_1.5.2       
- [7] doParallel_1.0.11 SQUAREM_2017.10-1 lattice_0.20-35  
-[10] foreach_1.4.4     stringr_1.2.0     tools_3.4.3      
-[13] parallel_3.4.3    grid_3.4.3        rmeta_2.16       
-[16] git2r_0.20.0      htmltools_0.3.6   iterators_1.0.9  
-[19] gtools_3.5.0      assertthat_0.2.0  yaml_2.1.16      
-[22] rprojroot_1.2     digest_0.6.13     Matrix_1.2-12    
-[25] codetools_0.2-15  evaluate_0.10.1   rmarkdown_1.8    
-[28] stringi_1.1.6     compiler_3.4.3    Rmosek_8.0.69    
-[31] backports_1.1.2   mvtnorm_1.0-7     truncnorm_1.0-7  </code></pre>
+ [1] Rcpp_0.12.15      bindr_0.1         compiler_3.4.3   
+ [4] git2r_0.20.0      iterators_1.0.9   tools_3.4.3      
+ [7] digest_0.6.13     tibble_1.3.4      evaluate_0.10.1  
+[10] gtable_0.2.0      lattice_0.20-35   pkgconfig_2.0.1  
+[13] rlang_0.1.6       Matrix_1.2-12     foreach_1.4.4    
+[16] yaml_2.1.16       parallel_3.4.3    mvtnorm_1.0-7    
+[19] bindrcpp_0.2      gridExtra_2.3     dplyr_0.7.4      
+[22] stringr_1.2.0     knitr_1.17        REBayes_1.2      
+[25] gtools_3.5.0      cowplot_0.9.2     rprojroot_1.2    
+[28] grid_3.4.3        glue_1.2.0        R6_2.2.2         
+[31] rmarkdown_1.8     rmeta_2.16        purrr_0.2.4      
+[34] backports_1.1.2   scales_0.5.0      codetools_0.2-15 
+[37] htmltools_0.3.6   MASS_7.3-47       assertthat_0.2.0 
+[40] colorspace_1.3-2  labeling_0.3      stringi_1.1.6    
+[43] Rmosek_8.0.69     lazyeval_0.2.1    doParallel_1.0.11
+[46] pscl_1.5.2        munsell_0.4.3     truncnorm_1.0-7  
+[49] SQUAREM_2017.10-1</code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
