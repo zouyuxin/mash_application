@@ -1,0 +1,86 @@
+---
+title: "Breast Cancer-Flash"
+author: "Yuxin Zou"
+date: 2018-2-20
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+```{r echo=FALSE}
+library(flashr); library(R.matlab)
+```
+
+Breast Cancer data:
+
+The data consist of gene expression measurements on 251 samples and 226 genes. We pre-processed the data by centering the data on each gene.
+```{r}
+data = readMat('../data/BreastCancer.mat')
+data = data$Y
+
+# centering on each gene (row)
+data.center = apply(data, 1, function(x) x - mean(x))
+```
+
+Flash:
+```{r, eval=FALSE}
+flash.data = flash_set_data(data.center)
+fmodel = flash(flash.data, greedy = TRUE, backfit = TRUE)
+
+saveRDS(fmodel, '../output/BreastCancerVarCol.rds')
+```
+
+```{r, echo=FALSE}
+fmodel = readRDS('../output/BreastCancerVarCol.rds')
+```
+
+```{r, echo=FALSE}
+Factors = flash_get_ldf(fmodel)$f
+pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)
+```
+```{r, echo=FALSE}
+par(mar=c(1,1,1,1))
+par(mfrow=c(3,2))
+for(i in pve.order){
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.4, names="")
+}
+```
+
+Flash again on the loading matrix
+```{r, eval=FALSE}
+flash.loading = flash_set_data(fmodel$EL[,1:19])
+flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)
+```
+
+The flash prefers the rank 0 model. There is no hidden structure in the loading matrix.
+
+<!--
+The result means that the loading matrix is nearly zero except the last column. I check the column mean of the loading matrix, the means are close to zero except the last column. This implies that the original data set could be factored with only the last factor. The last factor identifies the effect of gene 87.
+-->
+
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```

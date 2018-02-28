@@ -1,0 +1,85 @@
+---
+title: "MovieLens 100K-Flash"
+author: "Yuxin Zou"
+date: 2018-2-21
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+```{r echo=FALSE}
+library(flashr)
+library(methods)
+library(R.matlab)
+library(Matrix)
+```
+
+MovieLens 100K data:
+
+The data contains about 100K user-movie ratings (integers from 1 to 5) from approximately 1000 users across a total of 1700 movies. Most users do not rate most movies, so the matrix is sparsely observed (94% missing). We centered and scaled the ratings for each user before applying methods to these data.
+```{r}
+ml100K_data = readRDS("../data/scale_data.rds")
+MLMatrix <- sparseMatrix(i = ml100K_data[,1],
+                         j = ml100K_data[,2],
+                         x = ml100K_data[,3],dims = c(943,1682))
+# turn this sparse matrix into matrix in r
+Y = as.matrix(MLMatrix)
+Y[which(Y == 0)] = NA
+```
+
+Flash:
+```{r, eval=FALSE}
+flash_data = flash_set_data(Y)
+fmodel = flash(flash_data, greedy = TRUE, backfit = TRUE)
+
+saveRDS(fmodel, '../output/MovieLensVarCol.rds')
+```
+
+```{r, echo=FALSE}
+fmodel = readRDS('../output/MovieLensVarCol.rds')
+```
+
+```{r, echo=FALSE}
+Factors = flash_get_ldf(fmodel)$f
+```
+```{r, echo=FALSE}
+par(mar=c(1,1,1,1))
+par(mfrow=c(3,2))
+for(i in 1:5){
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.4, names="")
+}
+```
+
+Flash again on the loading matrix
+```{r, eval=FALSE}
+flash_loading = flash_set_data(fmodel$EL[,1:5])
+flmodel = flash(flash_loading, ebnm_fn = ebnm_ash, backfit = TRUE, greedy = TRUE)
+```
+
+The flash prefers the rank 0 model. There is no hidden structure in the loading matrix.
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```

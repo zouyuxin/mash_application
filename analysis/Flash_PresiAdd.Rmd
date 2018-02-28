@@ -1,0 +1,85 @@
+---
+title: "Presidential address-Flash"
+author: "Yuxin Zou"
+date: 2018-2-21
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+```{r echo=FALSE}
+library(flashr); library(R.matlab)
+```
+
+Presidential Address data:
+
+The data contains word counts from the inaugural addresses of 13 US presidents (1940–2009). There are 13 rows (presidents) and 836 columns (words), and each entry indicates the number of times a particular word was used in a particular address. Since both row and column means vary greatly here we pre-processed the data by centering and scaling both rows and columns, using the biScale function from softImpute.
+
+```{r}
+data = readMat('../data/PresiAdd.mat')
+data = data$Yscaled
+```
+
+Flash:
+```{r, eval=FALSE}
+flash.data = flash_set_data(data)
+fmodel = flash(flash.data, greedy = TRUE, backfit = TRUE)
+
+saveRDS(fmodel, '../output/PresiAddVarCol.rds')
+```
+
+```{r, echo=FALSE}
+fmodel = readRDS('../output/PresiAddVarCol.rds')
+```
+
+```{r, echo=FALSE}
+Factors = flash_get_ldf(fmodel)$f
+pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)
+```
+```{r, echo=FALSE}
+par(mar=c(1,1,1,1))
+par(mfrow=c(3,2))
+for(i in pve.order){
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.4, names="")
+}
+```
+
+Flash again on the loading matrix
+```{r}
+flash.loading = flash_set_data(fmodel$EL[,1:5])
+flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)
+```
+```{r, echo=FALSE}
+Factors_loading = flash_get_ldf(flmodel)$f
+```
+```{r, echo=FALSE}
+barplot(as.numeric(Factors_loading), main=paste0('Factor 1 pve= ', round(flash_get_pve(flmodel),3)), las=2, cex.names = 0.4, names='')
+```
+
+The result means that the loading matrix is nearly zero except the last column. This implies that the original data set could be factored with only the last factor. 
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```

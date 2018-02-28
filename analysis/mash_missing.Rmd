@@ -1,0 +1,112 @@
+---
+title: "Mash_missing"
+author: "Yuxin Zou"
+date: "2/14/2018"
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+Generate data with missing value:
+
+Some rows have very sparse observations.
+```{r}
+library(mashr)
+set.seed(2018)
+data = simple_sims(500, ncond = 60, err_sd = 0.5)
+
+data.miss = data
+missing.row = sample(1:nrow(data$Bhat), nrow(data$Bhat)/4)
+# choose number of missing for each row
+missing.num = sample(50:59, length(missing.row), replace = TRUE)
+missing.ind = matrix(0, nrow = nrow(data$B), ncol=ncol(data$B))
+for(i in 1: length(missing.row)){
+  col = sample(1:60, missing.num[i])
+  missing.ind[missing.row[i], col] = 1
+}
+
+missing = which(missing.ind == 1)
+data.miss$Bhat[missing] = NA
+data.miss$Shat[missing] = NA
+missing1 = is.na(data.miss$Bhat[,1])
+```
+
+Set the missing value with large standard deviation
+```{r}
+data.large.dev = data.miss
+data.large.dev$Bhat[is.na(data.miss$Bhat)] = 0
+data.large.dev$Shat[is.na(data.miss$Shat)] = 1000
+```
+
+# `ash`
+
+```{r}
+ash_res = ash(data.large.dev$Bhat[,1], data.large.dev$Shat[,1], mixcompdist = "normal", alpha = 0)
+
+which(ash_res$result$lfsr[missing1] < 0.05)
+
+ash_res_orig = ash(data.large.dev$Bhat[!missing1,1], data.large.dev$Shat[!missing1,1], mixcompdist = "normal", alpha = 0)
+
+sum((ash_res$result$PosteriorMean[!missing1] - ash_res_orig$result$PosteriorMean)^2)
+```
+
+The missing data are estimated as 0 and non-significant using `ash`. Since the missing data was assigned with large error, the analysis ignore those missing values. The estimates for the non-missing ones are similar.
+
+# `mash`
+
+* EE model
+```{r}
+mash.data.missing = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat)
+U.c = cov_canonical(mash.data.missing)
+
+mash.model.missing = mash(mash.data.missing, U.c)
+barplot(get_estimated_pi(mash.model.missing), las=2, cex.names = 0.7)
+```
+
+The weights learned from the data is correct, even there are many missing values. There are `r length(get_significant_results(mash.model.missing))` significant samples, `r length(which(mash.model.missing$result$lfsr[missing] < 0.05))` significent effects in missing data.
+
+Some of the missing value is estimated with significant posterior mean. This is caused by the information borrowing from other observations. Based on the covariance structure learned from the whole dataset, the missing value are imputed.
+
+We can check the RMSE, comparing the posterior mean for the missing data with the true value.
+```{r}
+# RMSE
+sqrt(sum(((mash.model.missing$result$PosteriorMean[missing] - data$B[missing])^2))/length(missing))
+```
+
+* EZ model
+```{r}
+mash.data.missing.1 = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat, alpha = 1)
+U.c = cov_canonical(mash.data.missing)
+
+mash.model.missing.1 = mash(mash.data.missing.1, U.c)
+barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7)
+```
+The weights learned from the data are very weird and incorrect. There are `r length(get_significant_results(mash.model.missing.1))` significant samples, `r length(which(mash.model.missing.1$result$lfsr[missing] < 0.05))` significent effects in missing data. The maximum of the estimated posterior mean is `r max(mash.model.missing.1$result$PosteriorMean)` with estimated sd `r mash.model.missing.1$result$PosteriorSD[1850,9]`. This result is not what we expected. In the EZ model, multiplying back the standard errors causes the problem, since the missing data are set with large standard error. 
+
+So, one lesson is that we should use EE model when there are missing values in the data.
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```

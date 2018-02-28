@@ -7,5 +7,11 @@ output:
 
 * XCI data:
     + MASH analysis for XCI sex bias: [sexbias](sexbias_Table2.html)
+    
+        Simulation about implementing `mash` on data with missing values: [missing](mash_missing.html)
 
-* The Flash model on GTEx data: [Flash_GTEx](Flash_GTEx.html)
+* The Flash hierarchical model on GTEx data: [Flash_GTEx](Flash_GTEx.html)
+* The Flash hierarchical model on Brain tumor data: [Brain_GTEx](Flash_Brain.html)
+* The Flash hierarchical model on Breast Cancer data: [Breast_GTEx](Flash_Breast.html)
+* The Flash hierarchical model on Presidential Address data: [PresiAdd_GTEx](Flash_PresiAdd.html)
+* The Flash hierarchical model on Movie Lens data: [Movie_GTEx](Flash_Movie.html)

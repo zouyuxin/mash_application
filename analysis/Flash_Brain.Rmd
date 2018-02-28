@@ -1,0 +1,79 @@
+---
+title: "Brain Tumor-Flash"
+author: "Yuxin Zou"
+date: 2018-2-20
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+```{r echo=FALSE}
+library(flashr); library(R.matlab)
+```
+
+Brain Tumor data:
+
+The data consist of micro array gene expression measurements on 43 brain tumors of four types, together with 356 additional variables related to the expression data. We pre-processed the data by centering the data by column.
+```{r}
+data = readMat('../data/BrainTumor.mat')
+data = data$Y
+```
+
+Flash:
+```{r, eval=FALSE}
+flash.data = flash_set_data(data)
+f = flash(flash.data, greedy = TRUE, backfit = TRUE)
+
+saveRDS(f, '../output/BrainTumorVarCol.rds')
+```
+
+```{r, echo=FALSE}
+fmodel = readRDS('../output/BrainTumorVarCol.rds')
+```
+
+```{r, echo=FALSE}
+Factors = flash_get_ldf(fmodel)$f
+pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)
+```
+```{r, echo=FALSE}
+par(mar=c(1,1,1,1))
+par(mfrow=c(3,2))
+
+for(i in pve.order){
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.4, names="")
+}
+```
+
+Flash again on the loading matrix
+```{r, eval=FALSE}
+flash.loading = flash_set_data(fmodel$EL[,1:9])
+flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)
+```
+
+The flash prefers the rank 0 model. There is no hidden structure in the loading matrix.
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
