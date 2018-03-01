@@ -1,0 +1,103 @@
+---
+title: "Mash Missing Large R"
+author: "Yuxin Zou"
+date: 2018-2-28
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+```{r}
+library(mashr)
+set.seed(2018)
+data.10 = simple_sims(100, ncond = 10, err_sd = 0.1)
+
+data.50 = simple_sims(100, ncond = 50, err_sd = 0.1)
+
+data.large = simple_sims(300, ncond = 50, err_sd = 0.1)
+
+data.larger = simple_sims(1000, ncond = 50, err_sd = 0.1)
+
+mash.data.10 = mash_set_data(Bhat = data.10$Bhat, Shat = data.10$Shat)
+mash.data.10.1 = mash_set_data(Bhat = data.10$Bhat, Shat = data.10$Shat, alpha=1)
+
+mash.data.50 = mash_set_data(Bhat = data.50$Bhat, Shat = data.50$Shat)
+mash.data.50.1 = mash_set_data(Bhat = data.50$Bhat, Shat = data.50$Shat, alpha=1)
+
+mash.data.large = mash_set_data(Bhat = data.large$Bhat, Shat = data.large$Shat)
+mash.data.large.1 = mash_set_data(Bhat = data.large$Bhat, Shat = data.large$Shat, alpha=1)
+
+mash.data.larger = mash_set_data(Bhat = data.larger$Bhat, Shat = data.larger$Shat)
+mash.data.larger.1 = mash_set_data(Bhat = data.larger$Bhat, Shat = data.larger$Shat, alpha=1)
+```
+
+# EE model
+```{r}
+U.c.10 = cov_canonical(mash.data.10)
+U.c.50 = cov_canonical(mash.data.50)
+U.c.large = cov_canonical(mash.data.large)
+U.c.larger = cov_canonical(mash.data.larger)
+
+mash.10 = mash(mash.data.10, U.c.10, verbose = FALSE)
+mash.50 = mash(mash.data.50, U.c.50, verbose = FALSE)
+mash.large = mash(mash.data.large, U.c.large,  verbose = FALSE)
+mash.larger = mash(mash.data.larger, U.c.larger,  verbose = FALSE)
+```
+```{r}
+par(mfcol=c(2,1))
+barplot(get_estimated_pi(mash.10), las=2, cex.names = 0.7, main='R=10')
+barplot(get_estimated_pi(mash.50), las=2, cex.names = 0.7, main='R=50, n = 400')
+barplot(get_estimated_pi(mash.large), las=2, cex.names = 0.7, main='R=50, n = 1200')
+barplot(get_estimated_pi(mash.larger), las=2, cex.names = 0.7, main='R=50, n = 4000')
+par(mfcol=c(1,1))
+```
+
+# EZ model
+```{r}
+mash.10.1 = mash(mash.data.10.1, U.c.10,  verbose = FALSE)
+mash.50.1 = mash(mash.data.50.1, U.c.50,  verbose = FALSE)
+mash.large.1 = mash(mash.data.large.1, U.c.large, verbose = FALSE)
+mash.larger.1 = mash(mash.data.larger.1, U.c.larger, verbose = FALSE)
+```
+```{r}
+par(mfcol=c(2,1))
+barplot(get_estimated_pi(mash.10.1), las=2, cex.names = 0.7, main='R=10')
+barplot(get_estimated_pi(mash.50.1), las=2, cex.names = 0.7, main='R=50, n=400')
+barplot(get_estimated_pi(mash.large.1), las=2, cex.names = 0.7, main='R=50, n=1200')
+barplot(get_estimated_pi(mash.larger.1), las=2, cex.names = 0.7, main='R=50, n=4000')
+par(mfcol=c(1,1))
+```
+
+Separate the conditions to subgroups.
+```{r}
+mash.data.50.sub1 = mash_set_data(data.50$Bhat[,1:25], data.50$Shat[,1:25])
+U.c.50.sub1 = cov_canonical(mash.data.50.sub1)
+mash.50.sub1 = mash(mash.data.50.sub1, U.c.50.sub1)
+barplot(get_estimated_pi(mash.50.sub1), las=2, cex.names = 0.7)
+```
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```

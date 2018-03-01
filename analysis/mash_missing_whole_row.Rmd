@@ -1,0 +1,251 @@
+---
+title: "Mash Missing Whole Row"
+author: "Yuxin Zou"
+date: 2018-2-28
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+# R=5
+
+```{r}
+library(mashr)
+set.seed(2018)
+data = simple_sims(500, err_sd = 0.1)
+
+data.miss = data
+missing.row = sample(1:nrow(data$Bhat), nrow(data$Bhat)/4)
+missing.ind = matrix(0, nrow = nrow(data$B), ncol=ncol(data$B))
+missing.ind[missing.row,] = 1
+
+missing = which(missing.ind == 1)
+data.miss$Bhat[missing] = NA
+data.miss$Shat[missing] = NA
+missing1 = is.na(data.miss$Bhat[,1])
+# Set the missing value with large standard deviation
+data.large.dev = data.miss
+data.large.dev$Bhat[is.na(data.miss$Bhat)] = 0
+data.large.dev$Shat[is.na(data.miss$Shat)] = 1000
+```
+
+## EE model
+
+```{r, echo=FALSE}
+# with missing values
+mash.data.missing = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat)
+U.c = cov_canonical(mash.data.missing)
+
+mash.model.missing = mash(mash.data.missing, U.c, verbose = FALSE)
+
+# without missing values
+data.miss.na = data.miss
+data.miss.na$Bhat = na.omit(data.miss$Bhat)
+data.miss.na$Shat = na.omit(data.miss$Shat)
+
+mash.data.missing.na = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat)
+U.c = cov_canonical(mash.data.missing.na)
+
+mash.model.missing.na = mash(mash.data.missing.na, U.c, verbose=FALSE)
+```
+
+```{r, echo=FALSE}
+par(mfrow=c(1,2))
+barplot(get_estimated_pi(mash.model.missing), las=2, cex.names = 0.7, main='with missing values')
+barplot(get_estimated_pi(mash.model.missing.na), las=2, cex.names = 0.7, main = 'without missing values')
+par(mfrow=c(1,1))
+```
+
+The log likelihood for model with missing data is `r get_loglik(mash.model.missing)`. The weights learned from the data is correct. There are `r length(get_significant_results(mash.model.missing))` significant samples.
+
+The log likelihood for model without missing vlaues is `r get_loglik(mash.model.missing.na)`. The estimated weights are same. There are `r length(get_significant_results(mash.model.missing.na))` significant samples. The missing values with large deviation contain little information.
+
+The estimates for other observed values are similar, as we expected.
+```{r}
+sqrt(sum((mash.model.missing$result$PosteriorMean[-missing] - mash.model.missing.na$result$PosteriorMean)^2))
+```
+
+## EZ model
+
+```{r, echo=FALSE}
+# With missing values
+mash.data.missing.1 = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat, alpha = 1)
+U.c = cov_canonical(mash.data.missing.1)
+
+mash.model.missing.1 = mash(mash.data.missing.1, U.c, verbose = FALSE)
+
+# Without missing values
+mash.data.missing.na.1 = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat, alpha = 1)
+U.c = cov_canonical(mash.data.missing.na.1)
+
+mash.model.missing.na.1 = mash(mash.data.missing.na.1, U.c, verbose=FALSE)
+```
+
+
+```{r}
+par(mfrow=c(1,2))
+barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7, main='with missing values')
+barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main='without missing values')
+par(mfrow=c(1,1))
+```
+
+The log likelihood for the model with missing values is `r get_loglik(mash.model.missing.1)`. There are `r length(get_significant_results(mash.model.missing.1))` significant samples.
+
+The log likelihood for the model without missing values is `r get_loglik(mash.model.missing.na.1)`. The estimated weights are different. There are `r length(get_significant_results(mash.model.missing.na.1))` significant samples. There are 2 cases for z close to 0. One is the observed effect is close to zero; the other is the value is missing, it has large standard deviation. The EZ model cannot distinguish this two cases. They contain same amount of information.
+
+# R=60
+```{r, echo=FALSE}
+set.seed(2018)
+data = simple_sims(500, ncond = 60, err_sd = 0.1)
+
+data.miss = data
+missing.row = sample(1:nrow(data$Bhat), nrow(data$Bhat)/4)
+missing.ind = matrix(0, nrow = nrow(data$B), ncol=ncol(data$B))
+missing.ind[missing.row,] = 1
+
+missing = which(missing.ind == 1)
+data.miss$Bhat[missing] = NA
+data.miss$Shat[missing] = NA
+missing1 = is.na(data.miss$Bhat[,1])
+# Set the missing value with large standard deviation
+data.large.dev = data.miss
+data.large.dev$Bhat[is.na(data.miss$Bhat)] = 0
+data.large.dev$Shat[is.na(data.miss$Shat)] = 1000
+```
+
+## EE model
+
+### With missing values
+```{r, echo=FALSE}
+mash.data.missing = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat)
+U.c = cov_canonical(mash.data.missing)
+
+mash.model.missing = mash(mash.data.missing, U.c, verbose = FALSE)
+barplot(get_estimated_pi(mash.model.missing), las=2, cex.names = 0.7)
+```
+The log likelihood is `r get_loglik(mash.model.missing)`. The weights learned from the data is correct. There are `r length(get_significant_results(mash.model.missing))` significant samples.
+
+### Without missing values
+```{r, echo=FALSE}
+data.miss.na = data.miss
+data.miss.na$Bhat = na.omit(data.miss$Bhat)
+data.miss.na$Shat = na.omit(data.miss$Shat)
+
+mash.data.missing.na = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat)
+U.c = cov_canonical(mash.data.missing.na)
+
+mash.model.missing.na = mash(mash.data.missing.na, U.c, verbose=FALSE)
+barplot(get_estimated_pi(mash.model.missing.na), las=2, cex.names = 0.7)
+```
+The log likelihood is `r get_loglik(mash.model.missing.na)`. The estimated weights are very weird and incorrect. It ignores the null matrix. There are `r length(get_significant_results(mash.model.missing.na))` significant samples.
+
+The estimates for other observed values are different, as we expected.
+```{r}
+sqrt(sum((mash.model.missing$result$PosteriorMean[-missing] - mash.model.missing.na$result$PosteriorMean)^2))
+```
+
+## EZ model
+
+### With missing values
+```{r, echo=FALSE}
+mash.data.missing.1 = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat, alpha = 1)
+U.c = cov_canonical(mash.data.missing.1)
+
+mash.model.missing.1 = mash(mash.data.missing.1, U.c, verbose = FALSE)
+barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7)
+```
+
+The log likelihood is `r get_loglik(mash.model.missing.1)`. There are `r length(get_significant_results(mash.model.missing.1))` significant samples.
+
+### Without missing values
+```{r}
+mash.data.missing.na.1 = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat, alpha = 1)
+U.c = cov_canonical(mash.data.missing.na.1)
+
+mash.model.missing.na.1 = mash(mash.data.missing.na.1, U.c, verbose=FALSE)
+barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7)
+```
+The log likelihood is `r get_loglik(mash.model.missing.na.1)`. The estimated weights are different. There are `r length(get_significant_results(mash.model.missing.na.1))` significant samples.
+
+# Covariance
+
+The weired covariance structure is caused by the high dimension of R.
+
+If we separate conditions into several groups, the covariance structure will be correct.
+
+We show this for the EZ model R=60.
+
+```{r, echo=FALSE}
+mash.data.missing.1.sub1 = mash_set_data(Bhat=data.large.dev$Bhat[,1:20], Shat=data.large.dev$Shat[,1:20], alpha = 1)
+U.c = cov_canonical(mash.data.missing.1.sub1)
+mash.model.missing.1.sub1 = mash(mash.data.missing.1.sub1, U.c, verbose = FALSE)
+
+mash.data.missing.1.sub2 = mash_set_data(Bhat=data.large.dev$Bhat[,21:40], Shat=data.large.dev$Shat[,21:40], alpha = 1)
+U.c = cov_canonical(mash.data.missing.1.sub2)
+mash.model.missing.1.sub2 = mash(mash.data.missing.1.sub2, U.c, verbose = FALSE)
+
+mash.data.missing.1.sub3 = mash_set_data(Bhat=data.large.dev$Bhat[,41:60], Shat=data.large.dev$Shat[,41:60], alpha = 1)
+U.c = cov_canonical(mash.data.missing.1.sub3)
+mash.model.missing.1.sub3 = mash(mash.data.missing.1.sub3, U.c, verbose = FALSE)
+
+par(mfcol=c(3,1))
+barplot(get_estimated_pi(mash.model.missing.1.sub1), las=2, cex.names = 0.7, main='condition 1:20')
+barplot(get_estimated_pi(mash.model.missing.1.sub2), las=2, cex.names = 0.7, main='condition 21:40')
+barplot(get_estimated_pi(mash.model.missing.1.sub3), las=2, cex.names = 0.7,
+main='condition 41:60')
+par(mfcol=c(1,1))
+```
+
+If we enlarge the sample sizes, but still $\frac{1}{4}$ rows are missing. There are 16000 samples.
+
+```{r}
+set.seed(2018)
+data = simple_sims(4000, ncond = 60, err_sd = 0.1)
+
+data.miss = data
+missing.row = sample(1:nrow(data$Bhat), nrow(data$Bhat)/4)
+missing.ind = matrix(0, nrow = nrow(data$B), ncol=ncol(data$B))
+missing.ind[missing.row,] = 1
+
+missing = which(missing.ind == 1)
+data.miss$Bhat[missing] = NA
+data.miss$Shat[missing] = NA
+missing1 = is.na(data.miss$Bhat[,1])
+# Set the missing value with large standard deviation
+data.large.dev = data.miss
+data.large.dev$Bhat[is.na(data.miss$Bhat)] = 0
+data.large.dev$Shat[is.na(data.miss$Shat)] = 1000
+```
+```{r, echo=FALSE}
+mash.data.missing.1.enlarge = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat, alpha = 1)
+U.c = cov_canonical(mash.data.missing.1)
+
+mash.model.missing.1.enlarge = mash(mash.data.missing.1.enlarge, U.c, verbose = FALSE)
+barplot(get_estimated_pi(mash.model.missing.1.enlarge), las=2, cex.names = 0.7)
+```
+ 
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
