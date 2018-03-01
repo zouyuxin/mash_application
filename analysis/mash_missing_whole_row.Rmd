@@ -215,34 +215,6 @@ barplot(get_estimated_pi(mash.model.missing.1.sub3), las=2, cex.names = 0.7,
 main='condition 41:60')
 par(mfcol=c(1,1))
 ```
-
-If we enlarge the sample sizes, but still $\frac{1}{4}$ rows are missing. There are 16000 samples.
-
-```{r}
-set.seed(2018)
-data = simple_sims(4000, ncond = 60, err_sd = 0.1)
-
-data.miss = data
-missing.row = sample(1:nrow(data$Bhat), nrow(data$Bhat)/4)
-missing.ind = matrix(0, nrow = nrow(data$B), ncol=ncol(data$B))
-missing.ind[missing.row,] = 1
-
-missing = which(missing.ind == 1)
-data.miss$Bhat[missing] = NA
-data.miss$Shat[missing] = NA
-missing1 = is.na(data.miss$Bhat[,1])
-# Set the missing value with large standard deviation
-data.large.dev = data.miss
-data.large.dev$Bhat[is.na(data.miss$Bhat)] = 0
-data.large.dev$Shat[is.na(data.miss$Shat)] = 1000
-```
-```{r, echo=FALSE}
-mash.data.missing.1.enlarge = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat, alpha = 1)
-U.c = cov_canonical(mash.data.missing.1)
-
-mash.model.missing.1.enlarge = mash(mash.data.missing.1.enlarge, U.c, verbose = FALSE)
-barplot(get_estimated_pi(mash.model.missing.1.enlarge), las=2, cex.names = 0.7)
-```
  
 # Session information
 

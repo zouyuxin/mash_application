@@ -4,11 +4,22 @@ output:
   html_document:
     toc: false
 ---
-
+* Missing value using `mash`:
+    
+    If we want to have reasonable posterior mean, we need to use EE mode. Because in the EZ model, multiplying back the standard errors causes the problem. The missing data are set with large standard error. It will pruduce huge posteiror mean.
+    
+    With missing values, the covariance structure learnt from the model is weired sometimes. The weights do not shrink to zero.
+    
+    Suppose some of the rows in the data are totally missing. With the large errors for those missing values, the EE model ignores the information in those missing positions. In contrast, the EZ model cannot distinguish the nearly 0 z scores caused by the small observed effects from those caused by the large errors.
+    
+    [Miss Whole Row](mash_missing_whole_row.html)
+    
+    The weired weights is not caused by the small sample size. [Sample Size](mash_missing_samplesize.html)
+    
+    It is caused by the large number of conditions.[LargeR](mash_largeR.html)
+    
 * XCI data:
     + MASH analysis for XCI sex bias: [sexbias](sexbias_Table2.html)
-    
-        Simulation about implementing `mash` on data with missing values: [missing](mash_missing.html)
 
 * The Flash hierarchical model on GTEx data: [Flash_GTEx](Flash_GTEx.html)
 * The Flash hierarchical model on Brain tumor data: [Brain_GTEx](Flash_Brain.html)

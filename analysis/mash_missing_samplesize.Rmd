@@ -1,0 +1,63 @@
+---
+title: "Mash Missing Sample Size"
+author: "Yuxin Zou"
+date: 2018-3-1
+output: html_document
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+We simulate data with R = 50, N = 300 and 400.
+
+# N = 400
+```{r, echo=FALSE}
+library(mashr)
+set.seed(2018)
+data = simple_sims(100, 50, err_sd = 0.1)
+
+mash.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(mash.data)
+
+mash.model = mash(mash.data, U.c)
+barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
+```
+
+# N = 300
+```{r, echo=FALSE}
+set.seed(2018)
+data = simple_sims(75, 50, err_sd = 0.1)
+
+mash.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(mash.data)
+
+mash.model = mash(mash.data, U.c)
+barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
+```
+
+The weights learnd from N=300 model is correct.
+
+
+# Session information
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
