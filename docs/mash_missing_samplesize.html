@@ -9,9 +9,10 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="Yuxin Zou" />
 
 
-<title>Home</title>
+<title>Mash Missing Sample Size</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +20,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -164,6 +168,101 @@ $(document).ready(function () {
 
 
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
 
 
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
@@ -210,29 +309,88 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Home</h1>
+<h1 class="title toc-ignore">Mash Missing Sample Size</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>2018-3-1</em></h4>
 
 </div>
 
 
-<ul>
-<li><p>Missing value using <code>mash</code>:</p>
-<p>If we want to have reasonable posterior mean, we need to use EE mode. Because in the EZ model, multiplying back the standard errors causes the problem. The missing data are set with large standard error. It will pruduce huge posteiror mean.</p>
-<p>With missing values, the covariance structure learnt from the model is weired sometimes. The weights do not shrink to zero.</p>
-<p>Suppose some of the rows in the data are totally missing. With the large errors for those missing values, the EE model ignores the information in those missing positions. In contrast, the EZ model cannot distinguish the nearly 0 z scores caused by the small observed effects from those caused by the large errors.</p>
-<p><a href="mash_missing_whole_row.html">Miss Whole Row</a></p>
-<p>The weired weights is not caused by the small sample size. <a href="mash_missing_samplesize.html">Sample Size</a></p>
-<p>It is caused by the large number of conditions.<a href="mash_largeR.html">LargeR</a></p></li>
-<li>XCI data:
-<ul>
-<li>MASH analysis for XCI sex bias: <a href="sexbias_Table2.html">sexbias</a></li>
-</ul></li>
-<li>The Flash hierarchical model on GTEx data: <a href="Flash_GTEx.html">Flash_GTEx</a></li>
-<li>The Flash hierarchical model on Brain tumor data: <a href="Flash_Brain.html">Brain_GTEx</a></li>
-<li>The Flash hierarchical model on Breast Cancer data: <a href="Flash_Breast.html">Breast_GTEx</a></li>
-<li>The Flash hierarchical model on Presidential Address data: <a href="Flash_PresiAdd.html">PresiAdd_GTEx</a></li>
-<li><p>The Flash hierarchical model on Movie Lens data: <a href="Flash_Movie.html">Movie_GTEx</a></p></li>
-</ul>
+<!-- Update knitr chunk options -->
+<!-- Insert the date the file was last updated -->
+<p><strong>Last updated:</strong> 2018-03-01</p>
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+<p><strong>Code version:</strong> d62d09a</p>
+<p>We simulate data with R = 50, N = 300 and 400.</p>
+<div id="n-400" class="section level1">
+<h1>N = 400</h1>
+<pre><code>Loading required package: ashr</code></pre>
+<pre><code> - Computing 400 x 1101 likelihood matrix.
+ - Likelihood calculations took 1.17 seconds.
+ - Fitting model with 1101 mixture components.</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.0182689419778344,
+0.023990286246669, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre><code> - Model fitting took 1.95 seconds.
+ - Computing posterior matrices.
+ - Computation allocated took 1.45 seconds.</code></pre>
+<p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="n-300" class="section level1">
+<h1>N = 300</h1>
+<pre><code> - Computing 300 x 1101 likelihood matrix.
+ - Likelihood calculations took 0.72 seconds.
+ - Fitting model with 1101 mixture components.</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.00730053524366138,
+0.268626142814483, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre><code> - Model fitting took 1.19 seconds.
+ - Computing posterior matrices.
+ - Computation allocated took 0.11 seconds.</code></pre>
+<p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The weights learnd from N=300 model is correct.</p>
+</div>
+<div id="session-information" class="section level1">
+<h1>Session information</h1>
+<!-- Insert the session information into the document -->
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.4.3 (2017-11-30)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.3
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] mashr_0.2-4 ashr_2.2-4 
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.15      knitr_1.17        magrittr_1.5     
+ [4] REBayes_1.2       MASS_7.3-47       doParallel_1.0.11
+ [7] pscl_1.5.2        SQUAREM_2017.10-1 lattice_0.20-35  
+[10] foreach_1.4.4     plyr_1.8.4        stringr_1.2.0    
+[13] tools_3.4.3       parallel_3.4.3    grid_3.4.3       
+[16] rmeta_2.16        git2r_0.20.0      htmltools_0.3.6  
+[19] iterators_1.0.9   assertthat_0.2.0  yaml_2.1.16      
+[22] rprojroot_1.2     digest_0.6.13     Matrix_1.2-12    
+[25] codetools_0.2-15  evaluate_0.10.1   rmarkdown_1.8    
+[28] stringi_1.1.6     compiler_3.4.3    Rmosek_8.0.69    
+[31] backports_1.1.2   mvtnorm_1.0-7     truncnorm_1.0-7  </code></pre>
+</div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
@@ -272,6 +430,8 @@ footer is added to webpages before the MathJax javascript. -->
 -->
 
 
+</div>
+</div>
 
 </div>
 

@@ -321,7 +321,7 @@ div.section {
 <p><strong>Last updated:</strong> 2018-03-01</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 55f7759</p>
+<p><strong>Code version:</strong> d62d09a</p>
 <div id="r5" class="section level1">
 <h1>R=5</h1>
 <pre class="r"><code>library(mashr)</code></pre>
@@ -439,25 +439,6 @@ after the optimization.</code></pre>
 FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE
 FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
 <p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>If we enlarge the sample sizes, but still <span class="math inline">\(\frac{1}{4}\)</span> rows are missing. There are 16000 samples.</p>
-<pre class="r"><code>set.seed(2018)
-data = simple_sims(4000, ncond = 60, err_sd = 0.1)
-
-data.miss = data
-missing.row = sample(1:nrow(data$Bhat), nrow(data$Bhat)/4)
-missing.ind = matrix(0, nrow = nrow(data$B), ncol=ncol(data$B))
-missing.ind[missing.row,] = 1
-
-missing = which(missing.ind == 1)
-data.miss$Bhat[missing] = NA
-data.miss$Shat[missing] = NA
-missing1 = is.na(data.miss$Bhat[,1])
-# Set the missing value with large standard deviation
-data.large.dev = data.miss
-data.large.dev$Bhat[is.na(data.miss$Bhat)] = 0
-data.large.dev$Shat[is.na(data.miss$Shat)] = 1000</code></pre>
-<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>

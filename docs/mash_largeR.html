@@ -321,122 +321,38 @@ div.section {
 <p><strong>Last updated:</strong> 2018-03-01</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 55f7759</p>
-<pre class="r"><code>library(mashr)</code></pre>
+<p><strong>Code version:</strong> d62d09a</p>
+<p>We simulate dataset with N=400, R = 10 and 50.</p>
 <pre><code>Loading required package: ashr</code></pre>
-<pre class="r"><code>set.seed(2018)
-data.10 = simple_sims(100, ncond = 10, err_sd = 0.1)
-
-data.50 = simple_sims(100, ncond = 50, err_sd = 0.1)
-
-data.large = simple_sims(300, ncond = 50, err_sd = 0.1)
-
-data.larger = simple_sims(1000, ncond = 50, err_sd = 0.1)
-
-mash.data.10 = mash_set_data(Bhat = data.10$Bhat, Shat = data.10$Shat)
-mash.data.10.1 = mash_set_data(Bhat = data.10$Bhat, Shat = data.10$Shat, alpha=1)
-
-mash.data.50 = mash_set_data(Bhat = data.50$Bhat, Shat = data.50$Shat)
-mash.data.50.1 = mash_set_data(Bhat = data.50$Bhat, Shat = data.50$Shat, alpha=1)
-
-mash.data.large = mash_set_data(Bhat = data.large$Bhat, Shat = data.large$Shat)
-mash.data.large.1 = mash_set_data(Bhat = data.large$Bhat, Shat = data.large$Shat, alpha=1)
-
-mash.data.larger = mash_set_data(Bhat = data.larger$Bhat, Shat = data.larger$Shat)
-mash.data.larger.1 = mash_set_data(Bhat = data.larger$Bhat, Shat = data.larger$Shat, alpha=1)</code></pre>
-<div id="ee-model" class="section level1">
-<h1>EE model</h1>
-<pre class="r"><code>U.c.10 = cov_canonical(mash.data.10)
-U.c.50 = cov_canonical(mash.data.50)
-U.c.large = cov_canonical(mash.data.large)
-U.c.larger = cov_canonical(mash.data.larger)
-
-mash.10 = mash(mash.data.10, U.c.10, verbose = FALSE)</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
 <pre><code>Warning in mixIP(matrix_lik = structure(c(0.825501423556077,
 0.0919617211603192, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre class="r"><code>mash.50 = mash(mash.data.50, U.c.50, verbose = FALSE)</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
 <pre><code>Warning in mixIP(matrix_lik = structure(c(0.0183400395288875,
 0.0241762811815978, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre class="r"><code>mash.large = mash(mash.data.large, U.c.large,  verbose = FALSE)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.195763263990199,
-0.0646431712501757, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre class="r"><code>mash.larger = mash(mash.data.larger, U.c.larger,  verbose = FALSE)</code></pre>
 <pre class="r"><code>par(mfcol=c(2,1))
-barplot(get_estimated_pi(mash.10), las=2, cex.names = 0.7, main=&#39;R=10&#39;)
+barplot(get_estimated_pi(mash.10), las=2, cex.names = 0.7, main=&#39;R=10, n = 400&#39;)
 barplot(get_estimated_pi(mash.50), las=2, cex.names = 0.7, main=&#39;R=50, n = 400&#39;)</code></pre>
 <p><img src="figure/mash_largeR.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>barplot(get_estimated_pi(mash.large), las=2, cex.names = 0.7, main=&#39;R=50, n = 1200&#39;)
-barplot(get_estimated_pi(mash.larger), las=2, cex.names = 0.7, main=&#39;R=50, n = 4000&#39;)</code></pre>
-<p><img src="figure/mash_largeR.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(mfcol=c(1,1))</code></pre>
-</div>
-<div id="ez-model" class="section level1">
-<h1>EZ model</h1>
-<pre class="r"><code>mash.10.1 = mash(mash.data.10.1, U.c.10,  verbose = FALSE)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.825501423556077,
-0.091961721160319, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<pre class="r"><code>mash.50.1 = mash(mash.data.50.1, U.c.50,  verbose = FALSE)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.0183400395288875,
-0.0241762811815978, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<pre class="r"><code>mash.large.1 = mash(mash.data.large.1, U.c.large, verbose = FALSE)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.195763263990196,
-0.0646431712501752, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<pre class="r"><code>mash.larger.1 = mash(mash.data.larger.1, U.c.larger, verbose = FALSE)</code></pre>
-<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<pre class="r"><code>par(mfcol=c(2,1))
-barplot(get_estimated_pi(mash.10.1), las=2, cex.names = 0.7, main=&#39;R=10&#39;)
-barplot(get_estimated_pi(mash.50.1), las=2, cex.names = 0.7, main=&#39;R=50, n=400&#39;)</code></pre>
-<p><img src="figure/mash_largeR.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>barplot(get_estimated_pi(mash.large.1), las=2, cex.names = 0.7, main=&#39;R=50, n=1200&#39;)
-barplot(get_estimated_pi(mash.larger.1), las=2, cex.names = 0.7, main=&#39;R=50, n=4000&#39;)</code></pre>
-<p><img src="figure/mash_largeR.Rmd/unnamed-chunk-6-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>par(mfcol=c(1,1))</code></pre>
-<p>Separate the conditions to subgroups.</p>
+<p>Separate the conditions to subgroups:</p>
 <pre class="r"><code>mash.data.50.sub1 = mash_set_data(data.50$Bhat[,1:25], data.50$Shat[,1:25])
 U.c.50.sub1 = cov_canonical(mash.data.50.sub1)
-mash.50.sub1 = mash(mash.data.50.sub1, U.c.50.sub1)</code></pre>
-<pre><code> - Computing 400 x 631 likelihood matrix.
- - Likelihood calculations took 0.17 seconds.
- - Fitting model with 631 mixture components.</code></pre>
+mash.50.sub1 = mash(mash.data.50.sub1, U.c.50.sub1, verbose = FALSE)</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
 <pre><code>Warning in mixIP(matrix_lik = structure(c(0.0183400395288872,
 0.210931087030779, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre><code> - Model fitting took 0.45 seconds.
- - Computing posterior matrices.
- - Computation allocated took 0.02 seconds.</code></pre>
 <pre class="r"><code>barplot(get_estimated_pi(mash.50.sub1), las=2, cex.names = 0.7)</code></pre>
-<p><img src="figure/mash_largeR.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
+<p><img src="figure/mash_largeR.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
 <!-- Insert the session information into the document -->
