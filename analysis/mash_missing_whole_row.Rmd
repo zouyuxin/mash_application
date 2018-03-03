@@ -76,15 +76,6 @@ barplot(get_estimated_pi(mash.model.missing.na), las=2, cex.names = 0.7, main = 
 par(mfrow=c(1,1))
 ```
 
-The log likelihood for model with missing data is `r get_loglik(mash.model.missing)`. The weights learned from the data is correct. There are `r length(get_significant_results(mash.model.missing))` significant samples.
-
-The log likelihood for model without missing vlaues is `r get_loglik(mash.model.missing.na)`. The estimated weights are same. There are `r length(get_significant_results(mash.model.missing.na))` significant samples. The missing values with large deviation contain little information.
-
-The estimates for other observed values are similar, as we expected.
-```{r}
-sqrt(sum((mash.model.missing$result$PosteriorMean[-missing] - mash.model.missing.na$result$PosteriorMean)^2))
-```
-
 ## EZ model
 
 ```{r, echo=FALSE}
@@ -102,16 +93,12 @@ mash.model.missing.na.1 = mash(mash.data.missing.na.1, U.c, verbose=FALSE)
 ```
 
 
-```{r}
+```{r, echo=FALSE}
 par(mfrow=c(1,2))
 barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7, main='with missing values')
 barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main='without missing values')
 par(mfrow=c(1,1))
 ```
-
-The log likelihood for the model with missing values is `r get_loglik(mash.model.missing.1)`. There are `r length(get_significant_results(mash.model.missing.1))` significant samples.
-
-The log likelihood for the model without missing values is `r get_loglik(mash.model.missing.na.1)`. The estimated weights are different. There are `r length(get_significant_results(mash.model.missing.na.1))` significant samples. There are 2 cases for z close to 0. One is the observed effect is close to zero; the other is the value is missing, it has large standard deviation. The EZ model cannot distinguish this two cases. They contain same amount of information.
 
 # R=60
 ```{r, echo=FALSE}
@@ -143,7 +130,7 @@ U.c = cov_canonical(mash.data.missing)
 mash.model.missing = mash(mash.data.missing, U.c, verbose = FALSE)
 barplot(get_estimated_pi(mash.model.missing), las=2, cex.names = 0.7)
 ```
-The log likelihood is `r get_loglik(mash.model.missing)`. The weights learned from the data is correct. There are `r length(get_significant_results(mash.model.missing))` significant samples.
+The weights learned from the data are correct.
 
 ### Without missing values
 ```{r, echo=FALSE}
@@ -157,12 +144,7 @@ U.c = cov_canonical(mash.data.missing.na)
 mash.model.missing.na = mash(mash.data.missing.na, U.c, verbose=FALSE)
 barplot(get_estimated_pi(mash.model.missing.na), las=2, cex.names = 0.7)
 ```
-The log likelihood is `r get_loglik(mash.model.missing.na)`. The estimated weights are very weird and incorrect. It ignores the null matrix. There are `r length(get_significant_results(mash.model.missing.na))` significant samples.
-
-The estimates for other observed values are different, as we expected.
-```{r}
-sqrt(sum((mash.model.missing$result$PosteriorMean[-missing] - mash.model.missing.na$result$PosteriorMean)^2))
-```
+The estimated weights are very weird and incorrect. It ignores the null matrix.
 
 ## EZ model
 
@@ -175,8 +157,6 @@ mash.model.missing.1 = mash(mash.data.missing.1, U.c, verbose = FALSE)
 barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7)
 ```
 
-The log likelihood is `r get_loglik(mash.model.missing.1)`. There are `r length(get_significant_results(mash.model.missing.1))` significant samples.
-
 ### Without missing values
 ```{r}
 mash.data.missing.na.1 = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat, alpha = 1)
@@ -185,9 +165,9 @@ U.c = cov_canonical(mash.data.missing.na.1)
 mash.model.missing.na.1 = mash(mash.data.missing.na.1, U.c, verbose=FALSE)
 barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7)
 ```
-The log likelihood is `r get_loglik(mash.model.missing.na.1)`. The estimated weights are different. There are `r length(get_significant_results(mash.model.missing.na.1))` significant samples.
+The estimated weights are different.
 
-# Covariance
+# Subgroups
 
 The weired covariance structure is caused by the high dimension of R.
 
