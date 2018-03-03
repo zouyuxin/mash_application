@@ -6,7 +6,7 @@ output:
 ---
 * Missing value using `mash`:
     
-    If we want to have reasonable posterior mean, we need to use EE mode. Because in the EZ model, multiplying back the standard errors causes the problem. The missing data are set with large standard error. It will pruduce huge posteiror mean.
+    If we want to have reasonable posterior mean, we need to use EE mode. Because in the EZ model, multiplying back the standard errors causes the problem. The missing data have large standard error. It will pruduce huge posteiror mean.
     
     With missing values, the covariance structure learnt from the model is weired sometimes. The weights do not shrink to zero.
     
