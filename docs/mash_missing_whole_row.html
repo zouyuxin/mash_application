@@ -318,10 +318,10 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-01</p>
+<p><strong>Last updated:</strong> 2018-03-02</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> d62d09a</p>
+<p><strong>Code version:</strong> a79b566</p>
 <div id="r5" class="section level1">
 <h1>R=5</h1>
 <pre class="r"><code>library(mashr)</code></pre>
@@ -351,11 +351,6 @@ data.large.dev$Shat[is.na(data.miss$Shat)] = 1000</code></pre>
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
 <p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The log likelihood for model with missing data is -2.111711210^{4}. The weights learned from the data is correct. There are 985 significant samples.</p>
-<p>The log likelihood for model without missing vlaues is -1550.3763871. The estimated weights are same. There are 985 significant samples. The missing values with large deviation contain little information.</p>
-<p>The estimates for other observed values are similar, as we expected.</p>
-<pre class="r"><code>sqrt(sum((mash.model.missing$result$PosteriorMean[-missing] - mash.model.missing.na$result$PosteriorMean)^2))</code></pre>
-<pre><code>[1] 3.422263e-07</code></pre>
 </div>
 <div id="ez-model" class="section level2">
 <h2>EZ model</h2>
@@ -367,13 +362,7 @@ after the optimization.</code></pre>
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
 <pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<pre class="r"><code>par(mfrow=c(1,2))
-barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7, main=&#39;with missing values&#39;)
-barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main=&#39;without missing values&#39;)</code></pre>
-<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>par(mfrow=c(1,1))</code></pre>
-<p>The log likelihood for the model with missing values is -2.159352210^{4}. There are 974 significant samples.</p>
-<p>The log likelihood for the model without missing values is -1550.3763871. The estimated weights are different. There are 985 significant samples. There are 2 cases for z close to 0. One is the observed effect is close to zero; the other is the value is missing, it has large standard deviation. The EZ model cannot distinguish this two cases. They contain same amount of information.</p>
+<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="r60" class="section level1">
@@ -382,7 +371,7 @@ barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main=
 <h2>EE model</h2>
 <div id="with-missing-values" class="section level3">
 <h3>With missing values</h3>
-<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /> The log likelihood is -2.124305510^{5}. The weights learned from the data is correct. There are 1020 significant samples.</p>
+<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /> The weights learned from the data are correct.</p>
 </div>
 <div id="without-missing-values" class="section level3">
 <h3>Without missing values</h3>
@@ -392,10 +381,7 @@ barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main=
 0.337563330121546, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /> The log likelihood is 2.187068210^{4}. The estimated weights are very weird and incorrect. It ignores the null matrix. There are 1014 significant samples.</p>
-<p>The estimates for other observed values are different, as we expected.</p>
-<pre class="r"><code>sqrt(sum((mash.model.missing$result$PosteriorMean[-missing] - mash.model.missing.na$result$PosteriorMean)^2))</code></pre>
-<pre><code>[1] 0.7759291</code></pre>
+<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /> The estimated weights are very weird and incorrect. It ignores the null matrix.</p>
 </div>
 </div>
 <div id="ez-model-1" class="section level2">
@@ -409,8 +395,7 @@ after the optimization.</code></pre>
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
 <pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The log likelihood is -2.13689310^{5}. There are 1010 significant samples.</p>
+<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="without-missing-values-1" class="section level3">
 <h3>Without missing values</h3>
@@ -426,19 +411,19 @@ either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
 <pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
 <pre class="r"><code>barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7)</code></pre>
-<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /> The log likelihood is 2.187068210^{4}. The estimated weights are different. There are 1014 significant samples.</p>
+<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /> The estimated weights are different.</p>
 </div>
 </div>
 </div>
-<div id="covariance" class="section level1">
-<h1>Covariance</h1>
+<div id="subgroups" class="section level1">
+<h1>Subgroups</h1>
 <p>The weired covariance structure is caused by the high dimension of R.</p>
 <p>If we separate conditions into several groups, the covariance structure will be correct.</p>
 <p>We show this for the EZ model R=60.</p>
 <pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE
 FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE
 FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
@@ -459,20 +444,20 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2-4 ashr_2.2-4 
+[1] mashr_0.2-6 ashr_2.2-7 
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.15      knitr_1.17        magrittr_1.5     
+ [1] Rcpp_0.12.15      knitr_1.20        magrittr_1.5     
  [4] REBayes_1.2       MASS_7.3-47       doParallel_1.0.11
  [7] pscl_1.5.2        SQUAREM_2017.10-1 lattice_0.20-35  
-[10] foreach_1.4.4     plyr_1.8.4        stringr_1.2.0    
+[10] foreach_1.4.4     plyr_1.8.4        stringr_1.3.0    
 [13] tools_3.4.3       parallel_3.4.3    grid_3.4.3       
 [16] rmeta_2.16        git2r_0.20.0      htmltools_0.3.6  
-[19] iterators_1.0.9   assertthat_0.2.0  yaml_2.1.16      
+[19] iterators_1.0.9   assertthat_0.2.0  yaml_2.1.17      
 [22] rprojroot_1.2     digest_0.6.13     Matrix_1.2-12    
 [25] codetools_0.2-15  evaluate_0.10.1   rmarkdown_1.8    
 [28] stringi_1.1.6     compiler_3.4.3    Rmosek_8.0.69    
-[31] backports_1.1.2   mvtnorm_1.0-7     truncnorm_1.0-7  </code></pre>
+[31] backports_1.1.2   mvtnorm_1.0-7     truncnorm_1.0-8  </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
