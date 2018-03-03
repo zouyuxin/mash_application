@@ -318,10 +318,10 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-01</p>
+<p><strong>Last updated:</strong> 2018-03-02</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> d62d09a</p>
+<p><strong>Code version:</strong> 2a2a084</p>
 <p>We simulate dataset with N=400, R = 10 and 50.</p>
 <pre><code>Loading required package: ashr</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
@@ -336,11 +336,7 @@ after the optimization.</code></pre>
 0.0241762811815978, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre class="r"><code>par(mfcol=c(2,1))
-barplot(get_estimated_pi(mash.10), las=2, cex.names = 0.7, main=&#39;R=10, n = 400&#39;)
-barplot(get_estimated_pi(mash.50), las=2, cex.names = 0.7, main=&#39;R=50, n = 400&#39;)</code></pre>
 <p><img src="figure/mash_largeR.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>par(mfcol=c(1,1))</code></pre>
 <p>Separate the conditions to subgroups:</p>
 <pre class="r"><code>mash.data.50.sub1 = mash_set_data(data.50$Bhat[,1:25], data.50$Shat[,1:25])
 U.c.50.sub1 = cov_canonical(mash.data.50.sub1)
@@ -372,20 +368,20 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2-4 ashr_2.2-4 
+[1] mashr_0.2-6 ashr_2.2-7 
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.15      knitr_1.17        magrittr_1.5     
+ [1] Rcpp_0.12.15      knitr_1.20        magrittr_1.5     
  [4] REBayes_1.2       MASS_7.3-47       doParallel_1.0.11
  [7] pscl_1.5.2        SQUAREM_2017.10-1 lattice_0.20-35  
-[10] foreach_1.4.4     plyr_1.8.4        stringr_1.2.0    
+[10] foreach_1.4.4     plyr_1.8.4        stringr_1.3.0    
 [13] tools_3.4.3       parallel_3.4.3    grid_3.4.3       
 [16] rmeta_2.16        git2r_0.20.0      htmltools_0.3.6  
-[19] iterators_1.0.9   assertthat_0.2.0  yaml_2.1.16      
+[19] iterators_1.0.9   assertthat_0.2.0  yaml_2.1.17      
 [22] rprojroot_1.2     digest_0.6.13     Matrix_1.2-12    
 [25] codetools_0.2-15  evaluate_0.10.1   rmarkdown_1.8    
 [28] stringi_1.1.6     compiler_3.4.3    Rmosek_8.0.69    
-[31] backports_1.1.2   mvtnorm_1.0-7     truncnorm_1.0-7  </code></pre>
+[31] backports_1.1.2   mvtnorm_1.0-7     truncnorm_1.0-8  </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
