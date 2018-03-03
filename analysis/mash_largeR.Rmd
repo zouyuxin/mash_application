@@ -49,7 +49,7 @@ U.c.50 = cov_canonical(mash.data.50)
 mash.10 = mash(mash.data.10, U.c.10, verbose = FALSE)
 mash.50 = mash(mash.data.50, U.c.50, verbose = FALSE)
 ```
-```{r}
+```{r, echo=FALSE}
 par(mfcol=c(2,1))
 barplot(get_estimated_pi(mash.10), las=2, cex.names = 0.7, main='R=10, n = 400')
 barplot(get_estimated_pi(mash.50), las=2, cex.names = 0.7, main='R=50, n = 400')
