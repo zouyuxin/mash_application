@@ -2,7 +2,9 @@
 title: "Mash Missing Large R"
 author: "Yuxin Zou"
 date: 2018-2-28
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 ```{r read-chunk, include=FALSE, cache=FALSE}
@@ -28,7 +30,7 @@ knitr::opts_chunk$set(eval = TRUE)
 ```
 
 We simulate dataset with N=400, R = 10 and 50.
-```{r, echo=FALSE}
+```{r}
 library(mashr)
 set.seed(2018)
 data.10 = simple_sims(100, ncond = 10, err_sd = 0.1)
@@ -42,14 +44,14 @@ mash.data.50 = mash_set_data(Bhat = data.50$Bhat, Shat = data.50$Shat)
 mash.data.50.1 = mash_set_data(Bhat = data.50$Bhat, Shat = data.50$Shat, alpha=1)
 ```
 
-```{r, echo=FALSE}
+```{r}
 U.c.10 = cov_canonical(mash.data.10)
 U.c.50 = cov_canonical(mash.data.50)
 
 mash.10 = mash(mash.data.10, U.c.10, verbose = FALSE)
 mash.50 = mash(mash.data.50, U.c.50, verbose = FALSE)
 ```
-```{r, echo=FALSE}
+```{r}
 par(mfcol=c(2,1))
 barplot(get_estimated_pi(mash.10), las=2, cex.names = 0.7, main='R=10, n = 400')
 barplot(get_estimated_pi(mash.50), las=2, cex.names = 0.7, main='R=50, n = 400')

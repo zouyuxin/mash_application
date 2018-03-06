@@ -2,7 +2,9 @@
 title: "Mash Missing Whole Row"
 author: "Yuxin Zou"
 date: 2018-2-28
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 ```{r read-chunk, include=FALSE, cache=FALSE}
@@ -35,15 +37,18 @@ set.seed(2018)
 data = simple_sims(500, err_sd = 0.1)
 
 data.miss = data
+# select missing rows
 missing.row = sample(1:nrow(data$Bhat), nrow(data$Bhat)/4)
 missing.ind = matrix(0, nrow = nrow(data$B), ncol=ncol(data$B))
 missing.ind[missing.row,] = 1
 
+# set missing rows to NA
 missing = which(missing.ind == 1)
 data.miss$Bhat[missing] = NA
 data.miss$Shat[missing] = NA
 missing1 = is.na(data.miss$Bhat[,1])
-# Set the missing value with large standard deviation
+
+# set the missing value with large standard deviation
 data.large.dev = data.miss
 data.large.dev$Bhat[is.na(data.miss$Bhat)] = 0
 data.large.dev$Shat[is.na(data.miss$Shat)] = 1000
@@ -51,14 +56,14 @@ data.large.dev$Shat[is.na(data.miss$Shat)] = 1000
 
 ## EE model
 
-```{r, echo=FALSE}
+```{r}
 # with missing values
 mash.data.missing = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat)
 U.c = cov_canonical(mash.data.missing)
 
 mash.model.missing = mash(mash.data.missing, U.c, verbose = FALSE)
 
-# without missing values
+# delete missing values
 data.miss.na = data.miss
 data.miss.na$Bhat = na.omit(data.miss$Bhat)
 data.miss.na$Shat = na.omit(data.miss$Shat)
@@ -69,23 +74,23 @@ U.c = cov_canonical(mash.data.missing.na)
 mash.model.missing.na = mash(mash.data.missing.na, U.c, verbose=FALSE)
 ```
 
-```{r, echo=FALSE}
+```{r}
 par(mfrow=c(1,2))
 barplot(get_estimated_pi(mash.model.missing), las=2, cex.names = 0.7, main='with missing values')
-barplot(get_estimated_pi(mash.model.missing.na), las=2, cex.names = 0.7, main = 'without missing values')
+barplot(get_estimated_pi(mash.model.missing.na), las=2, cex.names = 0.7, main = 'delete missing values')
 par(mfrow=c(1,1))
 ```
 
 ## EZ model
 
-```{r, echo=FALSE}
-# With missing values
+```{r}
+# with missing values
 mash.data.missing.1 = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat, alpha = 1)
 U.c = cov_canonical(mash.data.missing.1)
 
 mash.model.missing.1 = mash(mash.data.missing.1, U.c, verbose = FALSE)
 
-# Without missing values
+# delete missing values
 mash.data.missing.na.1 = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat, alpha = 1)
 U.c = cov_canonical(mash.data.missing.na.1)
 
@@ -93,7 +98,7 @@ mash.model.missing.na.1 = mash(mash.data.missing.na.1, U.c, verbose=FALSE)
 ```
 
 
-```{r, echo=FALSE}
+```{r}
 par(mfrow=c(1,2))
 barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7, main='with missing values')
 barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main='without missing values')
@@ -101,7 +106,7 @@ par(mfrow=c(1,1))
 ```
 
 # R=60
-```{r, echo=FALSE}
+```{r}
 set.seed(2018)
 data = simple_sims(500, ncond = 60, err_sd = 0.1)
 
@@ -123,7 +128,7 @@ data.large.dev$Shat[is.na(data.miss$Shat)] = 1000
 ## EE model
 
 ### With missing values
-```{r, echo=FALSE}
+```{r}
 mash.data.missing = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat)
 U.c = cov_canonical(mash.data.missing)
 
@@ -132,8 +137,8 @@ barplot(get_estimated_pi(mash.model.missing), las=2, cex.names = 0.7)
 ```
 The weights learned from the data are correct.
 
-### Without missing values
-```{r, echo=FALSE}
+### Delete missing values
+```{r}
 data.miss.na = data.miss
 data.miss.na$Bhat = na.omit(data.miss$Bhat)
 data.miss.na$Shat = na.omit(data.miss$Shat)
@@ -149,7 +154,7 @@ The estimated weights are very weird and incorrect. It ignores the null matrix.
 ## EZ model
 
 ### With missing values
-```{r, echo=FALSE}
+```{r}
 mash.data.missing.1 = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat, alpha = 1)
 U.c = cov_canonical(mash.data.missing.1)
 
@@ -157,7 +162,7 @@ mash.model.missing.1 = mash(mash.data.missing.1, U.c, verbose = FALSE)
 barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7)
 ```
 
-### Without missing values
+### Delete missing values
 ```{r}
 mash.data.missing.na.1 = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat, alpha = 1)
 U.c = cov_canonical(mash.data.missing.na.1)
@@ -175,7 +180,7 @@ If we separate conditions into several groups, the covariance structure will be 
 
 We show this for the EZ model R=60.
 
-```{r, echo=FALSE}
+```{r}
 mash.data.missing.1.sub1 = mash_set_data(Bhat=data.large.dev$Bhat[,1:20], Shat=data.large.dev$Shat[,1:20], alpha = 1)
 U.c = cov_canonical(mash.data.missing.1.sub1)
 mash.model.missing.1.sub1 = mash(mash.data.missing.1.sub1, U.c, verbose = FALSE)

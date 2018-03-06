@@ -2,7 +2,9 @@
 title: "Mash Missing Sample Size"
 author: "Yuxin Zou"
 date: 2018-3-1
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 ```{r read-chunk, include=FALSE, cache=FALSE}
@@ -30,7 +32,7 @@ knitr::opts_chunk$set(eval = TRUE)
 We simulate data with R = 50, N = 300 and 400.
 
 # N = 400
-```{r, echo=FALSE}
+```{r}
 library(mashr)
 set.seed(2018)
 data = simple_sims(100, 50, err_sd = 0.1)
@@ -43,7 +45,7 @@ barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
 ```
 
 # N = 300
-```{r, echo=FALSE}
+```{r}
 set.seed(2018)
 data = simple_sims(75, 50, err_sd = 0.1)
 
