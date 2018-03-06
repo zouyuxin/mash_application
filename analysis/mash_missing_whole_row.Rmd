@@ -101,7 +101,7 @@ mash.model.missing.na.1 = mash(mash.data.missing.na.1, U.c, verbose=FALSE)
 ```{r}
 par(mfrow=c(1,2))
 barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7, main='with missing values')
-barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main='without missing values')
+barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main='delete missing values')
 par(mfrow=c(1,1))
 ```
 

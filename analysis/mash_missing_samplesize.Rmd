@@ -44,7 +44,7 @@ mash.model = mash(mash.data, U.c)
 barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
 ```
 
-# N = 300
+# Decrease to N = 300
 ```{r}
 set.seed(2018)
 data = simple_sims(75, 50, err_sd = 0.1)
@@ -58,6 +58,31 @@ barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
 
 The weights learnd from N=300 model is correct.
 
+# Increase to N = 800
+```{r}
+set.seed(2018)
+data = simple_sims(200, 50, err_sd = 0.1)
+
+mash.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(mash.data)
+
+mash.model = mash(mash.data, U.c)
+barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
+```
+
+There are some shinkage for the small weights.
+
+# Increase to N = 3200
+```{r}
+set.seed(2018)
+data = simple_sims(800, 50, err_sd = 0.1)
+
+mash.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(mash.data)
+
+mash.model = mash(mash.data, U.c)
+barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
+```
 
 # Session information
 <!-- Insert the session information into the document -->
