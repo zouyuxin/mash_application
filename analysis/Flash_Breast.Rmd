@@ -2,7 +2,9 @@
 title: "Breast Cancer-Flash"
 author: "Yuxin Zou"
 date: 2018-2-20
-output: html_document
+output:
+  html_document:
+    code_folding: hide
 ---
 
 ```{r read-chunk, include=FALSE, cache=FALSE}

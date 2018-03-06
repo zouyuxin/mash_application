@@ -2,7 +2,9 @@
 title: "Presidential address-Flash"
 author: "Yuxin Zou"
 date: 2018-2-21
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 ```{r read-chunk, include=FALSE, cache=FALSE}
@@ -27,8 +29,9 @@ knitr::read_chunk("chunks.R")
 knitr::opts_chunk$set(eval = TRUE)
 ```
 
-```{r echo=FALSE}
+```{r}
 library(flashr); library(R.matlab)
+library(denoiseR)
 ```
 
 Presidential Address data:
@@ -36,12 +39,17 @@ Presidential Address data:
 The data contains word counts from the inaugural addresses of 13 US presidents (1940–2009). There are 13 rows (presidents) and 836 columns (words), and each entry indicates the number of times a particular word was used in a particular address. Since both row and column means vary greatly here we pre-processed the data by centering and scaling both rows and columns, using the biScale function from softImpute.
 
 ```{r}
+data("Presidents")
 data = readMat('../data/PresiAdd.mat')
 data = data$Yscaled
+words = row.names(Presidents)
+names = colnames(Presidents)
+row.names(data) = names
+colnames(data) = words
 ```
 
 Flash:
-```{r, eval=FALSE}
+```{r}
 flash.data = flash_set_data(data)
 fmodel = flash(flash.data, greedy = TRUE, backfit = TRUE)
 
@@ -52,16 +60,18 @@ saveRDS(fmodel, '../output/PresiAddVarCol.rds')
 fmodel = readRDS('../output/PresiAddVarCol.rds')
 ```
 
-```{r, echo=FALSE}
+```{r}
 Factors = flash_get_ldf(fmodel)$f
+row.names(Factors) = words
 pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)
 ```
-```{r, echo=FALSE}
+```{r}
 par(mar=c(1,1,1,1))
 par(mfrow=c(3,2))
 for(i in pve.order){
-  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.4, names="")
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fmodel)[i],3)), las=2, names='')
 }
+par(mfrow=c(1,1))
 ```
 
 Flash again on the loading matrix
@@ -69,14 +79,27 @@ Flash again on the loading matrix
 flash.loading = flash_set_data(fmodel$EL[,1:5])
 flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)
 ```
-```{r, echo=FALSE}
+```{r}
 Factors_loading = flash_get_ldf(flmodel)$f
 ```
-```{r, echo=FALSE}
+```{r}
 barplot(as.numeric(Factors_loading), main=paste0('Factor 1 pve= ', round(flash_get_pve(flmodel),3)), las=2, cex.names = 0.4, names='')
 ```
 
-The result means that the loading matrix is nearly zero except the last column. This implies that the original data set could be factored with only the last factor. 
+The distributions for the first four columns of the loading matrix are consistent with a normal distribution. So they are captured by the error term of the second flash run.
+
+It is hard to interpret each factor, none of them is sparse. For example, for factor 1 in the first flash run,
+```{r}
+words[Factors[,1] > 0]
+```
+
+The first factor separate the words above from others. But it is hard to summarize the feature of these words.
+
+The fifth factor separate the words below from others.
+```{r}
+words[Factors[,5] > 0.1]
+```
+
 
 # Session information
 

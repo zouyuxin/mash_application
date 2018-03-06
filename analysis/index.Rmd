@@ -14,9 +14,11 @@ output:
     
     [Miss Whole Row](mash_missing_whole_row.html)
     
-    The weired weights is not caused by the small sample size. [Sample Size](mash_missing_samplesize.html)
+    The large number of conditions is the main cause of the weired weights.[LargeR](mash_largeR.html)
     
-    It is caused by the large number of conditions.[LargeR](mash_largeR.html)
+    The small sample size could be the other reason. Increasing the sample size could improve the estimated weights. However, decreasing might also obtain the correct weights. When the number of conditions is large, we need more data to provide information. When the sample size is small, the model may not stable and the weights may not reliable. [Sample Size](mash_missing_samplesize.html)
+    
+    But in [Miss Whole Row](mash_missing_whole_row.html), the EE model with R = 60, deleting missing values results in non-zero weights. However, I expect the reuslt from data containing missing values is similar with the reuslt from data deleting missing values. Because the missing rows contain almost no information.
     
 * XCI data:
     + MASH analysis for XCI sex bias: [sexbias](sexbias_Table2.html)

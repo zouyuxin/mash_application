@@ -2,7 +2,9 @@
 title: "Brain Tumor-Flash"
 author: "Yuxin Zou"
 date: 2018-2-20
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 
 ```{r read-chunk, include=FALSE, cache=FALSE}
@@ -51,11 +53,11 @@ saveRDS(f, '../output/BrainTumorVarCol.rds')
 fmodel = readRDS('../output/BrainTumorVarCol.rds')
 ```
 
-```{r, echo=FALSE}
+```{r}
 Factors = flash_get_ldf(fmodel)$f
 pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)
 ```
-```{r, echo=FALSE}
+```{r}
 par(mar=c(1,1,1,1))
 par(mfrow=c(3,2))
 
@@ -65,7 +67,7 @@ for(i in pve.order){
 ```
 
 Flash again on the loading matrix
-```{r, eval=FALSE}
+```{r}
 flash.loading = flash_set_data(fmodel$EL[,1:9])
 flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)
 ```
