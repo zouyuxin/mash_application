@@ -24,6 +24,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -164,6 +165,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -307,6 +316,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Brain Tumor-Flash</h1>
@@ -318,10 +335,10 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-02-27</p>
+<p><strong>Last updated:</strong> 2018-03-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 5769f40</p>
+<p><strong>Code version:</strong> e16e34a</p>
 <pre><code>R.matlab v3.6.1 (2016-10-19) successfully loaded. See ?R.matlab for help.</code></pre>
 <pre><code>
 Attaching package: &#39;R.matlab&#39;</code></pre>
@@ -337,10 +354,19 @@ data = data$Y</code></pre>
 f = flash(flash.data, greedy = TRUE, backfit = TRUE)
 
 saveRDS(f, &#39;../output/BrainTumorVarCol.rds&#39;)</code></pre>
+<pre class="r"><code>Factors = flash_get_ldf(fmodel)$f
+pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)</code></pre>
+<pre class="r"><code>par(mar=c(1,1,1,1))
+par(mfrow=c(3,2))
+
+for(i in pve.order){
+  barplot(Factors[,i], main=paste0(&#39;Factor &#39;,i, &#39; pve= &#39;, round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.4, names=&quot;&quot;)
+}</code></pre>
 <p><img src="figure/Flash_Brain.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_Brain.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Flash again on the loading matrix</p>
 <pre class="r"><code>flash.loading = flash_set_data(fmodel$EL[,1:9])
 flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)</code></pre>
+<pre><code>fitting factor/loading 1</code></pre>
 <p>The flash prefers the rank 0 model. There is no hidden structure in the loading matrix.</p>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
@@ -361,15 +387,24 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] R.matlab_3.6.1 flashr_0.5-1  
+[1] R.matlab_3.6.1 flashr_0.5-6  
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.15      digest_0.6.13     rprojroot_1.2    
- [4] R.methodsS3_1.7.1 backports_1.1.2   git2r_0.20.0     
- [7] magrittr_1.5      evaluate_0.10.1   stringi_1.1.6    
-[10] R.utils_2.6.0     R.oo_1.21.0       rmarkdown_1.8    
-[13] tools_3.4.3       stringr_1.2.0     yaml_2.1.16      
-[16] compiler_3.4.3    htmltools_0.3.6   knitr_1.17       </code></pre>
+ [1] Rcpp_0.12.15      compiler_3.4.3    git2r_0.20.0     
+ [4] plyr_1.8.4        R.utils_2.6.0     R.methodsS3_1.7.1
+ [7] iterators_1.0.9   tools_3.4.3       digest_0.6.13    
+[10] evaluate_0.10.1   tibble_1.3.4      gtable_0.2.0     
+[13] lattice_0.20-35   rlang_0.1.6       Matrix_1.2-12    
+[16] foreach_1.4.4     yaml_2.1.17       parallel_3.4.3   
+[19] ebnm_0.1-10       stringr_1.3.0     knitr_1.20       
+[22] rprojroot_1.2     grid_3.4.3        rmarkdown_1.8    
+[25] ggplot2_2.2.1     ashr_2.2-7        magrittr_1.5     
+[28] backports_1.1.2   scales_0.5.0      codetools_0.2-15 
+[31] htmltools_0.3.6   MASS_7.3-47       assertthat_0.2.0 
+[34] softImpute_1.4    colorspace_1.3-2  stringi_1.1.6    
+[37] lazyeval_0.2.1    pscl_1.5.2        doParallel_1.0.11
+[40] munsell_0.4.3     truncnorm_1.0-8   SQUAREM_2017.10-1
+[43] R.oo_1.21.0      </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

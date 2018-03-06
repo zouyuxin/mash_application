@@ -24,6 +24,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -164,6 +165,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -307,6 +316,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Presidential address-Flash</h1>
@@ -318,33 +335,210 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-02-27</p>
+<p><strong>Last updated:</strong> 2018-03-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 5769f40</p>
+<p><strong>Code version:</strong> e16e34a</p>
+<pre class="r"><code>library(flashr); library(R.matlab)</code></pre>
 <pre><code>R.matlab v3.6.1 (2016-10-19) successfully loaded. See ?R.matlab for help.</code></pre>
 <pre><code>
 Attaching package: &#39;R.matlab&#39;</code></pre>
 <pre><code>The following objects are masked from &#39;package:base&#39;:
 
     getOption, isOpen</code></pre>
+<pre class="r"><code>library(denoiseR)</code></pre>
 <p>Presidential Address data:</p>
 <p>The data contains word counts from the inaugural addresses of 13 US presidents (1940–2009). There are 13 rows (presidents) and 836 columns (words), and each entry indicates the number of times a particular word was used in a particular address. Since both row and column means vary greatly here we pre-processed the data by centering and scaling both rows and columns, using the biScale function from softImpute.</p>
-<pre class="r"><code>data = readMat(&#39;../data/PresiAdd.mat&#39;)
-data = data$Yscaled</code></pre>
+<pre class="r"><code>data(&quot;Presidents&quot;)
+data = readMat(&#39;../data/PresiAdd.mat&#39;)
+data = data$Yscaled
+words = row.names(Presidents)
+names = colnames(Presidents)
+row.names(data) = names
+colnames(data) = words</code></pre>
 <p>Flash:</p>
 <pre class="r"><code>flash.data = flash_set_data(data)
-fmodel = flash(flash.data, greedy = TRUE, backfit = TRUE)
-
-saveRDS(fmodel, &#39;../output/PresiAddVarCol.rds&#39;)</code></pre>
+fmodel = flash(flash.data, greedy = TRUE, backfit = TRUE)</code></pre>
+<pre><code>fitting factor/loading 1</code></pre>
+<pre><code>fitting factor/loading 2</code></pre>
+<pre><code>fitting factor/loading 3</code></pre>
+<pre><code>fitting factor/loading 4</code></pre>
+<pre><code>fitting factor/loading 5</code></pre>
+<pre><code>fitting factor/loading 6</code></pre>
+<pre class="r"><code>saveRDS(fmodel, &#39;../output/PresiAddVarCol.rds&#39;)</code></pre>
+<pre class="r"><code>Factors = flash_get_ldf(fmodel)$f
+row.names(Factors) = words
+pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)</code></pre>
+<pre class="r"><code>par(mar=c(1,1,1,1))
+par(mfrow=c(3,2))
+for(i in pve.order){
+  barplot(Factors[,i], main=paste0(&#39;Factor &#39;,i, &#39; pve= &#39;, round(flash_get_pve(fmodel)[i],3)), las=2, names=&#39;&#39;)
+}
+par(mfrow=c(1,1))</code></pre>
 <p><img src="figure/Flash_PresiAdd.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Flash again on the loading matrix</p>
 <pre class="r"><code>flash.loading = flash_set_data(fmodel$EL[,1:5])
 flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)</code></pre>
 <pre><code>fitting factor/loading 1</code></pre>
 <pre><code>fitting factor/loading 2</code></pre>
+<pre class="r"><code>Factors_loading = flash_get_ldf(flmodel)$f</code></pre>
+<pre class="r"><code>barplot(as.numeric(Factors_loading), main=paste0(&#39;Factor 1 pve= &#39;, round(flash_get_pve(flmodel),3)), las=2, cex.names = 0.4, names=&#39;&#39;)</code></pre>
 <p><img src="figure/Flash_PresiAdd.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The result means that the loading matrix is nearly zero except the last column. This implies that the original data set could be factored with only the last factor.</p>
+<p>The distributions for the first four columns of the loading matrix are consistent with a normal distribution. So they are captured by the error term of the second flash run.</p>
+<p>It is hard to interpret each factor, none of them is sparse. For example, for factor 1 in the first flash run,</p>
+<pre class="r"><code>words[Factors[,1] &gt; 0]</code></pre>
+<pre><code>  [1] &quot;$1&quot;              &quot;0&quot;               &quot;Asia &quot;          
+  [4] &quot;European&quot;        &quot;Iraq&quot;            &quot;Iraqa&quot;          
+  [7] &quot;Iraqi&quot;           &quot;Medicare&quot;        &quot;Vietnam&quot;        
+ [10] &quot;a&quot;               &quot;ability&quot;         &quot;about&quot;          
+ [13] &quot;abroad &quot;         &quot;accept &quot;         &quot;access &quot;        
+ [16] &quot;accomplish &quot;     &quot;account&quot;         &quot;achievement&quot;    
+ [19] &quot;add  &quot;           &quot;addition&quot;        &quot;address&quot;        
+ [22] &quot;adopt&quot;           &quot;affair &quot;         &quot;affect &quot;        
+ [25] &quot;afford &quot;         &quot;afghanistan&quot;     &quot;africa &quot;        
+ [28] &quot;ago  &quot;           &quot;agree&quot;           &quot;aim  &quot;          
+ [31] &quot;air  &quot;           &quot;alliance&quot;        &quot;allow&quot;          
+ [34] &quot;alone&quot;           &quot;always &quot;         &quot;and  &quot;          
+ [37] &quot;answer &quot;         &quot;approach&quot;        &quot;appropriate&quot;    
+ [40] &quot;approve&quot;         &quot;army &quot;           &quot;assist &quot;        
+ [43] &quot;attempt&quot;         &quot;attention  &quot;     &quot;available  &quot;    
+ [46] &quot;average&quot;         &quot;avoid&quot;           &quot;away &quot;          
+ [49] &quot;back &quot;           &quot;bad  &quot;           &quot;balance&quot;        
+ [52] &quot;balanced&quot;        &quot;bank &quot;           &quot;basis&quot;          
+ [55] &quot;bear &quot;           &quot;before &quot;         &quot;beginning  &quot;    
+ [58] &quot;being&quot;           &quot;big  &quot;           &quot;bill &quot;          
+ [61] &quot;bipartisan &quot;     &quot;border &quot;         &quot;branch &quot;        
+ [64] &quot;break&quot;           &quot;broad&quot;           &quot;building&quot;       
+ [67] &quot;burden &quot;         &quot;but  &quot;           &quot;buy  &quot;          
+ [70] &quot;ca&quot;              &quot;capacity&quot;        &quot;capital&quot;        
+ [73] &quot;case &quot;           &quot;century&quot;         &quot;chamber&quot;        
+ [76] &quot;chance &quot;         &quot;china&quot;           &quot;choice &quot;        
+ [79] &quot;choose &quot;         &quot;civilian&quot;        &quot;clean&quot;          
+ [82] &quot;clearly&quot;         &quot;close&quot;           &quot;college&quot;        
+ [85] &quot;commit &quot;         &quot;committee  &quot;     &quot;common &quot;        
+ [88] &quot;company&quot;         &quot;competition&quot;     &quot;competitive&quot;    
+ [91] &quot;comprehensive&quot;   &quot;conference &quot;     &quot;confidence &quot;    
+ [94] &quot;conflict&quot;        &quot;confront&quot;        &quot;conservation &quot;  
+ [97] &quot;constitution &quot;   &quot;construction &quot;   &quot;consumer&quot;       
+[100] &quot;continued  &quot;     &quot;contribute &quot;     &quot;contribution &quot;  
+[103] &quot;courage&quot;         &quot;coverage&quot;        &quot;credit &quot;        
+[106] &quot;crime&quot;           &quot;crisis &quot;         &quot;critical&quot;       
+[109] &quot;current&quot;         &quot;deal &quot;           &quot;decade &quot;        
+[112] &quot;decision&quot;        &quot;decline&quot;         &quot;deep &quot;          
+[115] &quot;defend &quot;         &quot;deficit&quot;         &quot;demonstrate&quot;    
+[118] &quot;depend &quot;         &quot;destroy&quot;         &quot;determination&quot;  
+[121] &quot;difference &quot;     &quot;different  &quot;     &quot;difficult  &quot;    
+[124] &quot;direct &quot;         &quot;direction  &quot;     &quot;directly&quot;       
+[127] &quot;disease&quot;         &quot;domestic&quot;        &quot;double &quot;        
+[130] &quot;down &quot;           &quot;dream&quot;           &quot;drug &quot;          
+[133] &quot;duty &quot;           &quot;early&quot;           &quot;earn &quot;          
+[136] &quot;earth&quot;           &quot;easy &quot;           &quot;effect &quot;        
+[139] &quot;efficiency &quot;     &quot;efficient  &quot;     &quot;election&quot;       
+[142] &quot;eliminate  &quot;     &quot;emergency  &quot;     &quot;employee&quot;       
+[145] &quot;enable &quot;         &quot;enact&quot;           &quot;energy &quot;        
+[148] &quot;enforcement&quot;     &quot;enough &quot;         &quot;ensure &quot;        
+[151] &quot;enter&quot;           &quot;entire &quot;         &quot;environment&quot;    
+[154] &quot;equal&quot;           &quot;era  &quot;           &quot;especially &quot;    
+[157] &quot;event&quot;           &quot;example&quot;         &quot;expansion  &quot;    
+[160] &quot;experience &quot;     &quot;export &quot;         &quot;facility&quot;       
+[163] &quot;fail &quot;           &quot;fall &quot;           &quot;fear &quot;          
+[166] &quot;fellow &quot;         &quot;final&quot;           &quot;finally&quot;        
+[169] &quot;finance&quot;         &quot;financial  &quot;     &quot;form &quot;          
+[172] &quot;foundation &quot;     &quot;friend &quot;         &quot;fulfill&quot;        
+[175] &quot;fully&quot;           &quot;fundamental&quot;     &quot;funding&quot;        
+[178] &quot;gain &quot;           &quot;generation &quot;     &quot;get  &quot;          
+[181] &quot;global &quot;         &quot;god  &quot;           &quot;guarantee  &quot;    
+[184] &quot;half &quot;           &quot;hand &quot;           &quot;happen &quot;        
+[187] &quot;hard &quot;           &quot;hear &quot;           &quot;heart&quot;          
+[190] &quot;hemisphere &quot;     &quot;historic&quot;        &quot;hold &quot;          
+[193] &quot;honor&quot;           &quot;hospital&quot;        &quot;hour &quot;          
+[196] &quot;house&quot;           &quot;how  &quot;           &quot;idea &quot;          
+[199] &quot;ideal&quot;           &quot;i&quot;               &quot;immediate  &quot;    
+[202] &quot;importance &quot;     &quot;improvement&quot;     &quot;in&quot;             
+[205] &quot;incentive  &quot;     &quot;independence &quot;   &quot;influence  &quot;    
+[208] &quot;information&quot;     &quot;instead&quot;         &quot;institution&quot;    
+[211] &quot;intend &quot;         &quot;invest &quot;         &quot;investment &quot;    
+[214] &quot;involve&quot;         &quot;issue&quot;           &quot;japan&quot;          
+[217] &quot;key  &quot;           &quot;kind &quot;           &quot;korea&quot;          
+[220] &quot;launch &quot;         &quot;lay  &quot;           &quot;leadership &quot;    
+[223] &quot;least&quot;           &quot;leave&quot;           &quot;legislative&quot;    
+[226] &quot;liberty&quot;         &quot;lie  &quot;           &quot;like &quot;          
+[229] &quot;limit&quot;           &quot;line &quot;           &quot;little &quot;        
+[232] &quot;living &quot;         &quot;loan &quot;           &quot;longer &quot;        
+[235] &quot;look &quot;           &quot;lose &quot;           &quot;majority&quot;       
+[238] &quot;matter &quot;         &quot;middle &quot;         &quot;might&quot;          
+[241] &quot;minimum&quot;         &quot;missile&quot;         &quot;moment &quot;        
+[244] &quot;money&quot;           &quot;moral&quot;           &quot;mr&quot;             
+[247] &quot;mutual &quot;         &quot;n&quot;               &quot;natural&quot;        
+[250] &quot;nearly &quot;         &quot;negotiation&quot;     &quot;neighbor&quot;       
+[253] &quot;no&quot;              &quot;north&quot;           &quot;nothing&quot;        
+[256] &quot;obligation &quot;     &quot;offer&quot;           &quot;office &quot;        
+[259] &quot;often&quot;           &quot;oil  &quot;           &quot;once &quot;          
+[262] &quot;one  &quot;           &quot;open &quot;           &quot;operation  &quot;    
+[265] &quot;out  &quot;           &quot;parent &quot;         &quot;particular &quot;    
+[268] &quot;particularly &quot;   &quot;partner&quot;         &quot;partnership&quot;    
+[271] &quot;party&quot;           &quot;payment&quot;         &quot;peacetime  &quot;    
+[274] &quot;permanent  &quot;     &quot;person &quot;         &quot;personal&quot;       
+[277] &quot;plant&quot;           &quot;play &quot;           &quot;pledge &quot;        
+[280] &quot;police &quot;         &quot;poor &quot;           &quot;position&quot;       
+[283] &quot;poverty&quot;         &quot;powerful&quot;        &quot;practice&quot;       
+[286] &quot;prepare&quot;         &quot;preserve&quot;        &quot;press&quot;          
+[289] &quot;priority&quot;        &quot;product&quot;         &quot;productive &quot;    
+[292] &quot;profit &quot;         &quot;promise&quot;         &quot;proposal&quot;       
+[295] &quot;proud&quot;           &quot;prove&quot;           &quot;provision  &quot;    
+[298] &quot;pursue &quot;         &quot;put  &quot;           &quot;quality&quot;        
+[301] &quot;question&quot;        &quot;race &quot;           &quot;range&quot;          
+[304] &quot;rapidly&quot;         &quot;ready&quot;           &quot;realize&quot;        
+[307] &quot;reason &quot;         &quot;receive&quot;         &quot;recent &quot;        
+[310] &quot;recession  &quot;     &quot;recognize  &quot;     &quot;record &quot;        
+[313] &quot;recovery&quot;        &quot;reform &quot;         &quot;region &quot;        
+[316] &quot;regulation &quot;     &quot;relationship &quot;   &quot;remember&quot;       
+[319] &quot;remove &quot;         &quot;renew&quot;           &quot;represent  &quot;    
+[322] &quot;representative &quot; &quot;republic&quot;        &quot;request&quot;        
+[325] &quot;requirement&quot;     &quot;reserve&quot;         &quot;resolve&quot;        
+[328] &quot;responsible&quot;     &quot;rest &quot;           &quot;restore&quot;        
+[331] &quot;retirement &quot;     &quot;return &quot;         &quot;revenue&quot;        
+[334] &quot;review &quot;         &quot;revolution &quot;     &quot;reward &quot;        
+[337] &quot;risk &quot;           &quot;road &quot;           &quot;role &quot;          
+[340] &quot;rule &quot;           &quot;run  &quot;           &quot;rural&quot;          
+[343] &quot;sacrifice  &quot;     &quot;safe &quot;           &quot;saving &quot;        
+[346] &quot;science&quot;         &quot;sector &quot;         &quot;senate &quot;        
+[349] &quot;send &quot;           &quot;sense&quot;           &quot;serious&quot;        
+[352] &quot;session&quot;         &quot;short&quot;           &quot;side &quot;          
+[355] &quot;sign &quot;           &quot;significant&quot;     &quot;simple &quot;        
+[358] &quot;simply &quot;         &quot;single &quot;         &quot;situation  &quot;    
+[361] &quot;skill&quot;           &quot;solve&quot;           &quot;something  &quot;    
+[364] &quot;soon &quot;           &quot;sound&quot;           &quot;source &quot;        
+[367] &quot;south&quot;           &quot;space&quot;           &quot;speak&quot;          
+[370] &quot;speaker&quot;         &quot;specific&quot;        &quot;speed&quot;          
+[373] &quot;spend&quot;           &quot;spending&quot;        &quot;stability  &quot;    
+[376] &quot;stable &quot;         &quot;stand&quot;           &quot;start&quot;          
+[379] &quot;steady &quot;         &quot;stop &quot;           &quot;strategic  &quot;    
+[382] &quot;strategy&quot;        &quot;street &quot;         &quot;strike &quot;        
+[385] &quot;structure  &quot;     &quot;struggle&quot;        &quot;student&quot;        
+[388] &quot;subject&quot;         &quot;submit &quot;         &quot;succeed&quot;        
+[391] &quot;success&quot;         &quot;successful &quot;     &quot;sure &quot;          
+[394] &quot;t&quot;               &quot;talk &quot;           &quot;taxis&quot;          
+[397] &quot;taxpayer&quot;        &quot;teacher&quot;         &quot;technology &quot;    
+[400] &quot;tell &quot;           &quot;term &quot;           &quot;terror &quot;        
+[403] &quot;terrorist  &quot;     &quot;test &quot;           &quot;thank&quot;          
+[406] &quot;there&quot;           &quot;thousand&quot;        &quot;threaten&quot;       
+[409] &quot;thus &quot;           &quot;tomorrow&quot;        &quot;too  &quot;          
+[412] &quot;tough&quot;           &quot;training&quot;        &quot;transportation &quot;
+[415] &quot;troop&quot;           &quot;truly&quot;           &quot;trust&quot;          
+[418] &quot;turn &quot;           &quot;understand &quot;     &quot;understanding&quot;  
+[421] &quot;unity&quot;           &quot;up&quot;              &quot;vast &quot;          
+[424] &quot;vice &quot;           &quot;victory&quot;         &quot;view &quot;          
+[427] &quot;vote &quot;           &quot;washington &quot;     &quot;waste&quot;          
+[430] &quot;we&quot;              &quot;week &quot;           &quot;welcome&quot;        
+[433] &quot;western&quot;         &quot;whatever&quot;        &quot;whose&quot;          
+[436] &quot;why  &quot;           &quot;win  &quot;           &quot;word &quot;          
+[439] &quot;young&quot;          </code></pre>
+<p>The first factor separate the words above from others. But it is hard to summarize the feature of these words.</p>
+<p>The fifth factor separate the words below from others.</p>
+<pre class="r"><code>words[Factors[,5] &gt; 0.1]</code></pre>
+<pre><code> [1] &quot;address&quot;     &quot;chance &quot;     &quot;difference &quot; &quot;look &quot;       &quot;message&quot;    
+ [6] &quot;place&quot;       &quot;set  &quot;       &quot;structure  &quot; &quot;truly&quot;       &quot;washington &quot;</code></pre>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
 <!-- Insert the session information into the document -->
@@ -364,21 +558,26 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] R.matlab_3.6.1 flashr_0.5-1  
+[1] denoiseR_1.0   R.matlab_3.6.1 flashr_0.5-6  
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.15      knitr_1.17        magrittr_1.5     
- [4] MASS_7.3-47       pscl_1.5.2        doParallel_1.0.11
- [7] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
-[10] ashr_2.2-4        stringr_1.2.0     tools_3.4.3      
-[13] parallel_3.4.3    grid_3.4.3        ebnm_0.1-10      
-[16] R.oo_1.21.0       git2r_0.20.0      iterators_1.0.9  
-[19] htmltools_0.3.6   yaml_2.1.16       rprojroot_1.2    
-[22] digest_0.6.13     assertthat_0.2.0  softImpute_1.4   
-[25] Matrix_1.2-12     codetools_0.2-15  R.utils_2.6.0    
-[28] evaluate_0.10.1   rmarkdown_1.8     stringi_1.1.6    
-[31] compiler_3.4.3    backports_1.1.2   R.methodsS3_1.7.1
-[34] truncnorm_1.0-7  </code></pre>
+ [1] Rcpp_0.12.15         compiler_3.4.3       git2r_0.20.0        
+ [4] plyr_1.8.4           R.utils_2.6.0        R.methodsS3_1.7.1   
+ [7] iterators_1.0.9      tools_3.4.3          digest_0.6.13       
+[10] evaluate_0.10.1      tibble_1.3.4         gtable_0.2.0        
+[13] lattice_0.20-35      rlang_0.1.6          Matrix_1.2-12       
+[16] foreach_1.4.4        yaml_2.1.17          parallel_3.4.3      
+[19] ebnm_0.1-10          cluster_2.0.6        stringr_1.3.0       
+[22] knitr_1.20           flashClust_1.01-2    scatterplot3d_0.3-40
+[25] rprojroot_1.2        grid_3.4.3           rmarkdown_1.8       
+[28] irlba_2.3.2          FactoMineR_1.39      ggplot2_2.2.1       
+[31] ashr_2.2-7           magrittr_1.5         leaps_3.0           
+[34] backports_1.1.2      scales_0.5.0         codetools_0.2-15    
+[37] htmltools_0.3.6      MASS_7.3-47          assertthat_0.2.0    
+[40] softImpute_1.4       colorspace_1.3-2     stringi_1.1.6       
+[43] lazyeval_0.2.1       pscl_1.5.2           doParallel_1.0.11   
+[46] munsell_0.4.3        truncnorm_1.0-8      SQUAREM_2017.10-1   
+[49] R.oo_1.21.0         </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

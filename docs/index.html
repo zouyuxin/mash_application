@@ -221,8 +221,9 @@ div.section {
 <p>With missing values, the covariance structure learnt from the model is weired sometimes. The weights do not shrink to zero.</p>
 <p>Suppose some of the rows in the data are totally missing. With the large errors for those missing values, the EE model ignores the information in those missing positions. In contrast, the EZ model cannot distinguish the nearly 0 z scores caused by the small observed effects from those caused by the large errors.</p>
 <p><a href="mash_missing_whole_row.html">Miss Whole Row</a></p>
-<p>The weired weights is not caused by the small sample size. <a href="mash_missing_samplesize.html">Sample Size</a></p>
-<p>It is caused by the large number of conditions.<a href="mash_largeR.html">LargeR</a></p></li>
+<p>The large number of conditions is the main cause of the weired weights.<a href="mash_largeR.html">LargeR</a></p>
+<p>The small sample size could be the other reason. Increasing the sample size could improve the estimated weights. However, decreasing might also obtain the correct weights. When the number of conditions is large, we need more data to provide information. When the sample size is small, the model may not stable and the weights may not reliable. <a href="mash_missing_samplesize.html">Sample Size</a></p>
+<p>But in <a href="mash_missing_whole_row.html">Miss Whole Row</a>, the EE model with R = 60, deleting missing values results in non-zero weights. However, I expect the reuslt from data containing missing values is similar with the reuslt from data deleting missing values. Because the missing rows contain almost no information.</p></li>
 <li>XCI data:
 <ul>
 <li>MASH analysis for XCI sex bias: <a href="sexbias_Table2.html">sexbias</a></li>
