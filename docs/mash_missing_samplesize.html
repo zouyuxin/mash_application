@@ -335,11 +335,11 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-05</p>
+<p><strong>Last updated:</strong> 2018-03-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> ddb3166</p>
-<p>We simulate data with R = 50, N = 300 and 400.</p>
+<p><strong>Code version:</strong> 193208d</p>
+<p>The weights from data R = 50, N = 400 are non-zero. Increasing the sample size to 800 and 3200, the weights shrink to 0. Decreasing the sampel size to 400 provides the correct weights as well.</p>
 <div id="n-400" class="section level1">
 <h1>N = 400</h1>
 <pre class="r"><code>library(mashr)</code></pre>
@@ -352,7 +352,7 @@ U.c = cov_canonical(mash.data)
 
 mash.model = mash(mash.data, U.c)</code></pre>
 <pre><code> - Computing 400 x 1101 likelihood matrix.
- - Likelihood calculations took 1.09 seconds.
+ - Likelihood calculations took 1.00 seconds.
  - Fitting model with 1101 mixture components.</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
@@ -360,14 +360,63 @@ mash.model = mash(mash.data, U.c)</code></pre>
 0.023990286246669, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre><code> - Model fitting took 1.95 seconds.
+<pre><code> - Model fitting took 1.94 seconds.
  - Computing posterior matrices.
- - Computation allocated took 1.33 seconds.</code></pre>
+ - Computation allocated took 1.27 seconds.</code></pre>
 <pre class="r"><code>barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="n-300" class="section level1">
-<h1>N = 300</h1>
+<div id="increase-to-n-800" class="section level1">
+<h1>Increase to N = 800</h1>
+<pre class="r"><code>set.seed(2018)
+data = simple_sims(200, 50, err_sd = 0.1)
+
+mash.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(mash.data)
+
+mash.model = mash(mash.data, U.c)</code></pre>
+<pre><code> - Computing 800 x 1156 likelihood matrix.
+ - Likelihood calculations took 1.73 seconds.
+ - Fitting model with 1156 mixture components.</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.0183236802594066,
+0.0842224653599791, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre><code> - Model fitting took 4.59 seconds.
+ - Computing posterior matrices.
+ - Computation allocated took 2.54 seconds.</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)</code></pre>
+<p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>There are some shinkage for the small weights.</p>
+</div>
+<div id="increase-to-n-3200" class="section level1">
+<h1>Increase to N = 3200</h1>
+<pre class="r"><code>set.seed(2018)
+data = simple_sims(800, 50, err_sd = 0.1)
+
+mash.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(mash.data)
+
+mash.model = mash(mash.data, U.c)</code></pre>
+<pre><code> - Computing 3200 x 1156 likelihood matrix.
+ - Likelihood calculations took 7.04 seconds.
+ - Fitting model with 1156 mixture components.</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.195406888247947,
+0.198551348399632, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre><code> - Model fitting took 5.28 seconds.
+ - Computing posterior matrices.
+ - Computation allocated took 3.97 seconds.</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)</code></pre>
+<p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="decrease-to-n-300" class="section level1">
+<h1>Decrease to N = 300</h1>
 <pre class="r"><code>set.seed(2018)
 data = simple_sims(75, 50, err_sd = 0.1)
 
@@ -376,7 +425,7 @@ U.c = cov_canonical(mash.data)
 
 mash.model = mash(mash.data, U.c)</code></pre>
 <pre><code> - Computing 300 x 1101 likelihood matrix.
- - Likelihood calculations took 0.64 seconds.
+ - Likelihood calculations took 0.62 seconds.
  - Fitting model with 1101 mixture components.</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
@@ -384,11 +433,11 @@ mash.model = mash(mash.data, U.c)</code></pre>
 0.268626142814483, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre><code> - Model fitting took 1.13 seconds.
+<pre><code> - Model fitting took 1.11 seconds.
  - Computing posterior matrices.
- - Computation allocated took 0.11 seconds.</code></pre>
+ - Computation allocated took 0.10 seconds.</code></pre>
 <pre class="r"><code>barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)</code></pre>
-<p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The weights learnd from N=300 model is correct.</p>
 </div>
 <div id="session-information" class="section level1">

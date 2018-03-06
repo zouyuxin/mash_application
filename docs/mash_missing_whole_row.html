@@ -335,10 +335,10 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-05</p>
+<p><strong>Last updated:</strong> 2018-03-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 373cde0</p>
+<p><strong>Code version:</strong> 193208d</p>
 <div id="r5" class="section level1">
 <h1>R=5</h1>
 <pre class="r"><code>library(mashr)</code></pre>
@@ -413,7 +413,7 @@ after the optimization.</code></pre>
 <pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
 <pre class="r"><code>par(mfrow=c(1,2))
 barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7, main=&#39;with missing values&#39;)
-barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main=&#39;without missing values&#39;)</code></pre>
+barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main=&#39;delete missing values&#39;)</code></pre>
 <p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>par(mfrow=c(1,1))</code></pre>
 </div>
