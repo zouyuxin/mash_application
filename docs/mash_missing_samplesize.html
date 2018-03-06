@@ -338,7 +338,7 @@ div.section {
 <p><strong>Last updated:</strong> 2018-03-05</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 373cde0</p>
+<p><strong>Code version:</strong> ddb3166</p>
 <p>We simulate data with R = 50, N = 300 and 400.</p>
 <div id="n-400" class="section level1">
 <h1>N = 400</h1>
@@ -352,7 +352,7 @@ U.c = cov_canonical(mash.data)
 
 mash.model = mash(mash.data, U.c)</code></pre>
 <pre><code> - Computing 400 x 1101 likelihood matrix.
- - Likelihood calculations took 1.13 seconds.
+ - Likelihood calculations took 1.09 seconds.
  - Fitting model with 1101 mixture components.</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
@@ -360,9 +360,9 @@ mash.model = mash(mash.data, U.c)</code></pre>
 0.023990286246669, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre><code> - Model fitting took 2.19 seconds.
+<pre><code> - Model fitting took 1.95 seconds.
  - Computing posterior matrices.
- - Computation allocated took 1.38 seconds.</code></pre>
+ - Computation allocated took 1.33 seconds.</code></pre>
 <pre class="r"><code>barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
@@ -376,7 +376,7 @@ U.c = cov_canonical(mash.data)
 
 mash.model = mash(mash.data, U.c)</code></pre>
 <pre><code> - Computing 300 x 1101 likelihood matrix.
- - Likelihood calculations took 0.66 seconds.
+ - Likelihood calculations took 0.64 seconds.
  - Fitting model with 1101 mixture components.</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
@@ -384,9 +384,9 @@ mash.model = mash(mash.data, U.c)</code></pre>
 0.268626142814483, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre><code> - Model fitting took 1.22 seconds.
+<pre><code> - Model fitting took 1.13 seconds.
  - Computing posterior matrices.
- - Computation allocated took 0.10 seconds.</code></pre>
+ - Computation allocated took 0.11 seconds.</code></pre>
 <pre class="r"><code>barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The weights learnd from N=300 model is correct.</p>
