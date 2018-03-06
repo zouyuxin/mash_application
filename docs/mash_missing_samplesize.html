@@ -24,6 +24,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -164,6 +165,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -307,6 +316,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Mash Missing Sample Size</h1>
@@ -318,16 +335,24 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-01</p>
+<p><strong>Last updated:</strong> 2018-03-05</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> d62d09a</p>
+<p><strong>Code version:</strong> 373cde0</p>
 <p>We simulate data with R = 50, N = 300 and 400.</p>
 <div id="n-400" class="section level1">
 <h1>N = 400</h1>
+<pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>set.seed(2018)
+data = simple_sims(100, 50, err_sd = 0.1)
+
+mash.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(mash.data)
+
+mash.model = mash(mash.data, U.c)</code></pre>
 <pre><code> - Computing 400 x 1101 likelihood matrix.
- - Likelihood calculations took 1.17 seconds.
+ - Likelihood calculations took 1.13 seconds.
  - Fitting model with 1101 mixture components.</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
@@ -335,15 +360,23 @@ div.section {
 0.023990286246669, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre><code> - Model fitting took 1.95 seconds.
+<pre><code> - Model fitting took 2.19 seconds.
  - Computing posterior matrices.
- - Computation allocated took 1.45 seconds.</code></pre>
+ - Computation allocated took 1.38 seconds.</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="n-300" class="section level1">
 <h1>N = 300</h1>
+<pre class="r"><code>set.seed(2018)
+data = simple_sims(75, 50, err_sd = 0.1)
+
+mash.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(mash.data)
+
+mash.model = mash(mash.data, U.c)</code></pre>
 <pre><code> - Computing 300 x 1101 likelihood matrix.
- - Likelihood calculations took 0.72 seconds.
+ - Likelihood calculations took 0.66 seconds.
  - Fitting model with 1101 mixture components.</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
@@ -351,9 +384,10 @@ after the optimization.</code></pre>
 0.268626142814483, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
-<pre><code> - Model fitting took 1.19 seconds.
+<pre><code> - Model fitting took 1.22 seconds.
  - Computing posterior matrices.
- - Computation allocated took 0.11 seconds.</code></pre>
+ - Computation allocated took 0.10 seconds.</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/mash_missing_samplesize.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The weights learnd from N=300 model is correct.</p>
 </div>
@@ -376,20 +410,20 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2-4 ashr_2.2-4 
+[1] mashr_0.2-6 ashr_2.2-7 
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.15      knitr_1.17        magrittr_1.5     
+ [1] Rcpp_0.12.15      knitr_1.20        magrittr_1.5     
  [4] REBayes_1.2       MASS_7.3-47       doParallel_1.0.11
  [7] pscl_1.5.2        SQUAREM_2017.10-1 lattice_0.20-35  
-[10] foreach_1.4.4     plyr_1.8.4        stringr_1.2.0    
+[10] foreach_1.4.4     plyr_1.8.4        stringr_1.3.0    
 [13] tools_3.4.3       parallel_3.4.3    grid_3.4.3       
 [16] rmeta_2.16        git2r_0.20.0      htmltools_0.3.6  
-[19] iterators_1.0.9   assertthat_0.2.0  yaml_2.1.16      
+[19] iterators_1.0.9   assertthat_0.2.0  yaml_2.1.17      
 [22] rprojroot_1.2     digest_0.6.13     Matrix_1.2-12    
 [25] codetools_0.2-15  evaluate_0.10.1   rmarkdown_1.8    
 [28] stringi_1.1.6     compiler_3.4.3    Rmosek_8.0.69    
-[31] backports_1.1.2   mvtnorm_1.0-7     truncnorm_1.0-7  </code></pre>
+[31] backports_1.1.2   mvtnorm_1.0-7     truncnorm_1.0-8  </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using

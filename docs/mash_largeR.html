@@ -24,6 +24,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -164,6 +165,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -307,6 +316,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Mash Missing Large R</h1>
@@ -318,25 +335,45 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-02</p>
+<p><strong>Last updated:</strong> 2018-03-05</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 2a2a084</p>
+<p><strong>Code version:</strong> 373cde0</p>
 <p>We simulate dataset with N=400, R = 10 and 50.</p>
+<pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>set.seed(2018)
+data.10 = simple_sims(100, ncond = 10, err_sd = 0.1)
+
+data.50 = simple_sims(100, ncond = 50, err_sd = 0.1)
+
+mash.data.10 = mash_set_data(Bhat = data.10$Bhat, Shat = data.10$Shat)
+mash.data.10.1 = mash_set_data(Bhat = data.10$Bhat, Shat = data.10$Shat, alpha=1)
+
+mash.data.50 = mash_set_data(Bhat = data.50$Bhat, Shat = data.50$Shat)
+mash.data.50.1 = mash_set_data(Bhat = data.50$Bhat, Shat = data.50$Shat, alpha=1)</code></pre>
+<pre class="r"><code>U.c.10 = cov_canonical(mash.data.10)
+U.c.50 = cov_canonical(mash.data.50)
+
+mash.10 = mash(mash.data.10, U.c.10, verbose = FALSE)</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
 <pre><code>Warning in mixIP(matrix_lik = structure(c(0.825501423556077,
 0.0919617211603192, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
+<pre class="r"><code>mash.50 = mash(mash.data.50, U.c.50, verbose = FALSE)</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
 <pre><code>Warning in mixIP(matrix_lik = structure(c(0.0183400395288875,
 0.0241762811815978, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
+<pre class="r"><code>par(mfcol=c(2,1))
+barplot(get_estimated_pi(mash.10), las=2, cex.names = 0.7, main=&#39;R=10, n = 400&#39;)
+barplot(get_estimated_pi(mash.50), las=2, cex.names = 0.7, main=&#39;R=50, n = 400&#39;)</code></pre>
 <p><img src="figure/mash_largeR.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfcol=c(1,1))</code></pre>
 <p>Separate the conditions to subgroups:</p>
 <pre class="r"><code>mash.data.50.sub1 = mash_set_data(data.50$Bhat[,1:25], data.50$Shat[,1:25])
 U.c.50.sub1 = cov_canonical(mash.data.50.sub1)

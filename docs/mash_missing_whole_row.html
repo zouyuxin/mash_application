@@ -24,6 +24,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -164,6 +165,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -307,6 +316,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Mash Missing Whole Row</h1>
@@ -318,16 +335,93 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-02</p>
+<p><strong>Last updated:</strong> 2018-03-05</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> a79b566</p>
+<p><strong>Code version:</strong> 373cde0</p>
 <div id="r5" class="section level1">
 <h1>R=5</h1>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>set.seed(2018)
 data = simple_sims(500, err_sd = 0.1)
+
+data.miss = data
+# select missing rows
+missing.row = sample(1:nrow(data$Bhat), nrow(data$Bhat)/4)
+missing.ind = matrix(0, nrow = nrow(data$B), ncol=ncol(data$B))
+missing.ind[missing.row,] = 1
+
+# set missing rows to NA
+missing = which(missing.ind == 1)
+data.miss$Bhat[missing] = NA
+data.miss$Shat[missing] = NA
+missing1 = is.na(data.miss$Bhat[,1])
+
+# set the missing value with large standard deviation
+data.large.dev = data.miss
+data.large.dev$Bhat[is.na(data.miss$Bhat)] = 0
+data.large.dev$Shat[is.na(data.miss$Shat)] = 1000</code></pre>
+<div id="ee-model" class="section level2">
+<h2>EE model</h2>
+<pre class="r"><code># with missing values
+mash.data.missing = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat)
+U.c = cov_canonical(mash.data.missing)
+
+mash.model.missing = mash(mash.data.missing, U.c, verbose = FALSE)
+
+# delete missing values
+data.miss.na = data.miss
+data.miss.na$Bhat = na.omit(data.miss$Bhat)
+data.miss.na$Shat = na.omit(data.miss$Shat)
+
+mash.data.missing.na = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat)
+U.c = cov_canonical(mash.data.missing.na)
+
+mash.model.missing.na = mash(mash.data.missing.na, U.c, verbose=FALSE)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(1, 0.204132576568413,
+0.736530341806702, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>par(mfrow=c(1,2))
+barplot(get_estimated_pi(mash.model.missing), las=2, cex.names = 0.7, main=&#39;with missing values&#39;)
+barplot(get_estimated_pi(mash.model.missing.na), las=2, cex.names = 0.7, main = &#39;delete missing values&#39;)</code></pre>
+<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow=c(1,1))</code></pre>
+</div>
+<div id="ez-model" class="section level2">
+<h2>EZ model</h2>
+<pre class="r"><code># with missing values
+mash.data.missing.1 = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat, alpha = 1)
+U.c = cov_canonical(mash.data.missing.1)
+
+mash.model.missing.1 = mash(mash.data.missing.1, U.c, verbose = FALSE)</code></pre>
+<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
+<pre class="r"><code># delete missing values
+mash.data.missing.na.1 = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat, alpha = 1)
+U.c = cov_canonical(mash.data.missing.na.1)
+
+mash.model.missing.na.1 = mash(mash.data.missing.na.1, U.c, verbose=FALSE)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(1, 0.204132576568412,
+0.736530341806701, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
+<pre class="r"><code>par(mfrow=c(1,2))
+barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7, main=&#39;with missing values&#39;)
+barplot(get_estimated_pi(mash.model.missing.na.1), las=2, cex.names = 0.7, main=&#39;without missing values&#39;)</code></pre>
+<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfrow=c(1,1))</code></pre>
+</div>
+</div>
+<div id="r60" class="section level1">
+<h1>R=60</h1>
+<pre class="r"><code>set.seed(2018)
+data = simple_sims(500, ncond = 60, err_sd = 0.1)
 
 data.miss = data
 missing.row = sample(1:nrow(data$Bhat), nrow(data$Bhat)/4)
@@ -342,45 +436,34 @@ missing1 = is.na(data.miss$Bhat[,1])
 data.large.dev = data.miss
 data.large.dev$Bhat[is.na(data.miss$Bhat)] = 0
 data.large.dev$Shat[is.na(data.miss$Shat)] = 1000</code></pre>
-<div id="ee-model" class="section level2">
-<h2>EE model</h2>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(1, 0.204132576568413,
-0.736530341806702, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-<div id="ez-model" class="section level2">
-<h2>EZ model</h2>
-<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(1, 0.204132576568412,
-0.736530341806701, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
-<p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-</div>
-<div id="r60" class="section level1">
-<h1>R=60</h1>
 <div id="ee-model-1" class="section level2">
 <h2>EE model</h2>
 <div id="with-missing-values" class="section level3">
 <h3>With missing values</h3>
+<pre class="r"><code>mash.data.missing = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat)
+U.c = cov_canonical(mash.data.missing)
+
+mash.model.missing = mash(mash.data.missing, U.c, verbose = FALSE)
+barplot(get_estimated_pi(mash.model.missing), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /> The weights learned from the data are correct.</p>
 </div>
-<div id="without-missing-values" class="section level3">
-<h3>Without missing values</h3>
+<div id="delete-missing-values" class="section level3">
+<h3>Delete missing values</h3>
+<pre class="r"><code>data.miss.na = data.miss
+data.miss.na$Bhat = na.omit(data.miss$Bhat)
+data.miss.na$Shat = na.omit(data.miss$Shat)
+
+mash.data.missing.na = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat)
+U.c = cov_canonical(mash.data.missing.na)
+
+mash.model.missing.na = mash(mash.data.missing.na, U.c, verbose=FALSE)</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
 <pre><code>Warning in mixIP(matrix_lik = structure(c(0.240920767436896,
 0.337563330121546, : Optimization step yields mixture weights that are
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(mash.model.missing.na), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /> The estimated weights are very weird and incorrect. It ignores the null matrix.</p>
 </div>
 </div>
@@ -388,6 +471,10 @@ after the optimization.</code></pre>
 <h2>EZ model</h2>
 <div id="with-missing-values-1" class="section level3">
 <h3>With missing values</h3>
+<pre class="r"><code>mash.data.missing.1 = mash_set_data(Bhat=data.large.dev$Bhat, Shat=data.large.dev$Shat, alpha = 1)
+U.c = cov_canonical(mash.data.missing.1)
+
+mash.model.missing.1 = mash(mash.data.missing.1, U.c, verbose = FALSE)</code></pre>
 <pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
                consider reducing rtol</code></pre>
 <pre><code>Warning in mixIP(matrix_lik = structure(c(0.240920767436896,
@@ -395,10 +482,11 @@ after the optimization.</code></pre>
 either too small, or negative; weights have been corrected and renormalized
 after the optimization.</code></pre>
 <pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(mash.model.missing.1), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="without-missing-values-1" class="section level3">
-<h3>Without missing values</h3>
+<div id="delete-missing-values-1" class="section level3">
+<h3>Delete missing values</h3>
 <pre class="r"><code>mash.data.missing.na.1 = mash_set_data(Bhat=data.miss.na$Bhat, Shat= data.miss.na$Shat, alpha = 1)
 U.c = cov_canonical(mash.data.missing.na.1)
 
@@ -420,10 +508,25 @@ after the optimization.</code></pre>
 <p>The weired covariance structure is caused by the high dimension of R.</p>
 <p>If we separate conditions into several groups, the covariance structure will be correct.</p>
 <p>We show this for the EZ model R=60.</p>
-<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE
-FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE
-FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
+<pre class="r"><code>mash.data.missing.1.sub1 = mash_set_data(Bhat=data.large.dev$Bhat[,1:20], Shat=data.large.dev$Shat[,1:20], alpha = 1)
+U.c = cov_canonical(mash.data.missing.1.sub1)
+mash.model.missing.1.sub1 = mash(mash.data.missing.1.sub1, U.c, verbose = FALSE)</code></pre>
+<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
+<pre class="r"><code>mash.data.missing.1.sub2 = mash_set_data(Bhat=data.large.dev$Bhat[,21:40], Shat=data.large.dev$Shat[,21:40], alpha = 1)
+U.c = cov_canonical(mash.data.missing.1.sub2)
+mash.model.missing.1.sub2 = mash(mash.data.missing.1.sub2, U.c, verbose = FALSE)</code></pre>
+<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
+<pre class="r"><code>mash.data.missing.1.sub3 = mash_set_data(Bhat=data.large.dev$Bhat[,41:60], Shat=data.large.dev$Shat[,41:60], alpha = 1)
+U.c = cov_canonical(mash.data.missing.1.sub3)
+mash.model.missing.1.sub3 = mash(mash.data.missing.1.sub3, U.c, verbose = FALSE)</code></pre>
+<pre><code>FIXME: &#39;compute_posterior_matrices&#39; in Rcpp does not transfer EZ to EE</code></pre>
+<pre class="r"><code>par(mfcol=c(3,1))
+barplot(get_estimated_pi(mash.model.missing.1.sub1), las=2, cex.names = 0.7, main=&#39;condition 1:20&#39;)
+barplot(get_estimated_pi(mash.model.missing.1.sub2), las=2, cex.names = 0.7, main=&#39;condition 21:40&#39;)
+barplot(get_estimated_pi(mash.model.missing.1.sub3), las=2, cex.names = 0.7,
+main=&#39;condition 41:60&#39;)</code></pre>
 <p><img src="figure/mash_missing_whole_row.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>par(mfcol=c(1,1))</code></pre>
 </div>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
