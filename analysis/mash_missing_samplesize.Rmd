@@ -29,7 +29,7 @@ knitr::read_chunk("chunks.R")
 knitr::opts_chunk$set(eval = TRUE)
 ```
 
-We simulate data with R = 50, N = 300 and 400.
+The weights from data R = 50, N = 400 are non-zero. Increasing the sample size to 800 and 3200, the weights shrink to 0. Decreasing the sampel size to 400 provides the correct weights as well.
 
 # N = 400
 ```{r}
@@ -43,20 +43,6 @@ U.c = cov_canonical(mash.data)
 mash.model = mash(mash.data, U.c)
 barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
 ```
-
-# Decrease to N = 300
-```{r}
-set.seed(2018)
-data = simple_sims(75, 50, err_sd = 0.1)
-
-mash.data = mash_set_data(data$Bhat, data$Shat)
-U.c = cov_canonical(mash.data)
-
-mash.model = mash(mash.data, U.c)
-barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
-```
-
-The weights learnd from N=300 model is correct.
 
 # Increase to N = 800
 ```{r}
@@ -83,6 +69,20 @@ U.c = cov_canonical(mash.data)
 mash.model = mash(mash.data, U.c)
 barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
 ```
+
+# Decrease to N = 300
+```{r}
+set.seed(2018)
+data = simple_sims(75, 50, err_sd = 0.1)
+
+mash.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(mash.data)
+
+mash.model = mash(mash.data, U.c)
+barplot(get_estimated_pi(mash.model), las=2, cex.names = 0.7)
+```
+
+The weights learnd from N=300 model is correct.
 
 # Session information
 <!-- Insert the session information into the document -->
