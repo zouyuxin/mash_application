@@ -2,7 +2,9 @@
 title: "Table 2"
 author: "Yuxin Zou"
 date: 2018-2-1
-output: html_document
+output: 
+  html_document:
+    code_folding: hide
 ---
 ```{r read-chunk, include=FALSE, cache=FALSE}
 knitr::read_chunk("chunks.R")
@@ -26,14 +28,14 @@ knitr::read_chunk("chunks.R")
 knitr::opts_chunk$set(eval = TRUE)
 ```
 
-```{r echo=FALSE}
+```{r}
 library(gdata); library(mashr);library(flashr)
 library(mclust); library(plyr); library(corrplot)
 library(ggplot2); library(ggpubr)
 ```
 
 # Read Table 2
-```{r, eval=FALSE, echo=FALSE}
+```{r, eval=FALSE}
 SupplTable2 = read.xls('../data/Suppl.Table.2.xlsx')
 saveRDS(SupplTable2, '../data/SupplTable2.rds')
 ```
@@ -43,7 +45,7 @@ SupplTable2 = readRDS('../data/SupplTable2.rds')
 
 There are missing value in the data. I guess this is caused by the 0 count, since the effect is $\log_{2} (X_{1}/X_{2})$. We set these NAs to 0 with huge variance.
 
-```{r, eval=FALSE, echo=FALSE}
+```{r, eval=FALSE}
 Genename = as.character(SupplTable2$Gene.ID)
 colname = colnames(SupplTable2)[seq(3,89,by=3)]
 Tissue = gsub( "_.*$", "",  colname)
@@ -113,7 +115,7 @@ flash_get_pve(fmodel)
 ```
 
 The first factor is the overall summary of treatment effects.
-```{r, echo=FALSE}
+```{r}
 factors = flash_get_ldf(fmodel)$f
 row.names(factors) = colnames(data$logFC)
 layout(matrix(c(1,2,3,4,5,6), 3, 2, byrow = TRUE))
@@ -210,13 +212,13 @@ get_loglik(mash.model)
 ```
 Here is a plot of weights learned.
 
-```{r, echo=FALSE}
+```{r}
 options(repr.plot.width=12, repr.plot.height=4)
 barplot(get_estimated_pi(mash.model), las = 2, cex.names = 0.7)
 ```
 
 Check `ED_XX` and `ED_tPCA`:
-```{r, echo=FALSE}
+```{r}
 layout(matrix(c(1,2,3,4), 2, 2, byrow=TRUE))
 svd.out = svd(mash.model$fitted_g$Ulist[["ED_XX"]])
 v = svd.out$v
@@ -243,15 +245,12 @@ Among the 959 genes, `MASH` found `r length(get_significant_results(mash.model, 
 Missing.lfsr = mash.model$result$lfsr * data$missing
 Missing.lfsr[Missing.lfsr == 0] = NA
 ```
-```{r, echo=FALSE}
-# which(Missing.lfsr < 0.01, arr.ind = TRUE)
-```
 
 There are `r sum(Missing.lfsr < 0.01, na.rm = TRUE)` effects are estimated as significant, even though they are originally missing! This is caused by the borrowing information from other samples.
 
 The plot below compares the data with the `mash` output. The gene ASMT has lots of missing vales in tissues. The `mash` model estimates all effects as significant.
 
-```{r echo=FALSE}
+```{r}
 # before
 gene667 = data.frame(mash.data$Bhat[667,])
 colnames(gene667) = 'EffectSize'
@@ -278,7 +277,7 @@ ggarrange(p.orig, p.post, ncol=2, nrow=1, common.legend = TRUE, legend="right")
 ```
 
 Proportion of significantly biased (FDR < 1%) genes in each tissue by reported XCI status.
-```{r, echo=FALSE}
+```{r}
 Escape.prop = numeric(29)
 for(i in 1:29){
   Escape.prop[i] = length(which(data$category[get_significant_results(mash.model,0.01, conditions = i)] == 'Escape')) / length(which(data$category == 'Escape'))
