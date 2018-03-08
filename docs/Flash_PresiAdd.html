@@ -335,10 +335,10 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-03-06</p>
+<p><strong>Last updated:</strong> 2018-03-08</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> e16e34a</p>
+<p><strong>Code version:</strong> 7bd0159</p>
 <pre class="r"><code>library(flashr); library(R.matlab)</code></pre>
 <pre><code>R.matlab v3.6.1 (2016-10-19) successfully loaded. See ?R.matlab for help.</code></pre>
 <pre><code>
@@ -385,160 +385,168 @@ flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)</code></pre>
 <pre class="r"><code>barplot(as.numeric(Factors_loading), main=paste0(&#39;Factor 1 pve= &#39;, round(flash_get_pve(flmodel),3)), las=2, cex.names = 0.4, names=&#39;&#39;)</code></pre>
 <p><img src="figure/Flash_PresiAdd.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The distributions for the first four columns of the loading matrix are consistent with a normal distribution. So they are captured by the error term of the second flash run.</p>
-<p>It is hard to interpret each factor, none of them is sparse. For example, for factor 1 in the first flash run,</p>
-<pre class="r"><code>words[Factors[,1] &gt; 0]</code></pre>
-<pre><code>  [1] &quot;$1&quot;              &quot;0&quot;               &quot;Asia &quot;          
-  [4] &quot;European&quot;        &quot;Iraq&quot;            &quot;Iraqa&quot;          
-  [7] &quot;Iraqi&quot;           &quot;Medicare&quot;        &quot;Vietnam&quot;        
- [10] &quot;a&quot;               &quot;ability&quot;         &quot;about&quot;          
- [13] &quot;abroad &quot;         &quot;accept &quot;         &quot;access &quot;        
- [16] &quot;accomplish &quot;     &quot;account&quot;         &quot;achievement&quot;    
- [19] &quot;add  &quot;           &quot;addition&quot;        &quot;address&quot;        
- [22] &quot;adopt&quot;           &quot;affair &quot;         &quot;affect &quot;        
- [25] &quot;afford &quot;         &quot;afghanistan&quot;     &quot;africa &quot;        
- [28] &quot;ago  &quot;           &quot;agree&quot;           &quot;aim  &quot;          
- [31] &quot;air  &quot;           &quot;alliance&quot;        &quot;allow&quot;          
- [34] &quot;alone&quot;           &quot;always &quot;         &quot;and  &quot;          
- [37] &quot;answer &quot;         &quot;approach&quot;        &quot;appropriate&quot;    
- [40] &quot;approve&quot;         &quot;army &quot;           &quot;assist &quot;        
- [43] &quot;attempt&quot;         &quot;attention  &quot;     &quot;available  &quot;    
- [46] &quot;average&quot;         &quot;avoid&quot;           &quot;away &quot;          
- [49] &quot;back &quot;           &quot;bad  &quot;           &quot;balance&quot;        
- [52] &quot;balanced&quot;        &quot;bank &quot;           &quot;basis&quot;          
- [55] &quot;bear &quot;           &quot;before &quot;         &quot;beginning  &quot;    
- [58] &quot;being&quot;           &quot;big  &quot;           &quot;bill &quot;          
- [61] &quot;bipartisan &quot;     &quot;border &quot;         &quot;branch &quot;        
- [64] &quot;break&quot;           &quot;broad&quot;           &quot;building&quot;       
- [67] &quot;burden &quot;         &quot;but  &quot;           &quot;buy  &quot;          
- [70] &quot;ca&quot;              &quot;capacity&quot;        &quot;capital&quot;        
- [73] &quot;case &quot;           &quot;century&quot;         &quot;chamber&quot;        
- [76] &quot;chance &quot;         &quot;china&quot;           &quot;choice &quot;        
- [79] &quot;choose &quot;         &quot;civilian&quot;        &quot;clean&quot;          
- [82] &quot;clearly&quot;         &quot;close&quot;           &quot;college&quot;        
- [85] &quot;commit &quot;         &quot;committee  &quot;     &quot;common &quot;        
- [88] &quot;company&quot;         &quot;competition&quot;     &quot;competitive&quot;    
- [91] &quot;comprehensive&quot;   &quot;conference &quot;     &quot;confidence &quot;    
- [94] &quot;conflict&quot;        &quot;confront&quot;        &quot;conservation &quot;  
- [97] &quot;constitution &quot;   &quot;construction &quot;   &quot;consumer&quot;       
-[100] &quot;continued  &quot;     &quot;contribute &quot;     &quot;contribution &quot;  
-[103] &quot;courage&quot;         &quot;coverage&quot;        &quot;credit &quot;        
-[106] &quot;crime&quot;           &quot;crisis &quot;         &quot;critical&quot;       
-[109] &quot;current&quot;         &quot;deal &quot;           &quot;decade &quot;        
-[112] &quot;decision&quot;        &quot;decline&quot;         &quot;deep &quot;          
-[115] &quot;defend &quot;         &quot;deficit&quot;         &quot;demonstrate&quot;    
-[118] &quot;depend &quot;         &quot;destroy&quot;         &quot;determination&quot;  
-[121] &quot;difference &quot;     &quot;different  &quot;     &quot;difficult  &quot;    
-[124] &quot;direct &quot;         &quot;direction  &quot;     &quot;directly&quot;       
-[127] &quot;disease&quot;         &quot;domestic&quot;        &quot;double &quot;        
-[130] &quot;down &quot;           &quot;dream&quot;           &quot;drug &quot;          
-[133] &quot;duty &quot;           &quot;early&quot;           &quot;earn &quot;          
-[136] &quot;earth&quot;           &quot;easy &quot;           &quot;effect &quot;        
-[139] &quot;efficiency &quot;     &quot;efficient  &quot;     &quot;election&quot;       
-[142] &quot;eliminate  &quot;     &quot;emergency  &quot;     &quot;employee&quot;       
-[145] &quot;enable &quot;         &quot;enact&quot;           &quot;energy &quot;        
-[148] &quot;enforcement&quot;     &quot;enough &quot;         &quot;ensure &quot;        
-[151] &quot;enter&quot;           &quot;entire &quot;         &quot;environment&quot;    
-[154] &quot;equal&quot;           &quot;era  &quot;           &quot;especially &quot;    
-[157] &quot;event&quot;           &quot;example&quot;         &quot;expansion  &quot;    
-[160] &quot;experience &quot;     &quot;export &quot;         &quot;facility&quot;       
-[163] &quot;fail &quot;           &quot;fall &quot;           &quot;fear &quot;          
-[166] &quot;fellow &quot;         &quot;final&quot;           &quot;finally&quot;        
-[169] &quot;finance&quot;         &quot;financial  &quot;     &quot;form &quot;          
-[172] &quot;foundation &quot;     &quot;friend &quot;         &quot;fulfill&quot;        
-[175] &quot;fully&quot;           &quot;fundamental&quot;     &quot;funding&quot;        
-[178] &quot;gain &quot;           &quot;generation &quot;     &quot;get  &quot;          
-[181] &quot;global &quot;         &quot;god  &quot;           &quot;guarantee  &quot;    
-[184] &quot;half &quot;           &quot;hand &quot;           &quot;happen &quot;        
-[187] &quot;hard &quot;           &quot;hear &quot;           &quot;heart&quot;          
-[190] &quot;hemisphere &quot;     &quot;historic&quot;        &quot;hold &quot;          
-[193] &quot;honor&quot;           &quot;hospital&quot;        &quot;hour &quot;          
-[196] &quot;house&quot;           &quot;how  &quot;           &quot;idea &quot;          
-[199] &quot;ideal&quot;           &quot;i&quot;               &quot;immediate  &quot;    
-[202] &quot;importance &quot;     &quot;improvement&quot;     &quot;in&quot;             
-[205] &quot;incentive  &quot;     &quot;independence &quot;   &quot;influence  &quot;    
-[208] &quot;information&quot;     &quot;instead&quot;         &quot;institution&quot;    
-[211] &quot;intend &quot;         &quot;invest &quot;         &quot;investment &quot;    
-[214] &quot;involve&quot;         &quot;issue&quot;           &quot;japan&quot;          
-[217] &quot;key  &quot;           &quot;kind &quot;           &quot;korea&quot;          
-[220] &quot;launch &quot;         &quot;lay  &quot;           &quot;leadership &quot;    
-[223] &quot;least&quot;           &quot;leave&quot;           &quot;legislative&quot;    
-[226] &quot;liberty&quot;         &quot;lie  &quot;           &quot;like &quot;          
-[229] &quot;limit&quot;           &quot;line &quot;           &quot;little &quot;        
-[232] &quot;living &quot;         &quot;loan &quot;           &quot;longer &quot;        
-[235] &quot;look &quot;           &quot;lose &quot;           &quot;majority&quot;       
-[238] &quot;matter &quot;         &quot;middle &quot;         &quot;might&quot;          
-[241] &quot;minimum&quot;         &quot;missile&quot;         &quot;moment &quot;        
-[244] &quot;money&quot;           &quot;moral&quot;           &quot;mr&quot;             
-[247] &quot;mutual &quot;         &quot;n&quot;               &quot;natural&quot;        
-[250] &quot;nearly &quot;         &quot;negotiation&quot;     &quot;neighbor&quot;       
-[253] &quot;no&quot;              &quot;north&quot;           &quot;nothing&quot;        
-[256] &quot;obligation &quot;     &quot;offer&quot;           &quot;office &quot;        
-[259] &quot;often&quot;           &quot;oil  &quot;           &quot;once &quot;          
-[262] &quot;one  &quot;           &quot;open &quot;           &quot;operation  &quot;    
-[265] &quot;out  &quot;           &quot;parent &quot;         &quot;particular &quot;    
-[268] &quot;particularly &quot;   &quot;partner&quot;         &quot;partnership&quot;    
-[271] &quot;party&quot;           &quot;payment&quot;         &quot;peacetime  &quot;    
-[274] &quot;permanent  &quot;     &quot;person &quot;         &quot;personal&quot;       
-[277] &quot;plant&quot;           &quot;play &quot;           &quot;pledge &quot;        
-[280] &quot;police &quot;         &quot;poor &quot;           &quot;position&quot;       
-[283] &quot;poverty&quot;         &quot;powerful&quot;        &quot;practice&quot;       
-[286] &quot;prepare&quot;         &quot;preserve&quot;        &quot;press&quot;          
-[289] &quot;priority&quot;        &quot;product&quot;         &quot;productive &quot;    
-[292] &quot;profit &quot;         &quot;promise&quot;         &quot;proposal&quot;       
-[295] &quot;proud&quot;           &quot;prove&quot;           &quot;provision  &quot;    
-[298] &quot;pursue &quot;         &quot;put  &quot;           &quot;quality&quot;        
-[301] &quot;question&quot;        &quot;race &quot;           &quot;range&quot;          
-[304] &quot;rapidly&quot;         &quot;ready&quot;           &quot;realize&quot;        
-[307] &quot;reason &quot;         &quot;receive&quot;         &quot;recent &quot;        
-[310] &quot;recession  &quot;     &quot;recognize  &quot;     &quot;record &quot;        
-[313] &quot;recovery&quot;        &quot;reform &quot;         &quot;region &quot;        
-[316] &quot;regulation &quot;     &quot;relationship &quot;   &quot;remember&quot;       
-[319] &quot;remove &quot;         &quot;renew&quot;           &quot;represent  &quot;    
-[322] &quot;representative &quot; &quot;republic&quot;        &quot;request&quot;        
-[325] &quot;requirement&quot;     &quot;reserve&quot;         &quot;resolve&quot;        
-[328] &quot;responsible&quot;     &quot;rest &quot;           &quot;restore&quot;        
-[331] &quot;retirement &quot;     &quot;return &quot;         &quot;revenue&quot;        
-[334] &quot;review &quot;         &quot;revolution &quot;     &quot;reward &quot;        
-[337] &quot;risk &quot;           &quot;road &quot;           &quot;role &quot;          
-[340] &quot;rule &quot;           &quot;run  &quot;           &quot;rural&quot;          
-[343] &quot;sacrifice  &quot;     &quot;safe &quot;           &quot;saving &quot;        
-[346] &quot;science&quot;         &quot;sector &quot;         &quot;senate &quot;        
-[349] &quot;send &quot;           &quot;sense&quot;           &quot;serious&quot;        
-[352] &quot;session&quot;         &quot;short&quot;           &quot;side &quot;          
-[355] &quot;sign &quot;           &quot;significant&quot;     &quot;simple &quot;        
-[358] &quot;simply &quot;         &quot;single &quot;         &quot;situation  &quot;    
-[361] &quot;skill&quot;           &quot;solve&quot;           &quot;something  &quot;    
-[364] &quot;soon &quot;           &quot;sound&quot;           &quot;source &quot;        
-[367] &quot;south&quot;           &quot;space&quot;           &quot;speak&quot;          
-[370] &quot;speaker&quot;         &quot;specific&quot;        &quot;speed&quot;          
-[373] &quot;spend&quot;           &quot;spending&quot;        &quot;stability  &quot;    
-[376] &quot;stable &quot;         &quot;stand&quot;           &quot;start&quot;          
-[379] &quot;steady &quot;         &quot;stop &quot;           &quot;strategic  &quot;    
-[382] &quot;strategy&quot;        &quot;street &quot;         &quot;strike &quot;        
-[385] &quot;structure  &quot;     &quot;struggle&quot;        &quot;student&quot;        
-[388] &quot;subject&quot;         &quot;submit &quot;         &quot;succeed&quot;        
-[391] &quot;success&quot;         &quot;successful &quot;     &quot;sure &quot;          
-[394] &quot;t&quot;               &quot;talk &quot;           &quot;taxis&quot;          
-[397] &quot;taxpayer&quot;        &quot;teacher&quot;         &quot;technology &quot;    
-[400] &quot;tell &quot;           &quot;term &quot;           &quot;terror &quot;        
-[403] &quot;terrorist  &quot;     &quot;test &quot;           &quot;thank&quot;          
-[406] &quot;there&quot;           &quot;thousand&quot;        &quot;threaten&quot;       
-[409] &quot;thus &quot;           &quot;tomorrow&quot;        &quot;too  &quot;          
-[412] &quot;tough&quot;           &quot;training&quot;        &quot;transportation &quot;
-[415] &quot;troop&quot;           &quot;truly&quot;           &quot;trust&quot;          
-[418] &quot;turn &quot;           &quot;understand &quot;     &quot;understanding&quot;  
-[421] &quot;unity&quot;           &quot;up&quot;              &quot;vast &quot;          
-[424] &quot;vice &quot;           &quot;victory&quot;         &quot;view &quot;          
-[427] &quot;vote &quot;           &quot;washington &quot;     &quot;waste&quot;          
-[430] &quot;we&quot;              &quot;week &quot;           &quot;welcome&quot;        
-[433] &quot;western&quot;         &quot;whatever&quot;        &quot;whose&quot;          
-[436] &quot;why  &quot;           &quot;win  &quot;           &quot;word &quot;          
-[439] &quot;young&quot;          </code></pre>
-<p>The first factor separate the words above from others. But it is hard to summarize the feature of these words.</p>
-<p>The fifth factor separate the words below from others.</p>
-<pre class="r"><code>words[Factors[,5] &gt; 0.1]</code></pre>
-<pre><code> [1] &quot;address&quot;     &quot;chance &quot;     &quot;difference &quot; &quot;look &quot;       &quot;message&quot;    
- [6] &quot;place&quot;       &quot;set  &quot;       &quot;structure  &quot; &quot;truly&quot;       &quot;washington &quot;</code></pre>
+<p>We check the strongest words in each factor.</p>
+<p>The first factor separates the words about Iraq from those very general political words.</p>
+<pre class="r"><code># Factor 1
+words[order(Factors[,1], decreasing = TRUE)[1:50]]</code></pre>
+<pre><code> [1] &quot;Iraq&quot;        &quot;critical&quot;    &quot;away &quot;       &quot;tomorrow&quot;    &quot;depend &quot;    
+ [6] &quot;bad  &quot;       &quot;play &quot;       &quot;whatever&quot;    &quot;guarantee  &quot; &quot;simply &quot;    
+[11] &quot;longer &quot;     &quot;hear &quot;       &quot;partner&quot;     &quot;often&quot;       &quot;road &quot;      
+[16] &quot;era  &quot;       &quot;responsible&quot; &quot;plant&quot;       &quot;recession  &quot; &quot;easy &quot;      
+[21] &quot;least&quot;       &quot;avoid&quot;       &quot;deep &quot;       &quot;happen &quot;     &quot;view &quot;      
+[26] &quot;agree&quot;       &quot;vice &quot;       &quot;building&quot;    &quot;lay  &quot;       &quot;solve&quot;      
+[31] &quot;launch &quot;     &quot;reward &quot;     &quot;fundamental&quot; &quot;$1&quot;          &quot;contribute &quot;
+[36] &quot;rule &quot;       &quot;week &quot;       &quot;fulfill&quot;     &quot;election&quot;    &quot;0&quot;          
+[41] &quot;competitive&quot; &quot;tough&quot;       &quot;big  &quot;       &quot;street &quot;     &quot;burden &quot;    
+[46] &quot;moral&quot;       &quot;soon &quot;       &quot;speed&quot;       &quot;powerful&quot;    &quot;simple &quot;    </code></pre>
+<pre class="r"><code>words[order(Factors[,1])[1:50]]</code></pre>
+<pre><code> [1] &quot;have &quot;       &quot;be&quot;          &quot;to&quot;          &quot;need &quot;       &quot;make &quot;      
+ [6] &quot;as&quot;          &quot;can  &quot;       &quot;state&quot;       &quot;service&quot;     &quot;most &quot;      
+[11] &quot;government &quot; &quot;force&quot;       &quot;continue&quot;    &quot;world&quot;       &quot;nation &quot;    
+[16] &quot;year &quot;       &quot;other&quot;       &quot;will &quot;       &quot;increase&quot;    &quot;people &quot;    
+[21] &quot;congress&quot;    &quot;peace&quot;       &quot;provide&quot;     &quot;national&quot;    &quot;unite&quot;      
+[26] &quot;would&quot;       &quot;use  &quot;       &quot;system &quot;     &quot;private&quot;     &quot;program&quot;    
+[31] &quot;meet &quot;       &quot;must &quot;       &quot;now  &quot;       &quot;also &quot;       &quot;progress&quot;   
+[36] &quot;security&quot;    &quot;great&quot;       &quot;policy &quot;     &quot;high &quot;       &quot;legislation&quot;
+[41] &quot;action &quot;     &quot;good &quot;       &quot;not  &quot;       &quot;only &quot;       &quot;important  &quot;
+[46] &quot;economic&quot;    &quot;public &quot;     &quot;first&quot;       &quot;law  &quot;       &quot;past &quot;      </code></pre>
+<p>The second factor separates the words about people’s life, like ‘child’, ‘job’, ‘school’, ‘parent’, ‘Medicare’, from political words.</p>
+<pre class="r"><code># Factor 2
+words[order(Factors[,2], decreasing = TRUE)[1:50]]</code></pre>
+<pre><code> [1] &quot;thus &quot;         &quot;complete&quot;      &quot;affair &quot;       &quot;executive  &quot;  
+ [5] &quot;adequate&quot;      &quot;particularly &quot; &quot;importance &quot;   &quot;agricultural &quot;
+ [9] &quot;facility&quot;      &quot;understanding&quot; &quot;western&quot;       &quot;demonstrate&quot;  
+[13] &quot;situation  &quot;   &quot;activity&quot;      &quot;assure &quot;       &quot;capacity&quot;     
+[17] &quot;substantial&quot;   &quot;agriculture&quot;   &quot;available  &quot;   &quot;improvement&quot;  
+[21] &quot;objective  &quot;   &quot;republic&quot;      &quot;natural&quot;       &quot;period &quot;      
+[25] &quot;legislative&quot;   &quot;rapidly&quot;       &quot;provision  &quot;   &quot;cooperation&quot;  
+[29] &quot;maintain&quot;      &quot;design &quot;       &quot;requirement&quot;   &quot;general&quot;      
+[33] &quot;basis&quot;         &quot;assist &quot;       &quot;structure  &quot;   &quot;resource&quot;     
+[37] &quot;position&quot;      &quot;political  &quot;   &quot;relation&quot;      &quot;i&quot;            
+[41] &quot;clearly&quot;       &quot;vast &quot;         &quot;appropriate&quot;   &quot;farm &quot;        
+[45] &quot;contribution &quot; &quot;exist&quot;         &quot;being&quot;         &quot;addition&quot;     
+[49] &quot;industrial &quot;   &quot;organization &quot;</code></pre>
+<pre class="r"><code>words[order(Factors[,2])[1:50]]</code></pre>
+<pre><code> [1] &quot;safe &quot;    &quot;thank&quot;    &quot;child&quot;    &quot;join &quot;    &quot;pass &quot;    &quot;ask  &quot;   
+ [7] &quot;here &quot;    &quot;america&quot;  &quot;save &quot;    &quot;get  &quot;    &quot;family &quot;  &quot;sure &quot;   
+[13] &quot;young&quot;    &quot;fellow &quot;  &quot;American&quot; &quot;job  &quot;    &quot;who  &quot;    &quot;say  &quot;   
+[19] &quot;just &quot;    &quot;start&quot;    &quot;lead &quot;    &quot;know &quot;    &quot;n&quot;        &quot;tonight&quot; 
+[25] &quot;stop &quot;    &quot;when &quot;    &quot;leave&quot;    &quot;parent &quot;  &quot;back &quot;    &quot;together&quot;
+[31] &quot;America&quot;  &quot;money&quot;    &quot;so&quot;       &quot;honor&quot;    &quot;next &quot;    &quot;let  &quot;   
+[37] &quot;do&quot;       &quot;begin&quot;    &quot;school &quot;  &quot;reform &quot;  &quot;go&quot;       &quot;create &quot; 
+[43] &quot;cut  &quot;    &quot;worker &quot;  &quot;day  &quot;    &quot;keep &quot;    &quot;t&quot;        &quot;down &quot;   
+[49] &quot;help &quot;    &quot;bill &quot;   </code></pre>
+<p>The third factor separate the words about government and development of technology. These words are used in Carter’s address.</p>
+<pre class="r"><code># Factor 3
+words[order(Factors[,3], decreasing = TRUE)[1:50]]</code></pre>
+<pre><code> [1] &quot;win  &quot;       &quot;may  &quot;       &quot;method &quot;     &quot;destroy&quot;     &quot;man  &quot;      
+ [6] &quot;point&quot;       &quot;whole&quot;       &quot;war  &quot;       &quot;fact &quot;       &quot;find &quot;      
+[11] &quot;power&quot;       &quot;practice&quot;    &quot;follow &quot;     &quot;few  &quot;       &quot;victory&quot;    
+[16] &quot;army &quot;       &quot;great&quot;       &quot;far  &quot;       &quot;shall&quot;       &quot;modern &quot;    
+[21] &quot;history&quot;     &quot;labor&quot;       &quot;lie  &quot;       &quot;possible&quot;    &quot;case &quot;      
+[26] &quot;rest &quot;       &quot;not  &quot;       &quot;produce&quot;     &quot;certain&quot;     &quot;immediate  &quot;
+[31] &quot;learn&quot;       &quot;accept &quot;     &quot;fight&quot;       &quot;live &quot;       &quot;carry&quot;      
+[36] &quot;fear &quot;       &quot;adequate&quot;    &quot;beginning  &quot; &quot;would&quot;       &quot;ahead&quot;      
+[41] &quot;mean &quot;       &quot;total&quot;       &quot;condition  &quot; &quot;operation  &quot; &quot;fail &quot;      
+[46] &quot;back &quot;       &quot;believe&quot;     &quot;session&quot;     &quot;task &quot;       &quot;part &quot;      </code></pre>
+<pre class="r"><code>words[order(Factors[,3])[1:50]]</code></pre>
+<pre><code> [1] &quot;administration &quot; &quot;remain &quot;         &quot;stability  &quot;    
+ [4] &quot;develop&quot;         &quot;area &quot;           &quot;major&quot;          
+ [7] &quot;assistance &quot;     &quot;promote&quot;         &quot;nuclear&quot;        
+[10] &quot;significant&quot;     &quot;sector &quot;         &quot;relation&quot;       
+[13] &quot;strong &quot;         &quot;establish  &quot;     &quot;comprehensive&quot;  
+[16] &quot;demonstrate&quot;     &quot;conservation &quot;   &quot;sign &quot;          
+[19] &quot;negotiation&quot;     &quot;system &quot;         &quot;technology &quot;    
+[22] &quot;agreement  &quot;     &quot;development&quot;     &quot;political  &quot;    
+[25] &quot;strategic  &quot;     &quot;ensure &quot;         &quot;serious&quot;        
+[28] &quot;support&quot;         &quot;policy &quot;         &quot;agency &quot;        
+[31] &quot;important  &quot;     &quot;energy &quot;         &quot;soviet &quot;        
+[34] &quot;provide&quot;         &quot;region &quot;         &quot;continue&quot;       
+[37] &quot;oil  &quot;           &quot;foundation &quot;     &quot;importance &quot;    
+[40] &quot;improve&quot;         &quot;encourage  &quot;     &quot;commitment &quot;    
+[43] &quot;western&quot;         &quot;funding&quot;         &quot;access &quot;        
+[46] &quot;global &quot;         &quot;addition&quot;        &quot;rural&quot;          
+[49] &quot;stable &quot;         &quot;assist &quot;        </code></pre>
+<p>The fourth factor separate the words about Vietnam war.</p>
+<pre class="r"><code># Factor 4
+words[order(Factors[,4], decreasing = TRUE)[1:50]]</code></pre>
+<pre><code> [1] &quot;session&quot;         &quot;history&quot;         &quot;chance &quot;        
+ [4] &quot;Vietnam&quot;         &quot;poverty&quot;         &quot;senate &quot;        
+ [7] &quot;south&quot;           &quot;goal &quot;           &quot;entire &quot;        
+[10] &quot;achievement&quot;     &quot;open &quot;           &quot;land &quot;          
+[13] &quot;city &quot;           &quot;consumer&quot;        &quot;Asia &quot;          
+[16] &quot;skill&quot;           &quot;quality&quot;         &quot;answer &quot;        
+[19] &quot;water&quot;           &quot;deal &quot;           &quot;question&quot;       
+[22] &quot;partnership&quot;     &quot;in&quot;              &quot;congress&quot;       
+[25] &quot;then &quot;           &quot;enter&quot;           &quot;ahead&quot;          
+[28] &quot;treaty &quot;         &quot;try  &quot;           &quot;structure  &quot;    
+[31] &quot;reach&quot;           &quot;approve&quot;         &quot;believe&quot;        
+[34] &quot;resolve&quot;         &quot;i&quot;               &quot;measure&quot;        
+[37] &quot;last &quot;           &quot;move &quot;           &quot;test &quot;          
+[40] &quot;crime&quot;           &quot;possible&quot;        &quot;assist &quot;        
+[43] &quot;hospital&quot;        &quot;transportation &quot; &quot;pledge &quot;        
+[46] &quot;live &quot;           &quot;revenue&quot;         &quot;early&quot;          
+[49] &quot;truly&quot;           &quot;$1&quot;             </code></pre>
+<pre class="r"><code>words[order(Factors[,4])[1:50]]</code></pre>
+<pre><code> [1] &quot;general&quot;       &quot;operation  &quot;   &quot;practice&quot;      &quot;sound&quot;        
+ [5] &quot;immediate  &quot;   &quot;such &quot;         &quot;production &quot;   &quot;permanent  &quot;  
+ [9] &quot;situation  &quot;   &quot;number &quot;       &quot;industrial &quot;   &quot;fundamental&quot;  
+[13] &quot;day  &quot;         &quot;whole&quot;         &quot;future &quot;       &quot;effect &quot;      
+[17] &quot;ideal&quot;         &quot;investment &quot;   &quot;powerful&quot;      &quot;force&quot;        
+[21] &quot;encourage  &quot;   &quot;plant&quot;         &quot;agricultural &quot; &quot;include&quot;      
+[25] &quot;away &quot;         &quot;activity&quot;      &quot;group&quot;         &quot;exist&quot;        
+[29] &quot;army &quot;         &quot;plan &quot;         &quot;certain&quot;       &quot;long &quot;        
+[33] &quot;thing&quot;         &quot;condition  &quot;   &quot;rest &quot;         &quot;democratic &quot;  
+[37] &quot;produce&quot;       &quot;term &quot;         &quot;process&quot;       &quot;objective  &quot;  
+[41] &quot;fall &quot;         &quot;democracy  &quot;   &quot;put  &quot;         &quot;gain &quot;        
+[45] &quot;capital&quot;       &quot;service&quot;       &quot;pay  &quot;         &quot;armed&quot;        
+[49] &quot;economic&quot;      &quot;depend &quot;      </code></pre>
+<p>The fifth factor separates words about Vietnam war from words like ‘peacetime’, ‘reform’.</p>
+<pre class="r"><code># Factor 5
+words[order(Factors[,5], decreasing = TRUE)[1:50]]</code></pre>
+<pre><code> [1] &quot;look &quot;         &quot;place&quot;         &quot;truly&quot;         &quot;difference &quot;  
+ [5] &quot;set  &quot;         &quot;chance &quot;       &quot;message&quot;       &quot;address&quot;      
+ [9] &quot;washington &quot;   &quot;structure  &quot;   &quot;example&quot;       &quot;generation &quot;  
+[13] &quot;particular &quot;   &quot;point&quot;         &quot;meet &quot;         &quot;environment&quot;  
+[17] &quot;approach&quot;      &quot;peacetime  &quot;   &quot;beginning  &quot;   &quot;record &quot;      
+[21] &quot;historic&quot;      &quot;critical&quot;      &quot;goal &quot;         &quot;million&quot;      
+[25] &quot;decision&quot;      &quot;comprehensive&quot; &quot;america&quot;       &quot;open &quot;        
+[29] &quot;preserve&quot;      &quot;government &quot;   &quot;concern&quot;       &quot;America&quot;      
+[33] &quot;building&quot;      &quot;era  &quot;         &quot;great&quot;         &quot;priority&quot;     
+[37] &quot;balanced&quot;      &quot;what &quot;         &quot;back &quot;         &quot;proposal&quot;     
+[41] &quot;ahead&quot;         &quot;become &quot;       &quot;negotiation&quot;   &quot;same &quot;        
+[45] &quot;natural&quot;       &quot;fundamental&quot;   &quot;relationship &quot; &quot;sense&quot;        
+[49] &quot;reform &quot;       &quot;particularly &quot;</code></pre>
+<pre class="r"><code>words[order(Factors[,5])[1:50]]</code></pre>
+<pre><code> [1] &quot;south&quot;       &quot;north&quot;       &quot;poverty&quot;     &quot;test &quot;       &quot;month&quot;      
+ [6] &quot;$1&quot;          &quot;carry&quot;       &quot;hospital&quot;    &quot;hope &quot;       &quot;especially &quot;
+[11] &quot;early&quot;       &quot;danger &quot;     &quot;aggression &quot; &quot;public &quot;     &quot;seek &quot;      
+[16] &quot;rest &quot;       &quot;payment&quot;     &quot;food &quot;       &quot;approve&quot;     &quot;europe &quot;    
+[21] &quot;man  &quot;       &quot;try  &quot;       &quot;permit &quot;     &quot;Vietnam&quot;     &quot;prevent&quot;    
+[26] &quot;prepare&quot;     &quot;find &quot;       &quot;unity&quot;       &quot;already&quot;     &quot;certain&quot;    
+[31] &quot;entire &quot;     &quot;course &quot;     &quot;skill&quot;       &quot;close&quot;       &quot;home &quot;      
+[36] &quot;in&quot;          &quot;last &quot;       &quot;effort &quot;     &quot;think&quot;       &quot;pledge &quot;    
+[41] &quot;short&quot;       &quot;conflict&quot;    &quot;recommend  &quot; &quot;least&quot;       &quot;strengthen &quot;
+[46] &quot;extend &quot;     &quot;finally&quot;     &quot;Iraq&quot;        &quot;achievement&quot; &quot;bear &quot;      </code></pre>
+<p>Checking the loading matrix</p>
+<pre class="r"><code>loading = fmodel$EL[,1:5]
+row.names(loading) = names
+loading</code></pre>
+<pre><code>            [,1]        [,2]         [,3]         [,4]          [,5]
+Roos  -11.749949   7.3625658  17.85384337 -12.95451443   0.018641829
+Trum  -19.545564  10.6172584   5.84426524  -6.03364902  -0.025528893
+Eise  -17.804700  13.7714467  -4.18405718  -4.34058236   0.022367090
+Kenn   15.089515  13.3985343  -0.22487247  -0.03688365 -21.745118226
+John   -2.471928  -0.7544205   6.48496963  26.92988948 -38.428225506
+Nixo    9.068585   6.3107013   4.30658520  18.88490017  51.978743499
+Ford   18.748130  11.3162886  -5.12464770  -4.16083773   0.016974278
+Cart  -13.115567   7.1901043 -23.24710473   0.02551236   0.001341336
+Reag   -5.423707 -17.3142106  -0.07000135  -0.11704529   7.122486088
+Bush   18.904265  -6.6852742   0.07994342 -11.92173614  -0.004739630
+Clin   -8.207371 -22.7657349  -0.01911699   0.11123080   0.075746403
+Bushf  -4.507005 -18.7038114  -0.05075150  -0.12599003  -0.027001068
+Obam   20.995769  -3.6126797  -0.01329787  -5.48368076  -0.033863230</code></pre>
+<p>Kennedy, Johnson and Nixon used the words in Factor 5 a lot. This is reasonable since the Vietnam war was happened during their presidency term. When Nixon took office, people want peace because of the long times of the war. So he used words about ‘peace’ in his address a lot.</p>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
 <!-- Insert the session information into the document -->
