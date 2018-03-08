@@ -88,17 +88,54 @@ barplot(as.numeric(Factors_loading), main=paste0('Factor 1 pve= ', round(flash_g
 
 The distributions for the first four columns of the loading matrix are consistent with a normal distribution. So they are captured by the error term of the second flash run.
 
-It is hard to interpret each factor, none of them is sparse. For example, for factor 1 in the first flash run,
+We check the strongest words in each factor.
+
+The first factor separates the words about Iraq from those very general political words.
 ```{r}
-words[Factors[,1] > 0]
+# Factor 1
+words[order(Factors[,1], decreasing = TRUE)[1:50]]
+words[order(Factors[,1])[1:50]]
 ```
 
-The first factor separate the words above from others. But it is hard to summarize the feature of these words.
+The second factor separates the words about people's life, like 'child', 'job', 'school', 'parent', 'Medicare', from political words.
 
-The fifth factor separate the words below from others.
 ```{r}
-words[Factors[,5] > 0.1]
+# Factor 2
+words[order(Factors[,2], decreasing = TRUE)[1:50]]
+words[order(Factors[,2])[1:50]]
 ```
+
+The third factor separate the words about government and development of technology. These words are used in Carter's address.
+
+```{r}
+# Factor 3
+words[order(Factors[,3], decreasing = TRUE)[1:50]]
+words[order(Factors[,3])[1:50]]
+```
+
+The fourth factor separate the words about Vietnam war.
+```{r}
+# Factor 4
+words[order(Factors[,4], decreasing = TRUE)[1:50]]
+words[order(Factors[,4])[1:50]]
+```
+
+The fifth factor separates words about Vietnam war from words like 'peacetime', 'reform'.  
+
+```{r}
+# Factor 5
+words[order(Factors[,5], decreasing = TRUE)[1:50]]
+words[order(Factors[,5])[1:50]]
+```
+
+Checking the loading matrix
+```{r}
+loading = fmodel$EL[,1:5]
+row.names(loading) = names
+loading
+```
+
+Kennedy, Johnson and Nixon used the words in Factor 5 a lot. This is reasonable since the Vietnam war was happened during their presidency term. When Nixon took office, people want peace because of the long times of the war. So he used words about 'peace' in his address a lot.
 
 
 # Session information
