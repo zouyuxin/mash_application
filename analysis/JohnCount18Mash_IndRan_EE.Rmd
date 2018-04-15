@@ -1,0 +1,233 @@
+---
+title: "John Count 18 Mash - IndRan - EE"
+author: "Yuxin Zou"
+date: 2018-4-14
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+```{r packages}
+library(limma); library(mashr); library(mclust); library(plyr);
+library(flashr); library(colorRamps); library(corrplot)
+```
+
+```{r data}
+data = readRDS('../output/John18_IndRan_limma.rds')
+beta_class = data$beta
+sebeta_class = data$sebeta
+```
+
+Implement `mash` on John's data at time point 18.
+
+# Mash
+
+Set mash data object
+```{r mash.data}
+mash.data = mash_set_data(Bhat = beta_class, Shat = sebeta_class, df = data$df[1])
+L = diag(ncol(beta_class))
+# the first col is none
+L[,1] = -1
+L = L[2:9,]
+mash.data.diff = mash_set_data_contrast(mash.data, L)
+```
+
+Top genes:
+```{r top genes}
+# find strong genes
+m.1by1 = mash_1by1(mash.data.diff, alpha=0)
+strong = get_significant_results(m.1by1)
+# no strong genes
+# use t greater than 2
+Z = mash.data.diff$Bhat/mash.data.diff$Shat
+Z.strong = Z[apply(abs(Z), 1, max) > 2,]
+strong = which(apply(abs(Z), 1, max) > 2)
+# center
+Z.center = apply(Z.strong, 2, function(x) x - mean(x))
+```
+
+## Estimate covariance structures:
+
+Data Driven:
+
+Flash:
+```{r flash}
+flash.data = flash_set_data(Z.center)
+fmodel = flash(flash.data, greedy = TRUE, backfit = TRUE)
+flash_get_pve(fmodel)
+```
+```{r flash plot}
+factors = flash_get_ldf(fmodel)$f
+row.names(factors) = colnames(beta_class)[2:9]
+pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)
+
+par(mfrow=c(2,2))
+for(i in pve.order){
+  barplot(factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.7)
+}
+par(mfrow=c(1,1))
+```
+Factor 2 is the effect of Yers and Salm.
+
+`flash` on the loading:
+```{r flashLoading}
+loading = fmodel$EL[,1:4]
+colnames(loading) = paste0('F',seq(1,4))
+flash.loading = flash_set_data(loading)
+flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)
+```
+
+The flash prefers the rank 0 model. There is no hidden structure in the loading matrix.
+
+Cluster loadings:
+```{r cluster loading}
+mod = Mclust(loading)
+summary(mod$BIC)
+```
+
+Using clustering result to fit `mash`:
+
+$$l_{i}\sim \sum_{j=1}^{m}N(\mu_{j}, \Sigma_{j})$$
+We estimate the covariance as $F(\Sigma_j + \mu_{j}\mu_{j}')F'$.
+```{r cov from flash}
+U_list = alply(mod$parameters$variance$sigma,3)
+mu_list = alply(mod$parameters$mean,2)
+ll = list()
+for (i in 1:length(U_list)){
+  ll[[i]] = U_list[[i]] + mu_list[[i]] %*% t(mu_list[[i]])
+}
+
+Factors = fmodel$EF[,1:4]
+U.loading = lapply(ll, function(U){Factors %*% (U %*% t(Factors))})
+names(U.loading) = paste0('Load', "_", (1:length(U.loading)))
+
+# rank 1
+Flash_res = flash_get_lf(fmodel)
+U.Flash = c(mashr::cov_from_factors(t(as.matrix(factors)), "Flash"), 
+            list("tFlash" = t(Flash_res) %*% Flash_res / nrow(Z.center)))
+```
+
+PCA:
+```{r pca}
+U.pca = cov_pca(mash_set_data(Z.center), 4)
+```
+
+Canonical
+```{r Canonical}
+U.c = cov_canonical(mash_set_data(Z.center))
+```
+
+Extreme Deconvolution
+```{r ED, eval=FALSE}
+U.dd = c(U.pca, U.loading, U.Flash, list('XX' = t(Z.center) %*% Z.center / nrow(Z.center)))
+
+mash.data.ed = mash.data.diff
+mash.data.ed$Bhat = mash.data.diff$Bhat[strong,]
+mash.data.ed$Shat = mash.data.diff$Shat[strong,]
+mash.data.ed$Shat_alpha = mash.data.diff$Shat_alpha[strong,]
+saveRDS(cov_ed(mash.data.ed, U.dd), '../output/JohnCount18_IndRan_mash_EE_Cov.rds')
+```
+
+## Mash model:
+```{r, echo=FALSE}
+U.ed = readRDS('../output/JohnCount18_IndRan_mash_EE_Cov.rds')
+```
+
+```{r mash, eval=FALSE}
+saveRDS(mash(mash.data.diff, c(U.c, U.ed), algorithm.version = 'R'), '../output/JohnCount18_IndRan_mash_model_EE.rds') 
+```
+
+# Result
+```{r}
+mash.model = readRDS('../output/JohnCount18_IndRan_mash_model_EE.rds')
+```
+
+The log-likelihood of fit is
+```{r} 
+get_loglik(mash.model)
+```
+Here is a plot of weights learned:
+```{r}
+options(repr.plot.width=12, repr.plot.height=4)
+barplot(get_estimated_pi(mash.model), las = 2, cex.names = 0.7)
+```
+<!--
+Check PCA_1 matrix
+
+```{r PCA1}
+x           <- cov2cor(mash.model$fitted_g$Ulist[["ED_PCA_1"]])
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- colnames(beta_class)[2:9]
+rownames(x) <- colnames(x)
+# corrplot.mixed(x, tl.pos="d",upper='color',cl.lim=c(0.2,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF","#E0F3F8","#91BFDB","#4575B4")))(40), tl.cex=1.2)
+```
+
+```{r PCA1 pca}
+layout(matrix(c(1,2,3,4), 2, 2, byrow=TRUE))
+svd.out = svd(mash.model$fitted_g$Ulist[["ED_PCA_1"]])
+v = svd.out$v
+colnames(v) = colnames(beta_class)[-1]
+rownames(v) = colnames(v)
+options(repr.plot.width=10, repr.plot.height=5)
+for (j in 1:4)
+  barplot(v[,j]/v[,j][which.max(abs(v[,j]))], cex.names = 0.7,
+          las = 2, main = paste0("EigenVector ", j, " for PCA 1"))
+```
+
+The first eigenvector is the overall effects.
+
+There are `r length(get_significant_results(mash.model))` diferentially expressed genes.
+
+Check pairwise sharing by magnitude and sign:
+```{r}
+x = get_pairwise_sharing(mash.model)
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- colnames(beta_class)[-1]
+rownames(x) <- colnames(x)
+corrplot.mixed(x, tl.pos="d",upper='color', cl.lim=c(-0.05,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               tl.cex=1.2)
+```
+
+Ignoring the sign
+```{r}
+x = get_pairwise_sharing(mash.model, FUN = abs)
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- colnames(beta_class)[-1]
+rownames(x) <- colnames(x)
+corrplot.mixed(x, tl.pos="d",upper='color', cl.lim=c(0,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               tl.cex=1.2)
+```
+-->
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
