@@ -28,3 +28,11 @@ output:
 * The Flash hierarchical model on Breast Cancer data: [Flash_Breast](Flash_Breast.html)
 * The Flash hierarchical model on Presidential Address data: [Flash_PresiAdd](Flash_PresiAdd.html)
 * The Flash hierarchical model on Movie Lens data: [Flash_Movie](Flash_Movie.html)
+
+* Mean:
+    
+    [MeanSignal](MeanSignal_Orig.html)
+    
+    [MeanSignal Recover 10](MeanSignalRec10.html)
+    
+    [MeanSignal Recover 1](MeanSignalRec1.html)
