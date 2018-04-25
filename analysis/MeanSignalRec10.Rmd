@@ -1,0 +1,256 @@
+---
+title: "Comparing with mean (with signal)"
+author: "Yuxin Zou"
+date: 2018-04-24
+output: 
+  html_document:
+    code_folding: hide
+---
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the R version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r R-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+```{r functions}
+library(mashr)
+library(corrplot)
+source('../code/MashSource.R')
+source('../code/sim_mean_sig.R')
+```
+
+The data contains 10 conditions with 10% non-null samples. For the non-null samples, it has equal effects in the first c conditions. 
+
+Let L be the contrast matrix that subtract mean from each sample.
+
+$$\hat{\delta}_{j}|\delta_{j} \sim N(\delta_{j}, \frac{1}{2}LL')$$
+90% of the true deviations are 0. 10% of the deviation $\delta_{j}$ has correlation that the first c conditions are negatively correlated with the rest conditions.
+
+# Mash contrast model
+
+We set $c = 2$.
+```{r}
+set.seed(1)
+R = 10
+C = 2
+data = sim.mean.sig(nsamp=10000, ncond=C)
+```
+
+```{r}
+L = matrix(-1/R, R, R)
+L[cbind(1:R,1:R)] = (R-1)/R
+L = L[1:(R-1),]
+row.names(L) = seq(1,R-1)
+mash_data = mash_set_data(Bhat=data$Chat, Shat=data$Shat)
+mash_data_L = mash_set_data_contrast(mash_data, L)
+```
+
+```{r}
+U.c = cov_canonical(mash_data_L)
+
+# data driven
+# select max
+m.1by1 = mash_1by1(mash_data_L, alpha=1)
+strong = get_significant_results(m.1by1,0.05)
+# center Z
+mash_data_L.center = mash_data_L
+mash_data_L.center$Bhat = mash_data_L$Bhat/mash_data_L$Shat # obtain z
+mash_data_L.center$Shat = matrix(1, nrow(mash_data_L$Bhat),ncol(mash_data_L$Bhat))
+mash_data_L.center$Bhat = apply(mash_data_L.center$Bhat, 2, function(x) x - mean(x))
+U.pca = cov_pca(mash_data_L.center,2,strong)
+U.ed = cov_ed(mash_data_L.center, U.pca, strong)
+
+mashcontrast.model = mash(mash_data_L, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
+```
+Using `mashcommonbaseline`, there are `r length(get_significant_results(mashcontrast.model))` discoveries. The covariance structure found here is:
+```{r, echo=FALSE}
+barplot(get_estimated_pi(mashcontrast.model),las = 2, cex.names = 0.7)
+```
+The correlation for PCA1 is:
+```{r, echo=FALSE, fig.width=3, fig.height=3,fig.align='center'}
+x           <- cov2cor(mashcontrast.model$fitted_g$Ulist[["ED_PCA_1"]])
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- colnames(get_lfsr(mashcontrast.model))
+rownames(x) <- colnames(x)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='PCA1',mar=c(0,0,1.5,0))
+```
+
+The correlation identified here is correct.
+
+## Recover
+
+```{r}
+mashcontrast.model.full = mashcontrast.model
+mashcontrast.model.full$result = mash_compute_posterior_matrices(g = mashcontrast.model, data = mash_data_L, algorithm.version = 'R', recover=TRUE)
+```
+There are `r length(get_significant_results(mashcontrast.model.full))` discoveries.
+
+```{r}
+U = mashcontrast.model$fitted_g$Ulist[["ED_PCA_1"]]
+U_rec = cbind(U, -rowSums(U))
+U_rec = rbind(U_rec, c(-rowSums(U), sum(U)))
+x           <- cov2cor(U_rec)
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- c(colnames(get_lfsr(mashcontrast.model)), 'Discard')
+rownames(x) <- colnames(x)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='PCA1',mar=c(0,0,1.5,0))
+```
+
+# Subtract mean directly
+
+If we subtract the mean from the data directly
+$$Var(\hat{c}_{j,r}-\bar{\hat{c}_{j}}) = \frac{1}{2} - \frac{1}{2R}$$
+```{r}
+Indep.data = mash_set_data(Bhat = mash_data_L$Bhat,
+                           Shat = matrix(sqrt(0.5-1/(2*R)), nrow(data$Chat), R-1))
+
+Indep.model = mash(Indep.data, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
+```
+There are `r length(get_significant_results(Indep.model))` discoveries, which is **more** than the `mashcommonbaseline` model. The covariance structure found here is:
+```{r, echo=FALSE}
+barplot(get_estimated_pi(Indep.model),las = 2, cex.names = 0.7)
+```
+The weights for covariances are very different.
+
+The correlation for PCA2 and tPCA is:
+```{r, echo=FALSE, fig.width=8, fig.height=3,fig.align='center'}
+par(mfrow=c(1,2))
+x           <- cov2cor(Indep.model$fitted_g$Ulist[["ED_PCA_2"]])
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- seq(1,9)
+rownames(x) <- seq(1,9)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='PCA2',mar=c(0,0,1.5,0))
+
+x           <- cov2cor(Indep.model$fitted_g$Ulist[["ED_tPCA"]])
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- seq(1,9)
+rownames(x) <- seq(1,9)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='tPCA',mar=c(0,0,1.5,0))
+par(mfrow=c(1,1))
+```
+
+## Recover
+
+```{r}
+Indep.model.full = Indep.model
+Indep.model.full$result = mash_compute_posterior_matrices(g = Indep.model, data = Indep.data, algorithm.version = 'R', recover=TRUE)
+```
+There are `r length(get_significant_results(Indep.model.full))` discoveries.
+
+```{r, echo=FALSE, fig.width=8, fig.height=3,fig.align='center'}
+par(mfrow=c(1,2))
+U1 = Indep.model$fitted_g$Ulist[["ED_PCA_2"]]
+U1_rec = cbind(U1, -rowSums(U1))
+U1_rec = rbind(U1_rec, c(-rowSums(U1), sum(U1)))
+
+x           <- cov2cor(U1_rec)
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- c(1:9, 'Discard')
+rownames(x) <- colnames(x)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='PCA2',mar=c(0,0,1.5,0))
+
+U2 = Indep.model$fitted_g$Ulist[["ED_tPCA"]]
+U2_rec = cbind(U2, -rowSums(U2))
+U2_rec = rbind(U2_rec, c(-rowSums(U2), sum(U2)))
+
+x           <- cov2cor(U2_rec)
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- c(1:9, 'Discard')
+rownames(x) <- colnames(x)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='tPCA',mar=c(0,0,1.5,0))
+par(mfrow=c(1,1))
+```
+
+# Compare two models
+
+The RRMSE plot:
+
+```{r, echo=FALSE}
+L = matrix(-1/R, R, R)
+L[cbind(1:R,1:R)] = (R-1)/R
+row.names(L) = paste0('condition_',1:10)
+C = data$C %*% t(L)
+Chat = data$Chat %*% t(L)
+barplot(c(sqrt(mean((C - mashcontrast.model.full$result$PosteriorMean)^2)/mean((C - Chat)^2)), sqrt(mean((C - Indep.model.full$result$PosteriorMean)^2)/mean((C - Chat)^2))), ylim=c(0, 0.2), names.arg = c('mashcommonbaseline.full', 'mash.indep.full'), ylab='RRMSE')
+```
+
+
+We check the False Positive Rate and True Positive Rate. 
+$$FPR = \frac{|N\cap S|}{|N|} \quad TPR = \frac{|CS\cap S|}{|T|} $$
+
+```{r, echo=FALSE}
+CS_S = function(model, thresh=0.05, data){
+  sig.index = model$result$lfsr <= thresh
+  sum(sig.index * model$result$PosteriorMean * data > 0)
+}
+
+N_S = function(model, thresh=0.05, data){
+  N.index = data == 0
+  sig.index = model$result$lfsr <= thresh
+  sum(sig.index * N.index)
+}
+
+C = data$C - rowMeans(data$C)
+N = sum(C == 0)
+Tr = nrow(C) * ncol(C) - N
+
+thresh.seq = seq(0, 1, by=0.0005)[-1]
+mashcontrast = matrix(0,length(thresh.seq), 2)
+Indep = matrix(0,length(thresh.seq), 2)
+colnames(mashcontrast) = c('TPR', 'FPR')
+colnames(Indep) = c('TPR', 'FPR')
+for(t in 1:length(thresh.seq)){
+  mashcontrast[t,] = c(CS_S(mashcontrast.model.full, thresh.seq[t], C)/Tr, N_S(mashcontrast.model.full, thresh.seq[t], C)/N)
+  Indep[t,] = c(CS_S(Indep.model.full, thresh.seq[t], C)/Tr,  N_S(Indep.model.full, thresh.seq[t], C)/N)
+}
+
+```
+
+```{r, echo=FALSE}
+{plot(mashcontrast[,'FPR'], mashcontrast[,'TPR'], col='red',type='l',xlab = 'FPR', ylab='TPR', main='True Positive vs False Positive')
+lines(Indep[,'FPR'], Indep[,'TPR'])
+legend('bottomright', c('mashcommon', 'mash.indep'),col=c('red','black'),lty=c(1,1))}
+```
+
+These methods are similar in terms of the number of false positives versus true positive. The `mashcommonbaseline` model is slightly better than `mash.indep` model.
+
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
