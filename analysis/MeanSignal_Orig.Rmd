@@ -308,8 +308,6 @@ legend('bottomright', c('mashcommon', 'mashIndep'),col=c('red','black'),lty=c(1,
 
 Using this contrast L, the results from `mashcommonbaseline` is much better than `mashIndep`.
 
-**The choice of L could influence the result.**
-
 # Session information
 
 <!-- Insert the session information into the document -->
