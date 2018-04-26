@@ -274,8 +274,8 @@ N_S = function(model, thresh=0.05, data){
   sum(sig.index * N.index)
 }
 
-delta.1[abs(delta.1) <= 1e-14] = 0
-delta.50[abs(delta.50) <= 1e-14] = 0
+delta.1[abs(delta.1) <= 1e-10] = 0
+delta.50[abs(delta.50) <= 1e-10] = 0
 N = sum(delta.1 == 0)
 Tr = nrow(delta.1) * ncol(delta.1) - N
 
