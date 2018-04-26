@@ -96,8 +96,6 @@ corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c(
                title='PCA1',mar=c(0,0,1.5,0))
 ```
 
-The correlation identified here is correct.
-
 Recover the last column
 ```{r}
 mashcontrast.model.10.full = mashcontrast.model.10
@@ -116,11 +114,10 @@ Indep.data.10 = mash_set_data(Bhat = mash_data_L.10$Bhat,
 
 Indep.model.10 = mash(Indep.data.10, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
 ```
-There are `r length(get_significant_results(Indep.model.10))` discoveries, which is **more** than the `mashcommonbaseline` model. The covariance structure found here is:
+There are `r length(get_significant_results(Indep.model.10))` discoveries. The covariance structure found here is:
 ```{r}
 barplot(get_estimated_pi(Indep.model.10),las = 2, cex.names = 0.7)
 ```
-The weights for covariances are very different.
 
 The correlation for PCA2 and tPCA is:
 ```{r, echo=FALSE, fig.width=8, fig.height=3,fig.align='center'}
@@ -218,7 +215,7 @@ Indep.data.1 = mash_set_data(Bhat = mash_data_L.1$Bhat,
 
 Indep.model.1 = mash(Indep.data.1, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
 ```
-For `mashIndep` model, there are `r length(get_significant_results(Indep.model.1))` discoveries, which is **less** than the `mashcommonbaseline` model. The covariance structure found here is:
+For `mashIndep` model, there are `r length(get_significant_results(Indep.model.1))` discoveries. The covariance structure found here is:
 ```{r}
 barplot(get_estimated_pi(Indep.model.1),las = 2, cex.names = 0.7)
 ```
