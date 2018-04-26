@@ -377,7 +377,6 @@ mashcontrast.model.10 = mash(mash_data_L.10, c(U.c, U.ed), algorithm.version = &
 <p>Using <code>mashcommonbaseline</code>, there are 288 discoveries. The covariance structure found here is:</p>
 <pre class="r"><code>barplot(get_estimated_pi(mashcontrast.model.10),las = 2, cex.names = 0.7)</code></pre>
 <p><img src="figure/MeanSignalRec.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /> The correlation for PCA1 is: <img src="figure/MeanSignalRec.Rmd/unnamed-chunk-6-1.png" width="288" style="display: block; margin: auto;" /></p>
-<p>The correlation identified here is correct.</p>
 <p>Recover the last column</p>
 <pre class="r"><code>mashcontrast.model.10.full = mashcontrast.model.10
 mashcontrast.model.10.full$result = mash_compute_posterior_matrices(g = mashcontrast.model.10, data = mash_data_L.10, algorithm.version = &#39;R&#39;, recover=TRUE)</code></pre>
@@ -390,9 +389,9 @@ mashcontrast.model.10.full$result = mash_compute_posterior_matrices(g = mashcont
                            Shat = matrix(sqrt(0.5-1/(2*R)), nrow(data$Chat), R-1))
 
 Indep.model.10 = mash(Indep.data.10, c(U.c, U.ed), algorithm.version = &#39;R&#39;, verbose = FALSE)</code></pre>
-<p>There are 336 discoveries, which is <strong>more</strong> than the <code>mashcommonbaseline</code> model. The covariance structure found here is:</p>
+<p>There are 336 discoveries. The covariance structure found here is:</p>
 <pre class="r"><code>barplot(get_estimated_pi(Indep.model.10),las = 2, cex.names = 0.7)</code></pre>
-<p><img src="figure/MeanSignalRec.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /> The weights for covariances are very different.</p>
+<p><img src="figure/MeanSignalRec.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The correlation for PCA2 and tPCA is: <img src="figure/MeanSignalRec.Rmd/unnamed-chunk-10-1.png" width="768" style="display: block; margin: auto;" /></p>
 <p>Recover the last column</p>
 <pre class="r"><code>Indep.model.10.full = Indep.model.10
@@ -439,7 +438,7 @@ mashcontrast.model.1.full$result = mash_compute_posterior_matrices(g = mashcontr
                            Shat = matrix(sqrt(0.5-1/(R*2)), nrow(data$Chat), R-1))
 
 Indep.model.1 = mash(Indep.data.1, c(U.c, U.ed), algorithm.version = &#39;R&#39;, verbose = FALSE)</code></pre>
-<p>For <code>mashIndep</code> model, there are 217 discoveries, which is <strong>less</strong> than the <code>mashcommonbaseline</code> model. The covariance structure found here is:</p>
+<p>For <code>mashIndep</code> model, there are 217 discoveries. The covariance structure found here is:</p>
 <pre class="r"><code>barplot(get_estimated_pi(Indep.model.1),las = 2, cex.names = 0.7)</code></pre>
 <p><img src="figure/MeanSignalRec.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The correlation for PCA2 and tPCA is: <img src="figure/MeanSignalRec.Rmd/unnamed-chunk-19-1.png" width="768" style="display: block; margin: auto;" /></p>
