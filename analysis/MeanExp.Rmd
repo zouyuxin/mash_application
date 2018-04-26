@@ -1,0 +1,289 @@
+---
+title: "Comparing with mean (with signal) Recover - Whole"
+author: "Yuxin Zou"
+date: 2018-4-25
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the R version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r R-version, echo=FALSE, results='asis'}
+```
+
+```{r, echo=FALSE}
+# TEMPORARY.
+knitr::opts_chunk$set(eval = TRUE)
+```
+
+```{r, echo=FALSE}
+library(mashr)
+library(corrplot)
+source('../code/MashSource.R')
+source('../code/sim_mean_sig.R')
+```
+
+```{r data}
+set.seed(1)
+R = 10
+C = 2
+data = sim.mean.sig(nsamp=10000, ncond=C)
+```
+
+```{r mash.data}
+L.full = matrix(-1/R, R, R)
+L.full[cbind(1:R,1:R)] = (R-1)/R
+row.names(L.full) = seq(1,R)
+mash_data = mash_set_data(Bhat=data$Chat, Shat=data$Shat)
+mash_data_L_full = mash_set_data_contrast(mash_data, L.full)
+```
+
+```{r cov full}
+# data driven
+# select max
+m.1by1 = mash_1by1(mash_data_L_full)
+strong = get_significant_results(m.1by1,0.05)
+# center Z
+mash_data_L_full.center = mash_data_L_full
+mash_data_L_full.center$Bhat = mash_data_L_full$Bhat/mash_data_L_full$Shat # obtain z
+mash_data_L_full.center$Shat = matrix(1, nrow(mash_data_L_full$Bhat),ncol(mash_data_L_full$Bhat))
+mash_data_L_full.center$Bhat = apply(mash_data_L_full.center$Bhat, 2, function(x) x - mean(x))
+U.pca.full = cov_pca(mash_data_L_full.center,2, strong)
+```
+
+# Discard Last Column
+
+## Mash Contrast
+
+```{r Discard Last col}
+L.10 = L.full[1:(R-1),]
+mash_data_L.10 = mash_set_data_contrast(mash_data, L.10)
+mash_data_L.10.center = mash_data_L_full.center
+mash_data_L.10.center$Bhat = mash_data_L_full.center$Bhat[,1:9]
+mash_data_L.10.center$Shat = mash_data_L_full.center$Shat[,1:9]
+# Discard Last col
+U.pca.10 = lapply(U.pca.full, function(x) x[1:9,1:9])
+U.ed.10 = cov_ed(mash_data_L.10.center, U.pca.10, strong)
+
+# Canonical
+U.c.10 = cov_canonical(mash_data_L.10)
+```
+
+```{r mash.model.10}
+mashcontrast.model.10 = mash(mash_data_L.10, c(U.c.10, U.ed.10), algorithm.version = 'R', verbose = FALSE)
+```
+
+```{r}
+barplot(get_estimated_pi(mashcontrast.model.10),las = 2, cex.names = 0.7)
+```
+
+View PCA 1
+```{r, echo=FALSE, fig.width=3, fig.height=3,fig.align='center'}
+x           <- cov2cor(mashcontrast.model.10$fitted_g$Ulist[["ED_PCA_1"]])
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- colnames(get_lfsr(mashcontrast.model.10))
+rownames(x) <- colnames(x)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='PCA1',mar=c(0,0,1.5,0))
+```
+
+Recover col 10
+```{r recover10}
+mashcontrast.model.10.full = mashcontrast.model.10
+mashcontrast.model.10.full$result = mash_compute_posterior_matrices(g = mashcontrast.model.10, data = mash_data_L.10, algorithm.version = 'R', recover=TRUE)
+```
+
+There are `r length(get_significant_results(mashcontrast.model.10.full))` discoveries.
+
+## Subtract mean directly
+
+If we subtract the mean from the data directly
+$$Var(\hat{c}_{j,r}-\bar{\hat{c}_{j}}) = \frac{1}{2} - \frac{1}{2R}$$
+```{r}
+Indep.data.10 = mash_set_data(Bhat = mash_data_L.10$Bhat,
+                           Shat = matrix(sqrt(0.5-1/(2*R)), nrow(data$Chat), R-1))
+
+Indep.model.10 = mash(Indep.data.10, c(U.c.10, U.ed.10), algorithm.version = 'R', verbose = FALSE)
+```
+There are `r length(get_significant_results(Indep.model.10))` discoveries, which is **more** than the `mashcommonbaseline` model. The covariance structure found here is:
+```{r}
+barplot(get_estimated_pi(Indep.model.10),las = 2, cex.names = 0.7)
+```
+The weights for covariances are very different.
+
+The correlation for PCA2 and tPCA is:
+```{r, echo=FALSE, fig.width=8, fig.height=3,fig.align='center'}
+par(mfrow=c(1,2))
+x           <- cov2cor(Indep.model.10$fitted_g$Ulist[["ED_PCA_2"]])
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- seq(1,9)
+rownames(x) <- seq(1,9)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='PCA2',mar=c(0,0,1.5,0))
+
+x           <- cov2cor(Indep.model.10$fitted_g$Ulist[["ED_tPCA"]])
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- seq(1,9)
+rownames(x) <- seq(1,9)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='tPCA',mar=c(0,0,1.5,0))
+par(mfrow=c(1,1))
+```
+
+Recover the last column
+```{r}
+Indep.model.10.full = Indep.model.10
+Indep.model.10.full$result = mash_compute_posterior_matrices(g = Indep.model.10, data = Indep.data.10, algorithm.version = 'R', recover=TRUE)
+```
+
+There are `r length(get_significant_results(Indep.model.10.full))` discoveries.
+
+# Discard First Column
+
+## Mash Contrast
+
+```{r Discard first col}
+L.1 = L.full[2:R,]
+mash_data_L.1 = mash_set_data_contrast(mash_data, L.1)
+mash_data_L.1.center = mash_data_L_full.center
+mash_data_L.1.center$Bhat = mash_data_L_full.center$Bhat[,2:10]
+mash_data_L.1.center$Shat = mash_data_L_full.center$Shat[,2:10]
+# Discard Last col
+U.pca.1 = lapply(U.pca.full, function(x) x[2:10, 2:10])
+U.ed.1 = cov_ed(mash_data_L.1.center, U.pca.1, strong)
+
+# Canonical
+U.c.1 = cov_canonical(mash_data_L.1)
+```
+
+```{r mash.model.1}
+mashcontrast.model.1 = mash(mash_data_L.1, c(U.c.1, U.ed.1), algorithm.version = 'R', verbose = FALSE)
+```
+
+```{r}
+barplot(get_estimated_pi(mashcontrast.model.1),las = 2, cex.names = 0.7)
+```
+
+View tPCA
+```{r, echo=FALSE, fig.width=3, fig.height=3,fig.align='center'}
+x           <- cov2cor(mashcontrast.model.1$fitted_g$Ulist[["ED_tPCA"]])
+x[x > 1]    <- 1
+x[x < -1]   <- -1
+colnames(x) <- colnames(get_lfsr(mashcontrast.model.1))
+rownames(x) <- colnames(x)
+corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
+                               "#E0F3F8","#91BFDB","#4575B4")))(40),
+               title='tPCA',mar=c(0,0,1.5,0))
+```
+
+Recover the first column
+```{r recover1}
+mashcontrast.model.1.full = mashcontrast.model.1
+mashcontrast.model.1.full$result = mash_compute_posterior_matrices(g = mashcontrast.model.1, data = mash_data_L.1, algorithm.version = 'R', recover=TRUE)
+```
+
+There are `r length(get_significant_results(mashcontrast.model.1.full))` discoveries.
+
+## Subtract mean directly
+
+```{r}
+Indep.data.1 = mash_set_data(Bhat = mash_data_L.1$Bhat,
+                           Shat = matrix(sqrt(0.5-1/(R*2)), nrow(data$Chat), R-1))
+
+Indep.model.1 = mash(Indep.data.1, c(U.c.1, U.ed.1), algorithm.version = 'R', verbose = FALSE)
+```
+For `mashIndep` model, there are `r length(get_significant_results(Indep.model.1))` discoveries, which is **less** than the `mashcommonbaseline` model. The covariance structure found here is:
+```{r}
+barplot(get_estimated_pi(Indep.model.1),las = 2, cex.names = 0.7)
+```
+
+Recover the first column
+```{r}
+Indep.model.1.full = Indep.model.1
+Indep.model.1.full$result = mash_compute_posterior_matrices(g = Indep.model.1, data = Indep.data.1, algorithm.version = 'R', recover=TRUE)
+```
+
+There are `r length(get_significant_results(Indep.model.1.full))` discoveries.
+
+# Compare models
+
+The RRMSE plot:
+```{r}
+delta.10 = data$C %*% t(L.full)
+deltahat.10 = data$Chat %*% t(L.full)
+
+delta.1 = delta.10[, c(2:10, 1)]
+deltahat.1 = deltahat.10[, c(2:10, 1)]
+
+barplot(c(sqrt(mean((delta.10 - mashcontrast.model.10.full$result$PosteriorMean)^2)/mean((delta.10 - deltahat.10)^2)), sqrt(mean((delta.1 - mashcontrast.model.1.full$result$PosteriorMean)^2)/mean((delta.1 - deltahat.1)^2)), sqrt(mean((delta.10 - Indep.model.10.full$result$PosteriorMean)^2)/mean((delta.10 - deltahat.10)^2)), sqrt(mean((delta.1 - Indep.model.1.full$result$PosteriorMean)^2)/mean((delta.1 - deltahat.1)^2))), ylim=c(0,0.2), names.arg = c('mashcommon.10','mashcommon.1','mash.indep.10', 'mash.indep.1'), ylab='RRMSE')
+```
+
+We check the False Positive Rate and True Positive Rate. 
+$$FPR = \frac{|N\cap S|}{|N|} \quad TPR = \frac{|CS\cap S|}{|T|} $$
+
+```{r}
+CS_S = function(model, thresh=0.05, data){
+  sig.index = model$result$lfsr <= thresh
+  sum(sig.index * model$result$PosteriorMean * data > 0)
+}
+
+N_S = function(model, thresh=0.05, data){
+  N.index = data == 0
+  sig.index = model$result$lfsr <= thresh
+  sum(sig.index * N.index)
+}
+
+delta.1[abs(delta.1) <= 1e-14] = 0
+delta.10[abs(delta.10) <= 1e-14] = 0
+N = sum(delta.1 == 0)
+Tr = nrow(delta.1) * ncol(delta.1) - N
+
+thresh.seq = seq(0, 1, by=0.0005)[-1]
+mashcontrast.1 = matrix(0,length(thresh.seq), 2)
+Indep.1 = matrix(0,length(thresh.seq), 2)
+mashcontrast.10 = matrix(0,length(thresh.seq), 2)
+Indep.10 = matrix(0,length(thresh.seq), 2)
+colnames(mashcontrast.1) = c('TPR', 'FPR')
+colnames(Indep.1) = c('TPR', 'FPR')
+colnames(mashcontrast.10) = c('TPR', 'FPR')
+colnames(Indep.10) = c('TPR', 'FPR')
+for(t in 1:length(thresh.seq)){
+  mashcontrast.1[t,] = c(CS_S(mashcontrast.model.1.full, thresh.seq[t], delta.1)/Tr, N_S(mashcontrast.model.1.full, thresh.seq[t],delta.1)/N)
+  Indep.1[t,] = c(CS_S(Indep.model.1.full, thresh.seq[t], delta.1)/Tr,  N_S(Indep.model.1.full, thresh.seq[t],delta.1)/N)
+  
+  mashcontrast.10[t,] = c(CS_S(mashcontrast.model.10.full, thresh.seq[t], delta.10)/Tr, N_S(mashcontrast.model.10.full, thresh.seq[t],delta.10)/N)
+  Indep.10[t,] = c(CS_S(Indep.model.10.full, thresh.seq[t], delta.10)/Tr,  N_S(Indep.model.10.full, thresh.seq[t],delta.10)/N)
+}
+```
+
+```{r, echo=FALSE}
+{plot(mashcontrast.1[,'FPR'], mashcontrast.1[,'TPR'], col='red',type='l',xlab = 'FPR', ylab='TPR', main='True Positive vs False Positive')
+lines(mashcontrast.10[,'FPR'], mashcontrast.10[,'TPR'], col='green')
+lines(Indep.1[,'FPR'], Indep.1[,'TPR'], col='blue')
+lines(Indep.10[,'FPR'], Indep.10[,'TPR'])
+legend('bottomright', c('mashcommon.1','mashcommon.10', 'mash.indep.1', 'mash.indep.10'),col=c('red','green', 'blue', 'black'),lty=c(1,1))}
+```
+
+# Session Info
+
+```{r session-info}
+```
