@@ -54,39 +54,39 @@ data = sim.mean.sig(nsamp=10000, ncond=C)
 ```{r}
 L = matrix(-1/R, R, R)
 L[cbind(1:R,1:R)] = (R-1)/R
-L = L[1:(R-1),]
-row.names(L) = seq(1,R-1)
+L.10 = L[1:(R-1),]
+row.names(L.10) = seq(1,R-1)
 mash_data = mash_set_data(Bhat=data$Chat, Shat=data$Shat)
-mash_data_L = mash_set_data_contrast(mash_data, L)
+mash_data_L.10 = mash_set_data_contrast(mash_data, L.10)
 ```
 
 ```{r}
-U.c = cov_canonical(mash_data_L)
+U.c = cov_canonical(mash_data_L.10)
 
 # data driven
 # select max
-m.1by1 = mash_1by1(mash_data_L, alpha=1)
+m.1by1 = mash_1by1(mash_data_L.10)
 strong = get_significant_results(m.1by1,0.05)
 # center Z
-mash_data_L.center = mash_data_L
-mash_data_L.center$Bhat = mash_data_L$Bhat/mash_data_L$Shat # obtain z
-mash_data_L.center$Shat = matrix(1, nrow(mash_data_L$Bhat),ncol(mash_data_L$Bhat))
+mash_data_L.center = mash_data_L.10
+mash_data_L.center$Bhat = mash_data_L.10$Bhat/mash_data_L.10$Shat # obtain z
+mash_data_L.center$Shat = matrix(1, nrow(mash_data_L.10$Bhat),ncol(mash_data_L.10$Bhat))
 mash_data_L.center$Bhat = apply(mash_data_L.center$Bhat, 2, function(x) x - mean(x))
 U.pca = cov_pca(mash_data_L.center,2,strong)
 U.ed = cov_ed(mash_data_L.center, U.pca, strong)
 
-mashcontrast.model = mash(mash_data_L, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
+mashcontrast.model.10 = mash(mash_data_L.10, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
 ```
-Using `mashcommonbaseline`, there are `r length(get_significant_results(mashcontrast.model))` discoveries. The covariance structure found here is:
+Using `mashcommonbaseline`, there are `r length(get_significant_results(mashcontrast.model.10))` discoveries. The covariance structure found here is:
 ```{r}
-barplot(get_estimated_pi(mashcontrast.model),las = 2, cex.names = 0.7)
+barplot(get_estimated_pi(mashcontrast.model.10),las = 2, cex.names = 0.7)
 ```
 The correlation for PCA1 is:
 ```{r, echo=FALSE, fig.width=3, fig.height=3,fig.align='center'}
-x           <- cov2cor(mashcontrast.model$fitted_g$Ulist[["ED_PCA_1"]])
+x           <- cov2cor(mashcontrast.model.10$fitted_g$Ulist[["ED_PCA_1"]])
 x[x > 1]    <- 1
 x[x < -1]   <- -1
-colnames(x) <- colnames(get_lfsr(mashcontrast.model))
+colnames(x) <- colnames(get_lfsr(mashcontrast.model.10))
 rownames(x) <- colnames(x)
 corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
                                "#E0F3F8","#91BFDB","#4575B4")))(40),
@@ -100,21 +100,21 @@ The correlation identified here is correct.
 If we subtract the mean from the data directly
 $$Var(\hat{c}_{j,r}-\bar{\hat{c}_{j}}) = \frac{1}{2} - \frac{1}{2R}$$
 ```{r}
-Indep.data = mash_set_data(Bhat = mash_data_L$Bhat,
+Indep.data.10 = mash_set_data(Bhat = mash_data_L.10$Bhat,
                            Shat = matrix(sqrt(0.5-1/(2*R)), nrow(data$Chat), R-1))
 
-Indep.model = mash(Indep.data, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
+Indep.model.10 = mash(Indep.data.10, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
 ```
-There are `r length(get_significant_results(Indep.model))` discoveries, which is **more** than the `mashcommonbaseline` model. The covariance structure found here is:
+There are `r length(get_significant_results(Indep.model.10))` discoveries, which is **more** than the `mashcommonbaseline` model. The covariance structure found here is:
 ```{r}
-barplot(get_estimated_pi(Indep.model),las = 2, cex.names = 0.7)
+barplot(get_estimated_pi(Indep.model.10),las = 2, cex.names = 0.7)
 ```
 The weights for covariances are very different.
 
 The correlation for PCA2 and tPCA is:
 ```{r, echo=FALSE, fig.width=8, fig.height=3,fig.align='center'}
 par(mfrow=c(1,2))
-x           <- cov2cor(Indep.model$fitted_g$Ulist[["ED_PCA_2"]])
+x           <- cov2cor(Indep.model.10$fitted_g$Ulist[["ED_PCA_2"]])
 x[x > 1]    <- 1
 x[x < -1]   <- -1
 colnames(x) <- seq(1,9)
@@ -123,7 +123,7 @@ corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c(
                                "#E0F3F8","#91BFDB","#4575B4")))(40),
                title='PCA2',mar=c(0,0,1.5,0))
 
-x           <- cov2cor(Indep.model$fitted_g$Ulist[["ED_tPCA"]])
+x           <- cov2cor(Indep.model.10$fitted_g$Ulist[["ED_tPCA"]])
 x[x > 1]    <- 1
 x[x < -1]   <- -1
 colnames(x) <- seq(1,9)
@@ -138,8 +138,8 @@ par(mfrow=c(1,1))
 
 The RRMSE plot:
 ```{r}
-delta = data$C %*% t(L)
-barplot(c(sqrt(mean((delta - mashcontrast.model$result$PosteriorMean)^2)/mean((delta - data$Chat%*%t(L))^2)), sqrt(mean((delta - Indep.model$result$PosteriorMean)^2)/mean((delta - data$Chat%*%t(L))^2))), ylim=c(0,0.2), names.arg = c('mashcommonbaseline', 'mash.indep'), ylab='RRMSE')
+delta = data$C %*% t(L.10)
+barplot(c(sqrt(mean((delta - mashcontrast.model.10$result$PosteriorMean)^2)/mean((delta - data$Chat%*%t(L.10))^2)), sqrt(mean((delta - Indep.model.10$result$PosteriorMean)^2)/mean((delta - data$Chat%*%t(L.10))^2))), ylim=c(0,0.2), names.arg = c('mashcommonbaseline', 'mash.indep'), ylab='RRMSE')
 ```
 
 We check the False Positive Rate and True Positive Rate. 
@@ -157,7 +157,7 @@ N_S = function(model, thresh=0.05, data){
   sum(sig.index * N.index)
 }
 
-delta = data$C %*% t(L)
+delta = data$C %*% t(L.10)
 delta[abs(delta) <= 1e-14] = 0
 N = sum(delta == 0)
 Tr = nrow(delta) * ncol(delta) - N
@@ -168,8 +168,8 @@ Indep = matrix(0,length(thresh.seq), 2)
 colnames(mashcontrast) = c('TPR', 'FPR')
 colnames(Indep) = c('TPR', 'FPR')
 for(t in 1:length(thresh.seq)){
-  mashcontrast[t,] = c(CS_S(mashcontrast.model, thresh.seq[t], delta)/Tr, N_S(mashcontrast.model, thresh.seq[t],delta)/N)
-  Indep[t,] = c(CS_S(Indep.model, thresh.seq[t], delta)/Tr,  N_S(Indep.model, thresh.seq[t],delta)/N)
+  mashcontrast[t,] = c(CS_S(mashcontrast.model.10, thresh.seq[t], delta)/Tr, N_S(mashcontrast.model.10, thresh.seq[t],delta)/N)
+  Indep[t,] = c(CS_S(Indep.model.10, thresh.seq[t], delta)/Tr,  N_S(Indep.model.10, thresh.seq[t],delta)/N)
 }
 ```
 
@@ -190,41 +190,38 @@ However, the contrast matrix L can discard any deviation from $\hat{c}_{j,1} - \
 We run the same model with L that discard the first deviation.
 
 ```{r}
-L = matrix(-1/R, R, R)
-L[cbind(1:R,1:R)] = (R-1)/R
-L = L[2:R,]
-row.names(L) = seq(2,R)
-mash_data = mash_set_data(Bhat=data$Chat, Shat=data$Shat)
-mash_data_L = mash_set_data_contrast(mash_data, L)
+L.1 = L[2:R,]
+row.names(L.1) = seq(2,R)
+mash_data_L.1 = mash_set_data_contrast(mash_data, L.1)
 ```
 
 ```{r}
-U.c = cov_canonical(mash_data_L)
+U.c = cov_canonical(mash_data_L.1)
 
 # data driven
 # select max
-m.1by1 = mash_1by1(mash_data_L, alpha=1)
+m.1by1 = mash_1by1(mash_data_L.1)
 strong = get_significant_results(m.1by1,0.05)
 # center Z
-mash_data_L.center = mash_data_L
-mash_data_L.center$Bhat = mash_data_L$Bhat/mash_data_L$Shat # obtain z
-mash_data_L.center$Shat = matrix(1, nrow(mash_data_L$Bhat),ncol(mash_data_L$Bhat))
+mash_data_L.center = mash_data_L.1
+mash_data_L.center$Bhat = mash_data_L.1$Bhat/mash_data_L.1$Shat # obtain z
+mash_data_L.center$Shat = matrix(1, nrow(mash_data_L.1$Bhat),ncol(mash_data_L.1$Bhat))
 mash_data_L.center$Bhat = apply(mash_data_L.center$Bhat, 2, function(x) x - mean(x))
 U.pca = cov_pca(mash_data_L.center,2,strong)
 U.ed = cov_ed(mash_data_L.center, U.pca, strong)
 
-mashcontrast.model = mash(mash_data_L, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
+mashcontrast.model.1 = mash(mash_data_L.1, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
 ```
-Using `mashcommonbaseline` model, there are `r length(get_significant_results(mashcontrast.model))` discoveries. The covariance structure found here is:
+Using `mashcommonbaseline` model, there are `r length(get_significant_results(mashcontrast.model.1))` discoveries. The covariance structure found here is:
 ```{r}
-barplot(get_estimated_pi(mashcontrast.model),las = 2, cex.names = 0.7)
+barplot(get_estimated_pi(mashcontrast.model.1),las = 2, cex.names = 0.7)
 ```
 The correlation PCA 1 is:
 ```{r, echo=FALSE, fig.width=3, fig.height=3,fig.align='center'}
-x           <- cov2cor(mashcontrast.model$fitted_g$Ulist[["ED_PCA_1"]])
+x           <- cov2cor(mashcontrast.model.1$fitted_g$Ulist[["ED_PCA_1"]])
 x[x > 1]    <- 1
 x[x < -1]   <- -1
-colnames(x) <- colnames(get_lfsr(mashcontrast.model))
+colnames(x) <- colnames(get_lfsr(mashcontrast.model.1))
 rownames(x) <- colnames(x)
 corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
                                "#E0F3F8","#91BFDB","#4575B4")))(40),
@@ -233,20 +230,20 @@ corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c(
 
 
 ```{r}
-Indep.data = mash_set_data(Bhat = mash_data_L$Bhat,
+Indep.data.1 = mash_set_data(Bhat = mash_data_L.1$Bhat,
                            Shat = matrix(sqrt(0.5-1/(R*2)), nrow(data$Chat), R-1))
 
-Indep.model = mash(Indep.data, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
+Indep.model.1 = mash(Indep.data.1, c(U.c, U.ed), algorithm.version = 'R', verbose = FALSE)
 ```
-For `mashIndep` model, there are `r length(get_significant_results(Indep.model))` discoveries, which is **less** than the `mashcommonbaseline` model. The covariance structure found here is:
+For `mashIndep` model, there are `r length(get_significant_results(Indep.model.1))` discoveries, which is **less** than the `mashcommonbaseline` model. The covariance structure found here is:
 ```{r}
-barplot(get_estimated_pi(Indep.model),las = 2, cex.names = 0.7)
+barplot(get_estimated_pi(Indep.model.1),las = 2, cex.names = 0.7)
 ```
 
 The correlation for PCA2 and tPCA is:
 ```{r, echo=FALSE, fig.width=8, fig.height=3,fig.align='center'}
 par(mfrow=c(1,2))
-x           <- cov2cor(Indep.model$fitted_g$Ulist[["ED_PCA_2"]])
+x           <- cov2cor(Indep.model.1$fitted_g$Ulist[["ED_PCA_2"]])
 x[x > 1]    <- 1
 x[x < -1]   <- -1
 colnames(x) <- seq(1,9)
@@ -255,7 +252,7 @@ corrplot.mixed(x,upper='color',cl.lim=c(-1,1), upper.col=colorRampPalette(rev(c(
                                "#E0F3F8","#91BFDB","#4575B4")))(40),
                title='PCA2',mar=c(0,0,1.5,0))
 
-x           <- cov2cor(Indep.model$fitted_g$Ulist[["ED_tPCA"]])
+x           <- cov2cor(Indep.model.1$fitted_g$Ulist[["ED_tPCA"]])
 x[x > 1]    <- 1
 x[x < -1]   <- -1
 colnames(x) <- seq(1,9)
@@ -268,8 +265,8 @@ par(mfrow=c(1,1))
 
 The RRMSE plot:
 ```{r, echo=FALSE}
-delta = data$C %*% t(L)
-barplot(c(sqrt(mean((delta - mashcontrast.model$result$PosteriorMean)^2)/mean((delta - data$Chat%*%t(L))^2)), sqrt(mean((delta - Indep.model$result$PosteriorMean)^2)/mean((delta - data$Chat%*%t(L))^2))), ylim=c(0,0.4), names.arg = c('mashcontrast', 'indep'), ylab='RRMSE')
+delta = data$C %*% t(L.1)
+barplot(c(sqrt(mean((delta - mashcontrast.model.1$result$PosteriorMean)^2)/mean((delta - data$Chat%*%t(L.1))^2)), sqrt(mean((delta - Indep.model.1$result$PosteriorMean)^2)/mean((delta - data$Chat%*%t(L.1))^2))), ylim=c(0,0.2), names.arg = c('mashcontrast', 'indep'), ylab='RRMSE')
 ```
 
 We check the False Positive Rate and True Positive Rate. 
@@ -287,7 +284,7 @@ N_S = function(model, thresh=0.05, data){
   sum(sig.index * N.index)
 }
 
-delta = data$C %*% t(L)
+delta = data$C %*% t(L.1)
 delta[abs(delta) <= 1e-14] = 0
 N = sum(delta == 0)
 Tr = nrow(delta) * ncol(delta) - N
@@ -298,10 +295,9 @@ Indep = matrix(0,length(thresh.seq), 2)
 colnames(mashcontrast) = c('TPR', 'FPR')
 colnames(Indep) = c('TPR', 'FPR')
 for(t in 1:length(thresh.seq)){
-  mashcontrast[t,] = c(CS_S(mashcontrast.model, thresh.seq[t], delta)/Tr, N_S(mashcontrast.model, thresh.seq[t],delta)/N)
-  Indep[t,] = c(CS_S(Indep.model, thresh.seq[t], delta)/Tr,  N_S(Indep.model, thresh.seq[t],delta)/N)
+  mashcontrast[t,] = c(CS_S(mashcontrast.model.1, thresh.seq[t], delta)/Tr, N_S(mashcontrast.model.1, thresh.seq[t],delta)/N)
+  Indep[t,] = c(CS_S(Indep.model.1, thresh.seq[t], delta)/Tr,  N_S(Indep.model.1, thresh.seq[t],delta)/N)
 }
-
 ```
 
 ```{r, echo=FALSE}
