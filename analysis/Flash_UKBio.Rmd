@@ -1,0 +1,86 @@
+---
+title: "UKBioBank FLASH"
+author: "Yuxin Zou"
+date: 2018-5-30
+output: 
+  html_document:
+    code_folding: hide
+---
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+```{r code-version, echo=FALSE, results='asis'}
+```
+
+```{r echo=FALSE}
+library(flashr); library(mashr)
+```
+
+UKBioBank Strong data
+```{r}
+data = readRDS('../data/UKBioBank/StrongData.rds')
+```
+
+Estimate se based on p values
+```{r}
+# Adjust p value == 0
+data$p[data$p == 0] = 1e-323
+mash.data = mash_set_data(Bhat = data$beta, pval = data$p)
+```
+
+# Flash on centered Z
+```{r}
+Z = mash.data$Bhat/mash.data$Shat
+# column center
+Z.center = apply(Z, 2, function(x) x - mean(x, na.rm = TRUE))
+```
+
+```{r flash on centered Z}
+flash.data = flash_set_data(Z.center)
+fmodel = flash(flash.data, greedy = TRUE, backfit = TRUE)
+```
+
+```{r}
+Factors = flash_get_ldf(fmodel)$f
+row.names(Factors) = colnames(Z)
+par(mfrow=c(2,2))
+for(i in 1:18){
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.5)
+}
+```
+
+Flash again on the loading matrix
+
+```{r}
+loading = fmodel$EL[,1:18]
+colnames(loading) = paste0('Factor',seq(1,18))
+flash.loading = flash_set_data(loading)
+flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)
+```
+
+```{r, echo=FALSE}
+Factors = flash_get_ldf(flmodel)$f
+row.names(Factors) = colnames(loading)
+par(mfrow=c(2,2))
+for(i in 1:17){
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(flmodel)[i],3)), las=2, cex.names = 0.4)
+}
+```
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
+
