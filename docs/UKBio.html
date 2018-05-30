@@ -9,9 +9,10 @@
 <meta name="generator" content="pandoc" />
 
 
+<meta name="author" content="Yuxin Zou" />
 
 
-<title>Home</title>
+<title>UKBio</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,7 +20,11 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -160,8 +165,111 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -208,40 +316,70 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
 
 
-<h1 class="title toc-ignore">Home</h1>
+
+<h1 class="title toc-ignore">UKBio</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>2018-5-30</em></h4>
 
 </div>
 
 
+<!-- Update knitr chunk options -->
+<!-- Insert the date the file was last updated -->
+<p><strong>Last updated:</strong> 2018-05-30</p>
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+<p><strong>Code version:</strong> 229e181</p>
+<p>The summary statistics are from <a href="https://www.biorxiv.org/content/biorxiv/early/2017/09/27/194944.full.pdf">Mixed model association for biobank-scale data sets</a>.</p>
+<p>The <span class="math inline">\(\beta\)</span> are coefficients from mix effects model. Since fitting the mix model with a large sample size is intractable, the author estimate them using <span class="math inline">\(\chi^2_{BOLT\_LMM\_inf}\)</span> statistics. There is no information about how to compute se. The p value is based on <span class="math inline">\(\chi^2_{BOLT\_LMM}\)</span> statistics. Detail about the BOLT LMM is in <a href="https://media.nature.com/original/nature-assets/ng/journal/v47/n3/extref/ng.3190-S1.pdf">BOLT_LMM</a></p>
+<p>The tri-allelic SNPs are excluded.</p>
+<p>The procedure to select strong SNPs subset:</p>
+<ol style="list-style-type: decimal">
+<li>Select SNPs with p value less than <span class="math inline">\(5 \times 10^{-8}\)</span>.</li>
+<li>For each chromosome, pick SNPs that at least 15000 bp away.</li>
+</ol>
+<p>The procedure to select random SNPs subset:</p>
+<ol style="list-style-type: decimal">
+<li>Random select 800000 SNPs</li>
+<li>For each chromosome, pick SNPs that at least 15000 bp away.</li>
+</ol>
+<p>The total data set contains 11988455 SNPs. The strong subset contains 60070 SNPs. The random subset contains 142075 SNPs.</p>
 <ul>
-<li><p>Missing value using <code>mash</code>:</p>
-<p>If we want to have reasonable posterior mean, we need to use EE mode. Because in the EZ model, multiplying back the standard errors causes the problem. The missing data have large standard error. It will pruduce huge posteiror mean.</p>
-<p>With missing values, the covariance structure learnt from the model is weired sometimes. The weights do not shrink to zero.</p>
-<p>Suppose some of the rows in the data are totally missing. With the large errors for those missing values, the EE model ignores the information in those missing positions. In contrast, the EZ model cannot distinguish the nearly 0 z scores caused by the small observed effects from those caused by the large errors.</p>
-<p><a href="mash_missing_whole_row.html">Miss Whole Row</a></p>
-<p>The large number of conditions is the main cause of the weired weights.<a href="mash_largeR.html">LargeR</a></p>
-<p>The small sample size could be the other reason. Increasing the sample size could improve the estimated weights. However, decreasing might also obtain the correct weights. When the number of conditions is large, we need more data to provide information. When the sample size is small, the model may not stable and the weights may not reliable. <a href="mash_missing_samplesize.html">Sample Size</a></p>
-<p>But in <a href="mash_missing_whole_row.html">Miss Whole Row</a>, the EE model with R = 60, deleting missing values results in non-zero weights. However, I expect the reuslt from data containing missing values is similar with the reuslt from data deleting missing values. Because the missing rows contain almost no information.</p></li>
-<li>XCI data:
-<ul>
-<li>MASH analysis for XCI sex bias: <a href="sexbias_Table2.html">sexbias</a></li>
-</ul></li>
-<li>The Flash hierarchical model on GTEx data: <a href="Flash_GTEx.html">Flash_GTEx</a></li>
-<li>The Flash hierarchical model on Brain tumor data: <a href="Flash_Brain.html">Flash_Brain</a></li>
-<li>The Flash hierarchical model on Breast Cancer data: <a href="Flash_Breast.html">Flash_Breast</a></li>
-<li>The Flash hierarchical model on Presidential Address data: <a href="Flash_PresiAdd.html">Flash_PresiAdd</a></li>
-<li><p>The Flash hierarchical model on Movie Lens data: <a href="Flash_Movie.html">Flash_Movie</a></p></li>
-<li><p>Mean:</p>
-<p><a href="MeanSignal_Orig.html">MeanSignal</a></p>
-<p>Recover the discarded column: <a href="MeanSignalRec.html">MeanSignalRecover</a></p>
-<p>The estimated covariance in the the previous analysis was based on the data including the discarded column.</p>
-<p>Another way is estimating the covariance based on the full data. If we discard the ith column, then discard the ith row and ith column of the estimated covariance matrices. The <code>mashcommonbaseline</code> method is robust of the choice of the discarded column.</p>
-<p><a href="MeanSignalExp.html">MeanSignalWhole</a></p>
-<p>When we increase R: <a href="MeanSignalRecR50.html">MeanSignalR=50</a></p></li>
-<li><p><a href="UKBio.html">UKBioBank</a></p></li>
+<li><a href="Flash_UKBio.html">Flash on Strong SNPs</a></li>
 </ul>
+<div id="session-information" class="section level1">
+<h1>Session information</h1>
+<!-- Insert the session information into the document -->
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.4.4 (2018-03-15)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.4
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+ [1] compiler_3.4.4  backports_1.1.2 magrittr_1.5    rprojroot_1.3-2
+ [5] tools_3.4.4     htmltools_0.3.6 yaml_2.1.19     Rcpp_0.12.16   
+ [9] stringi_1.2.2   rmarkdown_1.9   knitr_1.20      git2r_0.21.0   
+[13] stringr_1.3.0   digest_0.6.15   evaluate_0.10.1</code></pre>
+</div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
@@ -281,6 +419,8 @@ footer is added to webpages before the MathJax javascript. -->
 -->
 
 
+</div>
+</div>
 
 </div>
 
