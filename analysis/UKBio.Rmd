@@ -26,9 +26,9 @@ knitr::read_chunk("chunks.R")
 
 The summary statistics are from [Mixed model association for biobank-scale data sets](https://www.biorxiv.org/content/biorxiv/early/2017/09/27/194944.full.pdf).
 
-The $\beta$ are coefficients from mix effects model. Since fitting the mix model with a large sample size is intractable, the author estimate them using $\chi^2_{BOLT\_LMM\_inf}$ statistics. There is no information about how to compute se. The p value is based on $\chi^2_{BOLT\_LMM}$ statistics. Detail about the BOLT LMM is in [BOLT_LMM](https://media.nature.com/original/nature-assets/ng/journal/v47/n3/extref/ng.3190-S1.pdf)
+The $\beta$ are coefficients from mix effects model. Since fitting the mix model with a large sample size is intractable, the authors estimate them using $\chi^2_{BOLT\_LMM\_inf}$ statistics. There is no information about how to compute se. The p value is based on $\chi^2_{BOLT\_LMM}$ statistics. Detail about the BOLT LMM is in [BOLT_LMM](https://media.nature.com/original/nature-assets/ng/journal/v47/n3/extref/ng.3190-S1.pdf)
 
-The tri-allelic SNPs are excluded.
+There are 23 phenotypes. The tri-allelic SNPs are excluded from the data. We took the union of the SNPs from different phenotype, so there are missing values in $\hat{B}$ matrix. The total data set contains 11988455 SNPs. 
 
 The procedure to select strong SNPs subset:
 
@@ -40,7 +40,7 @@ The procedure to select random SNPs subset:
 1. Random select 800000 SNPs
 2. For each chromosome, pick SNPs that at least 15000 bp away. 
 
-The total data set contains 11988455 SNPs. The strong subset contains 60070 SNPs. The random subset contains 142075 SNPs.
+The strong subset contains 60070 SNPs. The random subset contains 142075 SNPs.
 
 * [Flash on Strong SNPs](Flash_UKBio.html)
 
