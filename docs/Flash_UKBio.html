@@ -335,14 +335,14 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-05-30</p>
+<p><strong>Last updated:</strong> 2018-06-04</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 0ddbf9c</p>
+<p><strong>Code version:</strong> 479d555</p>
 <pre><code>Loading required package: ashr</code></pre>
 <p>UKBioBank Strong data</p>
 <pre class="r"><code>data = readRDS(&#39;../data/UKBioBank/StrongData.rds&#39;)</code></pre>
-<p>Estimate se based on p values</p>
+<p>Estimate se based on <em>p values</em></p>
 <pre class="r"><code># Adjust p value == 0
 data$p[data$p == 0] = 1e-323
 mash.data = mash_set_data(Bhat = data$beta, pval = data$p)</code></pre>
@@ -374,8 +374,9 @@ fmodel = flash(flash.data, greedy = TRUE, backfit = TRUE)</code></pre>
 <pre><code>fitting factor/loading 19</code></pre>
 <pre class="r"><code>Factors = flash_get_ldf(fmodel)$f
 row.names(Factors) = colnames(Z)
+pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)
 par(mfrow=c(2,2))
-for(i in 1:18){
+for(i in pve.order){
   barplot(Factors[,i], main=paste0(&#39;Factor &#39;,i, &#39; pve= &#39;, round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.5)
 }</code></pre>
 <p><img src="figure/Flash_UKBio.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_UKBio.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_UKBio.Rmd/unnamed-chunk-5-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_UKBio.Rmd/unnamed-chunk-5-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_UKBio.Rmd/unnamed-chunk-5-5.png" width="672" style="display: block; margin: auto;" /></p>
@@ -423,10 +424,10 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2-10 ashr_2.2-7   flashr_0.5-6
+[1] mashr_0.2-10 ashr_2.2-7   flashr_0.5-8
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.16      compiler_3.4.4    pillar_1.2.2     
+ [1] Rcpp_0.12.17      compiler_3.4.4    pillar_1.2.2     
  [4] git2r_0.21.0      plyr_1.8.4        iterators_1.0.9  
  [7] tools_3.4.4       digest_0.6.15     evaluate_0.10.1  
 [10] tibble_1.4.2      gtable_0.2.0      lattice_0.20-35  
