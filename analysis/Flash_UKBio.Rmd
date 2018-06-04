@@ -32,7 +32,7 @@ UKBioBank Strong data
 data = readRDS('../data/UKBioBank/StrongData.rds')
 ```
 
-Estimate se based on p values
+Estimate se based on *p values*
 ```{r}
 # Adjust p value == 0
 data$p[data$p == 0] = 1e-323
@@ -54,8 +54,9 @@ fmodel = flash(flash.data, greedy = TRUE, backfit = TRUE)
 ```{r}
 Factors = flash_get_ldf(fmodel)$f
 row.names(Factors) = colnames(Z)
+pve.order = order(flash_get_pve(fmodel), decreasing = TRUE)
 par(mfrow=c(2,2))
-for(i in 1:18){
+for(i in pve.order){
   barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fmodel)[i],3)), las=2, cex.names = 0.5)
 }
 ```
@@ -72,8 +73,9 @@ flmodel = flash(flash.loading, greedy = TRUE, backfit = TRUE)
 ```{r, echo=FALSE}
 Factors = flash_get_ldf(flmodel)$f
 row.names(Factors) = colnames(loading)
+pve.order = order(flash_get_pve(flmodel), decreasing = TRUE)
 par(mfrow=c(2,2))
-for(i in 1:17){
+for(i in pve.order){
   barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(flmodel)[i],3)), las=2, cex.names = 0.4)
 }
 ```
