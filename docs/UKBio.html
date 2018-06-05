@@ -335,13 +335,116 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-06-01</p>
+<p><strong>Last updated:</strong> 2018-06-04</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 22c273c</p>
+<p><strong>Code version:</strong> 2474790</p>
 <p>The summary statistics are from <a href="https://www.biorxiv.org/content/biorxiv/early/2017/09/27/194944.full.pdf">Mixed model association for biobank-scale data sets</a>.</p>
 <p>The <span class="math inline">\(\beta\)</span> are coefficients from mix effects model. Since fitting the mix model with a large sample size is intractable, the authors estimate them using <span class="math inline">\(\chi^2_{BOLT\_LMM\_inf}\)</span> statistics. There is no information about how to compute se. The p value is based on <span class="math inline">\(\chi^2_{BOLT\_LMM}\)</span> statistics. Detail about the BOLT LMM is in <a href="https://media.nature.com/original/nature-assets/ng/journal/v47/n3/extref/ng.3190-S1.pdf">BOLT_LMM</a></p>
 <p>There are 23 phenotypes. The tri-allelic SNPs are excluded from the data. We took the union of the SNPs from different phenotype, so there are missing values in <span class="math inline">\(\hat{B}\)</span> matrix. The total data set contains 11988455 SNPs.</p>
+<p>The phenotypes are</p>
+<table>
+<thead>
+<tr class="header">
+<th>Abbreviations</th>
+<th>Phenotype</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Eosinophil_Count</td>
+<td>Eosinophil count</td>
+</tr>
+<tr class="even">
+<td>Height</td>
+<td>Height</td>
+</tr>
+<tr class="odd">
+<td>BMI</td>
+<td>BMI</td>
+</tr>
+<tr class="even">
+<td>WHR</td>
+<td>Waist hip ratio</td>
+</tr>
+<tr class="odd">
+<td>BMD</td>
+<td>Bone mineral density</td>
+</tr>
+<tr class="even">
+<td>FVC</td>
+<td>Forced vital capacity</td>
+</tr>
+<tr class="odd">
+<td>FEV1FVC</td>
+<td>FEV1 FVC ratio</td>
+</tr>
+<tr class="even">
+<td>Red_Count</td>
+<td>Red blood cell count</td>
+</tr>
+<tr class="odd">
+<td>RBC_Dist_Width</td>
+<td>RBC distribution width</td>
+</tr>
+<tr class="even">
+<td>White_Count</td>
+<td>White blood cell count</td>
+</tr>
+<tr class="odd">
+<td>Platelet_Count</td>
+<td>Platelet count</td>
+</tr>
+<tr class="even">
+<td>BP</td>
+<td>Blood pressure (systolic)</td>
+</tr>
+<tr class="odd">
+<td>Cardiovascular</td>
+<td>Cardiovascular disease</td>
+</tr>
+<tr class="even">
+<td>T2D</td>
+<td>Type 2 diabetes</td>
+</tr>
+<tr class="odd">
+<td>Respiratory</td>
+<td>Respiratory disease</td>
+</tr>
+<tr class="even">
+<td>Allergy_Eczema</td>
+<td>Allergy or eczema</td>
+</tr>
+<tr class="odd">
+<td>Hypothyroidism</td>
+<td>Hypothyroidism</td>
+</tr>
+<tr class="even">
+<td>Neuroticism</td>
+<td>Neuroticism</td>
+</tr>
+<tr class="odd">
+<td>MorningPerson</td>
+<td>Chronotype (morning person)</td>
+</tr>
+<tr class="even">
+<td>Hair</td>
+<td>Hair color</td>
+</tr>
+<tr class="odd">
+<td>Tanning</td>
+<td>Tanning ability</td>
+</tr>
+<tr class="even">
+<td>Edu_Years</td>
+<td>Years of education</td>
+</tr>
+<tr class="odd">
+<td>Smoking</td>
+<td>Smoking status</td>
+</tr>
+</tbody>
+</table>
 <p>The procedure to select strong SNPs subset:</p>
 <ol style="list-style-type: decimal">
 <li>Select SNPs with p value less than <span class="math inline">\(5 \times 10^{-8}\)</span>.</li>
@@ -376,7 +479,7 @@ attached base packages:
 
 loaded via a namespace (and not attached):
  [1] compiler_3.4.4  backports_1.1.2 magrittr_1.5    rprojroot_1.3-2
- [5] tools_3.4.4     htmltools_0.3.6 yaml_2.1.19     Rcpp_0.12.16   
+ [5] tools_3.4.4     htmltools_0.3.6 yaml_2.1.19     Rcpp_0.12.17   
  [9] stringi_1.2.2   rmarkdown_1.9   knitr_1.20      git2r_0.21.0   
 [13] stringr_1.3.0   digest_0.6.15   evaluate_0.10.1</code></pre>
 </div>
