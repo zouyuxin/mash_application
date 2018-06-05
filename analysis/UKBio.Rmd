@@ -32,7 +32,7 @@ There are 23 phenotypes. The tri-allelic SNPs are excluded from the data. We too
 
 The phenotypes are
 
-Abbreviations    | Phenotype
+Abbreviation     | Phenotype
 -----------------|------------------
 Eosinophil_Count | Eosinophil count
 Height           | Height
