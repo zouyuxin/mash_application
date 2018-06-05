@@ -30,6 +30,34 @@ The $\beta$ are coefficients from mix effects model. Since fitting the mix model
 
 There are 23 phenotypes. The tri-allelic SNPs are excluded from the data. We took the union of the SNPs from different phenotype, so there are missing values in $\hat{B}$ matrix. The total data set contains 11988455 SNPs. 
 
+The phenotypes are
+
+Abbreviations    | Phenotype
+-----------------|------------------
+Eosinophil_Count | Eosinophil count
+Height           | Height
+BMI              | BMI
+WHR              | Waist hip ratio
+BMD              | Bone mineral density
+FVC              | Forced vital capacity
+FEV1FVC          | FEV1 FVC ratio
+Red_Count        | Red blood cell count
+RBC_Dist_Width   | RBC distribution width
+White_Count      | White blood cell count
+Platelet_Count   | Platelet count
+BP               | Blood pressure (systolic)
+Cardiovascular   | Cardiovascular disease
+T2D              | Type 2 diabetes
+Respiratory      | Respiratory disease
+Allergy_Eczema   | Allergy or eczema
+Hypothyroidism   | Hypothyroidism
+Neuroticism      | Neuroticism
+MorningPerson    | Chronotype (morning person)
+Hair             | Hair color
+Tanning          | Tanning ability
+Edu_Years        | Years of education
+Smoking          | Smoking status
+
 The procedure to select strong SNPs subset:
 
 1. Select SNPs with p value less than $5 \times 10^{-8}$.
