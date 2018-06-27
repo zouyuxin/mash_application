@@ -71,6 +71,7 @@ The procedure to select random SNPs subset:
 The strong subset contains 60070 SNPs. The random subset contains 142075 SNPs.
 
 * [Flash on Strong SNPs](Flash_UKBio.html)
+* [Mash on UKBio](Mash_UKBio.html)
 
 
 
