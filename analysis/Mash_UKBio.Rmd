@@ -167,9 +167,17 @@ barplot(get_estimated_pi(mash.model), las = 2, cex.names = 0.7)
 
 The founded correlations:
 
-From the empirical correlation matrix, the metabolic disorder diseases are correlated (BMI, Blood Pressure, Cardiovascular and Type 2 Diabetes), which agrees the Factor 2 in the flash result. The eosinophil cell count is positively correlated with white cell count, since eosinophil cell is a variety of white blood cells. Eosinophil cell cpunt is also positively correlated with respiratory disease. Having respiratory disease decreases FEV1FVC ratio. Years of education is negatively correlated with smoking status. There must be some strong environmental factors that are affecting these phenotypes together. The associations from the mash result here may not the pure genetic associations. Moreover, from the `load_4` covariance matrix, neuroticism and smoking are highly correlated here (0.71). Neurotic people may smoke more and finish their school life earlier.
+1. From the empirical correlation matrix:
+    * The metabolic disorder diseases are correlated (BMI, Blood Pressure, Cardiovascular and Type 2 Diabetes), which agrees the Factor 2 in the flash result.
+    * The white cell count is positively correlated with Platelet count (Factor 3)
+    * The eosinophil cell count is positively correlated with white cell count, since eosinophil cell is a variety of white blood cells. (Factor 10, 13)
+    * Eosinophil cell count is also positively correlated with respiratory disease. (Factor 7)
+    * Having respiratory disease decreases FEV1FVC ratio. (Factor 11)
+    * Years of education is negatively correlated with smoking status. (Factor 15)
+    
+    There must be some strong environmental factors that are affecting these phenotypes together. The associations from the mash result here may not the pure genetic associations. 
 
-
+2. From the `load_4` covariance matrix, neuroticism and smoking are highly correlated here (0.71). Neurotic people may smoke more and finish their school life earlier. (Factor 15)
 
 `ED_XX`:
 ```{r ED_XX, fig.height = 15, fig.width = 15, fig.align = "center"}
@@ -178,7 +186,6 @@ colnames(x) <- colnames(get_lfsr(mash.model))
 rownames(x) <- colnames(x)
 corrplot::corrplot(x, method='color', cl.lim=c(-1,1), type='upper', addCoef.col = "black", tl.col="black", tl.srt=45, col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF", "#E0F3F8","#91BFDB","#4575B4")))(128))
 ```
-
 
 The top eigenvalues:
 ```{r}
