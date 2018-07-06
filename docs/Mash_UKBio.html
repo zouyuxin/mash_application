@@ -335,10 +335,10 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-06-27</p>
+<p><strong>Last updated:</strong> 2018-07-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 05580d6</p>
+<p><strong>Code version:</strong> 8389b57</p>
 <pre><code>Loading required package: ashr</code></pre>
 <pre><code>Package &#39;mclust&#39; version 5.4
 Type &#39;citation(&quot;mclust&quot;)&#39; for citing this R package in publications.</code></pre>
@@ -443,21 +443,14 @@ saveRDS(mash.model, &#39;../output/UKBio_mash_model.rds&#39;)</code></pre>
 <pre class="r"><code>options(repr.plot.width=12, repr.plot.height=4)
 barplot(get_estimated_pi(mash.model), las = 2, cex.names = 0.7)</code></pre>
 <p><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The founded correlations:</p>
+<p>From the empirical correlation matrix, the metabolic disorder diseases are correlated (BMI, Blood Pressure, Cardiovascular and Type 2 Diabetes), which agrees the Factor 2 in the flash result. The eosinophil cell count is positively correlated with white cell count, since eosinophil cell is a variety of white blood cells. Eosinophil cell cpunt is also positively correlated with respiratory disease. Having respiratory disease decreases FEV1FVC ratio. Years of education is negatively correlated with smoking status. There must be some strong environmental factors that are affecting these phenotypes together. The associations from the mash result here may not the pure genetic associations. Moreover, from the <code>load_4</code> covariance matrix, neuroticism and smoking are highly correlated here (0.71). Neurotic people may smoke more and finish their school life earlier.</p>
 <p><code>ED_XX</code>:</p>
 <pre class="r"><code>x           &lt;- cov2cor(mash.model$fitted_g$Ulist[[&quot;ED_XX&quot;]])
-x[x &lt; 0]    &lt;- 0
 colnames(x) &lt;- colnames(get_lfsr(mash.model))
 rownames(x) &lt;- colnames(x)
-x &lt;- x[rev(rownames(x)),rev(colnames(x))]
-x[lower.tri(x)] &lt;- NA
-clrs &lt;- colorRampPalette(rev(c(&quot;#D73027&quot;,&quot;#FC8D59&quot;,&quot;#FEE090&quot;,&quot;#FFFFBF&quot;,
-                               &quot;#E0F3F8&quot;,&quot;#91BFDB&quot;,&quot;#4575B4&quot;)))(64)
-n &lt;- nrow(x)
-options(repr.plot.width=9, repr.plot.height=9)
-print(levelplot(x[n:1,],col.regions = clrs,xlab = &quot;&quot;,ylab = &quot;&quot;,
-                colorkey = TRUE, at = seq(0,1,length.out = 64),
-                scales = list(cex = 0.5,x = list(rot = 45))))</code></pre>
-<p><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+corrplot::corrplot(x, method=&#39;color&#39;, cl.lim=c(-1,1), type=&#39;upper&#39;, addCoef.col = &quot;black&quot;, tl.col=&quot;black&quot;, tl.srt=45, col=colorRampPalette(rev(c(&quot;#D73027&quot;,&quot;#FC8D59&quot;,&quot;#FEE090&quot;,&quot;#FFFFBF&quot;, &quot;#E0F3F8&quot;,&quot;#91BFDB&quot;,&quot;#4575B4&quot;)))(128))</code></pre>
+<p><img src="figure/Mash_UKBio.Rmd/ED_XX-1.png" width="1440" style="display: block; margin: auto;" /></p>
 <p>The top eigenvalues:</p>
 <pre class="r"><code>svd.out = svd(mash.model$fitted_g$Ulist[[&quot;ED_XX&quot;]])
 v = svd.out$v
@@ -467,22 +460,13 @@ options(repr.plot.width=10, repr.plot.height=5)
 for (j in 1:6)
   barplot(v[,j]/v[,j][which.max(abs(v[,j]))], cex.names = 0.6,
           las = 2, main = paste0(&quot;EigenVector &quot;, j, &quot; for empirical covariance matrix&quot;))</code></pre>
-<p><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-19-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-19-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-19-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-19-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-18-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-18-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-18-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-18-6.png" width="672" style="display: block; margin: auto;" /></p>
 <p><code>ED_load_4</code></p>
 <pre class="r"><code>x           &lt;- cov2cor(mash.model$fitted_g$Ulist[[&quot;ED_Load_4&quot;]])
-x[x &lt; 0]    &lt;- 0
 colnames(x) &lt;- colnames(get_lfsr(mash.model))
 rownames(x) &lt;- colnames(x)
-x &lt;- x[rev(rownames(x)),rev(colnames(x))]
-x[lower.tri(x)] &lt;- NA
-clrs &lt;- colorRampPalette(rev(c(&quot;#D73027&quot;,&quot;#FC8D59&quot;,&quot;#FEE090&quot;,&quot;#FFFFBF&quot;,
-                               &quot;#E0F3F8&quot;,&quot;#91BFDB&quot;,&quot;#4575B4&quot;)))(64)
-n &lt;- nrow(x)
-options(repr.plot.width=9, repr.plot.height=9)
-print(levelplot(x[n:1,],col.regions = clrs,xlab = &quot;&quot;,ylab = &quot;&quot;,
-                colorkey = TRUE, at = seq(0,1,length.out = 64),
-                scales = list(cex = 0.5,x = list(rot = 45))))</code></pre>
-<p><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+corrplot::corrplot(x, method=&#39;color&#39;, cl.lim=c(-1,1), type=&#39;upper&#39;, addCoef.col = &quot;black&quot;, tl.col=&quot;black&quot;, tl.srt=45, col=colorRampPalette(rev(c(&quot;#D73027&quot;,&quot;#FC8D59&quot;,&quot;#FEE090&quot;,&quot;#FFFFBF&quot;, &quot;#E0F3F8&quot;,&quot;#91BFDB&quot;,&quot;#4575B4&quot;)))(128))</code></pre>
+<p><img src="figure/Mash_UKBio.Rmd/ED_load_4-1.png" width="1440" style="display: block; margin: auto;" /></p>
 <p>The top eigenvalues:</p>
 <pre class="r"><code>svd.out = svd(mash.model$fitted_g$Ulist[[&quot;ED_Load_4&quot;]])
 v = svd.out$v
@@ -492,27 +476,28 @@ options(repr.plot.width=10, repr.plot.height=5)
 for (j in 1:3)
   barplot(v[,j]/v[,j][which.max(abs(v[,j]))], cex.names = 0.6,
           las = 2, main = paste0(&quot;EigenVector &quot;, j, &quot; for Load 4 covariance matrix&quot;))</code></pre>
-<p><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-21-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-21-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-19-3.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="posterior" class="section level1">
 <h1>Posterior</h1>
 <pre class="r"><code>data.strong = mash_set_data(data.EZ$Bhat, data.EZ$Shat, V = Vhat)
 mash.model$result = mash_compute_posterior_matrices(mash.model, data.strong)</code></pre>
 <p>There are 60069 significant snps.</p>
-<p>Pairwise sharing:</p>
+<p>Pairwise sharing (Shared by magnitude when sign is ignored):</p>
+<pre class="r"><code>x           &lt;- get_pairwise_sharing(mash.model, FUN = abs)
+colnames(x) &lt;- colnames(get_lfsr(mash.model))
+rownames(x) &lt;- colnames(x)
+clrs=colorRampPalette(rev(c(&#39;darkred&#39;, &#39;red&#39;,&#39;orange&#39;,&#39;yellow&#39;,&#39;cadetblue1&#39;, &#39;cyan&#39;, &#39;dodgerblue4&#39;, &#39;blue&#39;,&#39;darkorchid1&#39;,&#39;lightgreen&#39;,&#39;green&#39;, &#39;forestgreen&#39;,&#39;darkolivegreen&#39;)))(200)
+
+corrplot::corrplot(x, method=&#39;color&#39;, type=&#39;upper&#39;, addCoef.col = &quot;black&quot;, tl.col=&quot;black&quot;, tl.srt=45, diag = FALSE, col=clrs, cl.lim = c(0,1))</code></pre>
+<p><img src="figure/Mash_UKBio.Rmd/sharing%20by%20magnitude-1.png" width="1440" style="display: block; margin: auto;" /></p>
+<p>Pairwise sharing (Shared by magnitude and sign):</p>
 <pre class="r"><code>x           &lt;- get_pairwise_sharing(mash.model)
 colnames(x) &lt;- colnames(get_lfsr(mash.model))
 rownames(x) &lt;- colnames(x)
-x &lt;- x[rev(rownames(x)),rev(colnames(x))]
-x[lower.tri(x)] &lt;- NA
-clrs &lt;- colorRampPalette(rev(c(&quot;#D73027&quot;,&quot;#FC8D59&quot;,&quot;#FEE090&quot;,&quot;#FFFFBF&quot;,
-                               &quot;#E0F3F8&quot;,&quot;#91BFDB&quot;,&quot;#4575B4&quot;)))(64)
-n &lt;- nrow(x)
-options(repr.plot.width=9, repr.plot.height=9)
-print(levelplot(x[n:1,],col.regions = clrs,xlab = &quot;&quot;,ylab = &quot;&quot;,
-                colorkey = TRUE, at = seq(0,1,length.out = 64),
-                scales = list(cex = 0.5,x = list(rot = 45))))</code></pre>
-<p><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+clrs=colorRampPalette(rev(c(&#39;darkred&#39;, &#39;red&#39;,&#39;orange&#39;,&#39;yellow&#39;,&#39;cadetblue1&#39;, &#39;cyan&#39;, &#39;dodgerblue4&#39;, &#39;blue&#39;,&#39;darkorchid1&#39;,&#39;lightgreen&#39;,&#39;green&#39;, &#39;forestgreen&#39;,&#39;darkolivegreen&#39;)))(200)
+corrplot::corrplot(x, method=&#39;color&#39;, type=&#39;upper&#39;, addCoef.col = &quot;black&quot;, tl.col=&quot;black&quot;, diag=FALSE,tl.srt=45, col=clrs, cl.lim = c(0,1))</code></pre>
+<p><img src="figure/Mash_UKBio.Rmd/sharing%20by%20magnitude%20and%20sign-1.png" width="1440" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
@@ -534,22 +519,23 @@ attached base packages:
 
 other attached packages:
 [1] colorRamps_2.3  ggplot2_2.2.1   lattice_0.20-35 plyr_1.8.4     
-[5] mclust_5.4      mashr_0.2-10    ashr_2.2-7      flashr_0.5-8   
+[5] mclust_5.4      mashr_0.2-10    ashr_2.2-7      flashr_0.5-11  
 
 loaded via a namespace (and not attached):
  [1] Rcpp_0.12.17      compiler_3.4.4    pillar_1.2.2     
  [4] git2r_0.21.0      iterators_1.0.9   tools_3.4.4      
- [7] digest_0.6.15     evaluate_0.10.1   tibble_1.4.2     
-[10] gtable_0.2.0      rlang_0.2.0       Matrix_1.2-14    
-[13] foreach_1.4.4     yaml_2.1.19       parallel_3.4.4   
-[16] mvtnorm_1.0-7     ebnm_0.1-11       stringr_1.3.0    
-[19] knitr_1.20        rprojroot_1.3-2   grid_3.4.4       
-[22] rmarkdown_1.9     rmeta_3.0         magrittr_1.5     
-[25] backports_1.1.2   scales_0.5.0      codetools_0.2-15 
-[28] htmltools_0.3.6   MASS_7.3-50       assertthat_0.2.0 
-[31] softImpute_1.4    colorspace_1.3-2  stringi_1.2.2    
-[34] lazyeval_0.2.1    pscl_1.5.2        doParallel_1.0.11
-[37] munsell_0.4.3     truncnorm_1.0-8   SQUAREM_2017.10-1</code></pre>
+ [7] corrplot_0.84     digest_0.6.15     evaluate_0.10.1  
+[10] tibble_1.4.2      gtable_0.2.0      rlang_0.2.0      
+[13] Matrix_1.2-14     foreach_1.4.4     yaml_2.1.19      
+[16] parallel_3.4.4    mvtnorm_1.0-7     ebnm_0.1-11      
+[19] stringr_1.3.0     knitr_1.20        rprojroot_1.3-2  
+[22] grid_3.4.4        rmarkdown_1.9     rmeta_3.0        
+[25] magrittr_1.5      backports_1.1.2   scales_0.5.0     
+[28] codetools_0.2-15  htmltools_0.3.6   MASS_7.3-50      
+[31] assertthat_0.2.0  softImpute_1.4    colorspace_1.3-2 
+[34] stringi_1.2.2     lazyeval_0.2.1    pscl_1.5.2       
+[37] doParallel_1.0.11 munsell_0.4.3     truncnorm_1.0-8  
+[40] SQUAREM_2017.10-1</code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
