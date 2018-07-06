@@ -338,7 +338,7 @@ div.section {
 <p><strong>Last updated:</strong> 2018-07-06</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 8389b57</p>
+<p><strong>Code version:</strong> eae2de7</p>
 <pre><code>Loading required package: ashr</code></pre>
 <pre><code>Package &#39;mclust&#39; version 5.4
 Type &#39;citation(&quot;mclust&quot;)&#39; for citing this R package in publications.</code></pre>
@@ -444,7 +444,19 @@ saveRDS(mash.model, &#39;../output/UKBio_mash_model.rds&#39;)</code></pre>
 barplot(get_estimated_pi(mash.model), las = 2, cex.names = 0.7)</code></pre>
 <p><img src="figure/Mash_UKBio.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The founded correlations:</p>
-<p>From the empirical correlation matrix, the metabolic disorder diseases are correlated (BMI, Blood Pressure, Cardiovascular and Type 2 Diabetes), which agrees the Factor 2 in the flash result. The eosinophil cell count is positively correlated with white cell count, since eosinophil cell is a variety of white blood cells. Eosinophil cell cpunt is also positively correlated with respiratory disease. Having respiratory disease decreases FEV1FVC ratio. Years of education is negatively correlated with smoking status. There must be some strong environmental factors that are affecting these phenotypes together. The associations from the mash result here may not the pure genetic associations. Moreover, from the <code>load_4</code> covariance matrix, neuroticism and smoking are highly correlated here (0.71). Neurotic people may smoke more and finish their school life earlier.</p>
+<ol style="list-style-type: decimal">
+<li>From the empirical correlation matrix:
+<ul>
+<li>The metabolic disorder diseases are correlated (BMI, Blood Pressure, Cardiovascular and Type 2 Diabetes), which agrees the Factor 2 in the flash result.</li>
+<li>The white cell count is positively correlated with Platelet count (Factor 3)</li>
+<li>The eosinophil cell count is positively correlated with white cell count, since eosinophil cell is a variety of white blood cells. (Factor 10, 13)</li>
+<li>Eosinophil cell count is also positively correlated with respiratory disease. (Factor 7)</li>
+<li>Having respiratory disease decreases FEV1FVC ratio. (Factor 11)</li>
+<li>Years of education is negatively correlated with smoking status. (Factor 15)</li>
+</ul>
+<p>There must be some strong environmental factors that are affecting these phenotypes together. The associations from the mash result here may not the pure genetic associations.</p></li>
+<li><p>From the <code>load_4</code> covariance matrix, neuroticism and smoking are highly correlated here (0.71). Neurotic people may smoke more and finish their school life earlier. (Factor 15)</p></li>
+</ol>
 <p><code>ED_XX</code>:</p>
 <pre class="r"><code>x           &lt;- cov2cor(mash.model$fitted_g$Ulist[[&quot;ED_XX&quot;]])
 colnames(x) &lt;- colnames(get_lfsr(mash.model))
