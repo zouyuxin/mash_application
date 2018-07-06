@@ -165,22 +165,20 @@ options(repr.plot.width=12, repr.plot.height=4)
 barplot(get_estimated_pi(mash.model), las = 2, cex.names = 0.7)
 ```
 
+The founded correlations:
+
+From the empirical correlation matrix, the metabolic disorder diseases are correlated (BMI, Blood Pressure, Cardiovascular and Type 2 Diabetes), which agrees the Factor 2 in the flash result. The eosinophil cell count is positively correlated with white cell count, since eosinophil cell is a variety of white blood cells. Eosinophil cell cpunt is also positively correlated with respiratory disease. Having respiratory disease decreases FEV1FVC ratio. Years of education is negatively correlated with smoking status. There must be some strong environmental factors that are affecting these phenotypes together. The associations from the mash result here may not the pure genetic associations. Moreover, from the `load_4` covariance matrix, neuroticism and smoking are highly correlated here (0.71). Neurotic people may smoke more and finish their school life earlier.
+
+
+
 `ED_XX`:
-```{r}
+```{r ED_XX, fig.height = 15, fig.width = 15, fig.align = "center"}
 x           <- cov2cor(mash.model$fitted_g$Ulist[["ED_XX"]])
-x[x < 0]    <- 0
 colnames(x) <- colnames(get_lfsr(mash.model))
 rownames(x) <- colnames(x)
-x <- x[rev(rownames(x)),rev(colnames(x))]
-x[lower.tri(x)] <- NA
-clrs <- colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
-                               "#E0F3F8","#91BFDB","#4575B4")))(64)
-n <- nrow(x)
-options(repr.plot.width=9, repr.plot.height=9)
-print(levelplot(x[n:1,],col.regions = clrs,xlab = "",ylab = "",
-                colorkey = TRUE, at = seq(0,1,length.out = 64),
-                scales = list(cex = 0.5,x = list(rot = 45))))
+corrplot::corrplot(x, method='color', cl.lim=c(-1,1), type='upper', addCoef.col = "black", tl.col="black", tl.srt=45, col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF", "#E0F3F8","#91BFDB","#4575B4")))(128))
 ```
+
 
 The top eigenvalues:
 ```{r}
@@ -195,20 +193,11 @@ for (j in 1:6)
 ```
 
 `ED_load_4`
-```{r}
+```{r ED_load_4, fig.height = 15, fig.width = 15, fig.align = "center"}
 x           <- cov2cor(mash.model$fitted_g$Ulist[["ED_Load_4"]])
-x[x < 0]    <- 0
 colnames(x) <- colnames(get_lfsr(mash.model))
 rownames(x) <- colnames(x)
-x <- x[rev(rownames(x)),rev(colnames(x))]
-x[lower.tri(x)] <- NA
-clrs <- colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
-                               "#E0F3F8","#91BFDB","#4575B4")))(64)
-n <- nrow(x)
-options(repr.plot.width=9, repr.plot.height=9)
-print(levelplot(x[n:1,],col.regions = clrs,xlab = "",ylab = "",
-                colorkey = TRUE, at = seq(0,1,length.out = 64),
-                scales = list(cex = 0.5,x = list(rot = 45))))
+corrplot::corrplot(x, method='color', cl.lim=c(-1,1), type='upper', addCoef.col = "black", tl.col="black", tl.srt=45, col=colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF", "#E0F3F8","#91BFDB","#4575B4")))(128))
 ```
 
 The top eigenvalues:
@@ -232,22 +221,25 @@ mash.model$result = mash_compute_posterior_matrices(mash.model, data.strong)
 
 There are `r length(get_significant_results(mash.model))` significant snps.
 
-Pairwise sharing:
+Pairwise sharing (Shared by magnitude when sign is ignored):
 
-```{r}
+```{r sharing by magnitude, fig.align='center', fig.width=15, fig.height=15}
+x           <- get_pairwise_sharing(mash.model, FUN = abs)
+colnames(x) <- colnames(get_lfsr(mash.model))
+rownames(x) <- colnames(x)
+clrs=colorRampPalette(rev(c('darkred', 'red','orange','yellow','cadetblue1', 'cyan', 'dodgerblue4', 'blue','darkorchid1','lightgreen','green', 'forestgreen','darkolivegreen')))(200)
+
+corrplot::corrplot(x, method='color', type='upper', addCoef.col = "black", tl.col="black", tl.srt=45, diag = FALSE, col=clrs, cl.lim = c(0,1))
+```
+
+Pairwise sharing (Shared by magnitude and sign):
+
+```{r sharing by magnitude and sign, fig.align='center', fig.width=15, fig.height=15}
 x           <- get_pairwise_sharing(mash.model)
 colnames(x) <- colnames(get_lfsr(mash.model))
 rownames(x) <- colnames(x)
-x <- x[rev(rownames(x)),rev(colnames(x))]
-x[lower.tri(x)] <- NA
-clrs <- colorRampPalette(rev(c("#D73027","#FC8D59","#FEE090","#FFFFBF",
-                               "#E0F3F8","#91BFDB","#4575B4")))(64)
-n <- nrow(x)
-options(repr.plot.width=9, repr.plot.height=9)
-print(levelplot(x[n:1,],col.regions = clrs,xlab = "",ylab = "",
-                colorkey = TRUE, at = seq(0,1,length.out = 64),
-                scales = list(cex = 0.5,x = list(rot = 45))))
-
+clrs=colorRampPalette(rev(c('darkred', 'red','orange','yellow','cadetblue1', 'cyan', 'dodgerblue4', 'blue','darkorchid1','lightgreen','green', 'forestgreen','darkolivegreen')))(200)
+corrplot::corrplot(x, method='color', type='upper', addCoef.col = "black", tl.col="black", diag=FALSE,tl.srt=45, col=clrs, cl.lim = c(0,1))
 ```
 
 # Session information
