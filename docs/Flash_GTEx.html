@@ -318,10 +318,10 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-02-06</p>
+<p><strong>Last updated:</strong> 2018-07-08</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> dd20a02</p>
+<p><strong>Code version:</strong> f1c2f6e</p>
 <p>GTEx data</p>
 <pre class="r"><code>data = readRDS(&#39;../data/MatrixEQTLSumStats.Portable.Z.rds&#39;)
 Z = data$test.z</code></pre>
@@ -333,19 +333,18 @@ f_b = flash_backfit(flash.data, f_greedy)
 saveRDS(list(backfit = f_b, greedy = f_greedy), &#39;../output/GTExVarCol.rds&#39;)</code></pre>
 <p><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Flash again on the loading matrix</p>
-<pre class="r"><code>flash.loading = flash_set_data(flash_get_l(f_b)[,1:23])
+<pre class="r"><code>flash.loading = flash_set_data(flash_get_ldf(f_b)$l[,1:23])
 fl_greedy = flash_add_greedy(flash.loading, K=30)
 fl_b = flash_backfit(flash.loading, fl_greedy)
 saveRDS(list(backfit = fl_b, greedy = fl_greedy), &#39;../output/GTExVarColLoaing_Flash.rds&#39;)</code></pre>
-<p><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>There is no latent structure in the flashr loadings matrix.</p>
+<p><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-1.png" width="1152" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-2.png" width="1152" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-3.png" width="1152" style="display: block; margin: auto;" /><img src="figure/Flash_GTEx.Rmd/unnamed-chunk-10-4.png" width="1152" style="display: block; margin: auto;" /></p>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
 <!-- Insert the session information into the document -->
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.4.3 (2017-11-30)
+<pre><code>R version 3.4.4 (2018-03-15)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS High Sierra 10.13.3
+Running under: macOS High Sierra 10.13.5
 
 Matrix products: default
 BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
@@ -358,13 +357,23 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] flashr_0.4-3
+[1] flashr_0.5-11
 
 loaded via a namespace (and not attached):
- [1] compiler_3.4.3  backports_1.1.2 magrittr_1.5    rprojroot_1.2  
- [5] tools_3.4.3     htmltools_0.3.6 yaml_2.1.16     Rcpp_0.12.15   
- [9] stringi_1.1.6   rmarkdown_1.8   knitr_1.17      git2r_0.20.0   
-[13] stringr_1.2.0   digest_0.6.13   evaluate_0.10.1</code></pre>
+ [1] Rcpp_0.12.17      knitr_1.20        magrittr_1.5     
+ [4] MASS_7.3-50       munsell_0.4.3     doParallel_1.0.11
+ [7] pscl_1.5.2        colorspace_1.3-2  SQUAREM_2017.10-1
+[10] lattice_0.20-35   rlang_0.2.0       foreach_1.4.4    
+[13] plyr_1.8.4        ashr_2.2-7        stringr_1.3.0    
+[16] tools_3.4.4       parallel_3.4.4    grid_3.4.4       
+[19] gtable_0.2.0      ebnm_0.1-11       git2r_0.21.0     
+[22] htmltools_0.3.6   iterators_1.0.9   lazyeval_0.2.1   
+[25] assertthat_0.2.0  yaml_2.1.19       rprojroot_1.3-2  
+[28] digest_0.6.15     softImpute_1.4    tibble_1.4.2     
+[31] Matrix_1.2-14     ggplot2_2.2.1     codetools_0.2-15 
+[34] evaluate_0.10.1   rmarkdown_1.9     stringi_1.2.2    
+[37] pillar_1.2.2      compiler_3.4.4    scales_0.5.0     
+[40] backports_1.1.2   truncnorm_1.0-8  </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
