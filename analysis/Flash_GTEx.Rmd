@@ -54,21 +54,21 @@ gtex.colors <- read.table('../data/GTExColors.txt', sep = '\t', comment.char = '
 
 ```{r, echo=FALSE}
 f_b = FlashRes$backfit
-Factors = flash_get_f(f_b)
+Factors = flash_get_ldf(f_b)$f
 row.names(Factors) = colnames(Z)
 ```
 ```{r, echo=FALSE}
 par(mar=c(1,1,1,1))
 par(mfrow=c(3,2))
 # layout(matrix(seq(1,12), 6, 2, byrow = TRUE))
-for(i in 1:23){
+for(i in 1:22){
   barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(f_b)[i],3)), las=2, cex.names = 0.4, col=as.character(gtex.colors), names="")
 }
 ```
 
 Flash again on the loading matrix
 ```{r, eval=FALSE}
-flash.loading = flash_set_data(flash_get_l(f_b)[,1:23])
+flash.loading = flash_set_data(flash_get_ldf(f_b)$l[,1:23])
 fl_greedy = flash_add_greedy(flash.loading, K=30)
 fl_b = flash_backfit(flash.loading, fl_greedy)
 saveRDS(list(backfit = fl_b, greedy = fl_greedy), '../output/GTExVarColLoaing_Flash.rds')
@@ -78,17 +78,16 @@ saveRDS(list(backfit = fl_b, greedy = fl_greedy), '../output/GTExVarColLoaing_Fl
 FlashRes.loading = readRDS('../output/GTExVarColLoaing_Flash.rds')
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.height=12, fig.width=12}
 fl_b = FlashRes.loading$backfit
-Factors = flash_get_f(fl_b)
-par(mar=c(1,1,1,1))
+Factors = flash_get_ldf(fl_b)$f
+colnames(Factors) = paste0('Factor ', 1:23)
+row.names(Factors) = colnames(Factors)
 par(mfrow=c(3,2))
 for(i in 1:23){
-  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fl_b)[i],3)), las=2, cex.names = 0.4, col=as.character(gtex.colors), names="")
+  barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(fl_b)[i],3)), las=2, cex.names = 0.8)
 }
 ```
-
-There is no latent structure in the flashr loadings matrix.
 
 # Session information
 
