@@ -28,19 +28,5 @@ output:
 * The Flash hierarchical model on Breast Cancer data: [Flash_Breast](Flash_Breast.html)
 * The Flash hierarchical model on Presidential Address data: [Flash_PresiAdd](Flash_PresiAdd.html)
 * The Flash hierarchical model on Movie Lens data: [Flash_Movie](Flash_Movie.html)
-
-* Mean:
-    
-    [MeanSignal](MeanSignal_Orig.html)
-    
-    Recover the discarded column: [MeanSignalRecover](MeanSignalRec.html)
-    
-    The estimated covariance in the the previous analysis was based on the data including the discarded column.
-    
-    Another way is estimating the covariance based on the full data. If we discard the ith column, then discard the ith row and ith column of the estimated covariance matrices. The `mashcommonbaseline` method is robust of the choice of the discarded column.
-    
-    [MeanSignalWhole](MeanSignalExp.html)
-    
-    When we increase R: [MeanSignalR=50](MeanSignalRecR50.html)
     
 * [UKBioBank](UKBio.html)
