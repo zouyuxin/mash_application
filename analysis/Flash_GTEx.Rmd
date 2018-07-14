@@ -61,7 +61,7 @@ row.names(Factors) = colnames(Z)
 par(mar=c(1,1,1,1))
 par(mfrow=c(3,2))
 # layout(matrix(seq(1,12), 6, 2, byrow = TRUE))
-for(i in 1:22){
+for(i in 1:23){
   barplot(Factors[,i], main=paste0('Factor ',i, ' pve= ', round(flash_get_pve(f_b)[i],3)), las=2, cex.names = 0.4, col=as.character(gtex.colors), names="")
 }
 ```
