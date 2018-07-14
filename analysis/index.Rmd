@@ -28,5 +28,7 @@ output:
 * The Flash hierarchical model on Breast Cancer data: [Flash_Breast](Flash_Breast.html)
 * The Flash hierarchical model on Presidential Address data: [Flash_PresiAdd](Flash_PresiAdd.html)
 * The Flash hierarchical model on Movie Lens data: [Flash_Movie](Flash_Movie.html)
-    
+
+* [Hierarchical Flash model simulation](HierarchicalFlash.html)
+
 * [UKBioBank](UKBio.html)
