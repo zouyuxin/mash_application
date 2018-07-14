@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yuxin Zou" />
+
+
+<title>Hierarchicagl Flash</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mash_application</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Hierarchicagl Flash</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>7/14/2018</em></h4>
+
+</div>
+
+
+<!-- Update knitr chunk options -->
+<!-- Insert the date the file was last updated -->
+<p><strong>Last updated:</strong> 2018-07-14</p>
+<!-- Insert the code version (Git commit SHA1) if Git repository exists and R
+ package git2r is installed -->
+<p><strong>Code version:</strong> 51f2ca3</p>
+<pre class="r"><code>library(flashr); library(ggplot2); library(reshape2)</code></pre>
+<p>Plot function:</p>
+<pre class="r"><code>plot_HP = function(title_name, mat, absolute = TRUE){
+  p1 = ggplot(data = mat, aes(Var2, Var1, fill = value))+geom_tile(color = &quot;white&quot;)+
+    scale_fill_gradient2(low = &quot;darkblue&quot;, high = &quot;darkred&quot;, mid = &quot;white&quot;, 
+     midpoint = 0, space = &quot;Lab&quot;) + labs(title = title_name, y = &quot;samples&quot;, x = &quot;variables&quot;) +
+    # scale_fill_gradient2(low = &quot;white&quot;, high = &quot;grey6&quot;, mid = &quot;grey9&quot;, midpoint = 0.41, limit = c(0,0.82), space = &quot;Lab&quot;) + labs(title = title_name, y = &quot;samples&quot;, x = &quot;variables&quot;) +
+    theme_minimal() + theme(legend.position=&quot;none&quot;,plot.title = element_text(size = 12.9, face = &quot;bold&quot;)) 
+  p1
+}</code></pre>
+<div id="model-outline" class="section level1">
+<h1>Model Outline</h1>
+<p>In flash model, we have <span class="math display">\[
+Y_{n\times p} = L_{n \times k}F_{p\times k}^{T} + E_{n\times p}
+\]</span> We could find some patterns of the data Y based on the factors in F. But the patterns depend on the loadings L. We run flash on L again <span class="math display">\[
+L_{n\times k} = O_{n\times r} A_{k\times r}^{T} + R_{n\times k} 
+\]</span></p>
+<p>From the factors A, we can check the dependence of factors in F.</p>
+<p>I simulate Y with 5 conditions (p = 5). Some have equal effect in all conditions; some have equal effect in consition 3, 4 and 5, but stronger effect in condition 1 and 2 (all effects are in the same direction); some have effect only in the last condition.</p>
+<ul>
+<li><p>Summary from the simulation:</p>
+<p>From the simulation, we see factors with loadings both positive or both negative, and also see cases where one loading is positive and the other is negative.</p></li>
+<li><p>Question:</p>
+<p>We interprete the factor as a pattern in the data <code>Y</code>. For example, in GTEx data, we say a factor with approximately equal weight for every tissue reflects that many eQTLs have similar effects accross all tissues. I doubt whether our interpretation is correct. <strong>The pattern in Y depends on L</strong>. If some rows of L have 2 large entries, then those samples depend on 2 factors. The pattern in <code>Y</code> is actually a linear combination of the 2 factors. Therefore, we perform factor analysis on <code>L</code> again. Using the new factors <code>A</code>, we check if there is a linear combination of factors <code>F</code>.</p>
+<p>My question is that the actual pattern in <code>Y</code> is still depending on the new loading <code>O</code>. The rows of loading <code>O</code> could also have several large entries, which suggests that the pattern in <code>Y</code> depends on a combination of factors. I don’t have an example for this case yet. So I think we cannot say the factors summarize the patterns in the data.</p>
+<p>The problem is that the pattern in the data depends on loadings, and we don’t have any summary about the loadings.</p></li>
+</ul>
+</div>
+<div id="simulation" class="section level1">
+<h1>Simulation</h1>
+<pre class="r"><code>flashdata = function(n, FF, LL, Lsd, err_sd){
+  k = ncol(FF)
+  p = nrow(FF)
+  LLL = matrix(0,0,k)
+  for(i in 1:nrow(LL)){
+    temp = matrix(rnorm(n * k, sd = Lsd), n, k)
+    direction = c(sign(temp[,1]))
+    temp2 = direction * abs(temp)
+    LLL = rbind(LLL, t(t(temp2) * LL[i,] ))
+  }
+  Ytrue = LLL %*% t(FF)
+  Y = Ytrue + matrix(rnorm(n*nrow(LL)*p, sd = err_sd), n*nrow(LL), p)
+  return(list(Y = Y, Ytrue = Ytrue))
+}</code></pre>
+<pre class="r"><code>set.seed(1)
+FF = cbind(c(1,1,1,1,1), c(1,1,0,0,0), c(0,0,0,0,1))
+LL = rbind(c(1,0,0), c(0,0,1), c(0.3,0.7,0))
+data = flashdata(500, FF, LL, 4,0.5)</code></pre>
+<div id="flash-model-loading-opposite-sign" class="section level2">
+<h2>Flash model (loading opposite sign)</h2>
+<p>Using greefy+backfit flash method:</p>
+<pre class="r"><code>f1 = flash(data$Y, greedy = TRUE, backfit = TRUE)</code></pre>
+<pre><code>fitting factor/loading 1</code></pre>
+<pre><code>fitting factor/loading 2</code></pre>
+<pre><code>fitting factor/loading 3</code></pre>
+<pre><code>fitting factor/loading 4</code></pre>
+<pre class="r"><code>ff1 = flash_get_ldf(f1)$f; Loadings1 = flash_get_ldf(f1)$l * flash_get_ldf(f1)$d</code></pre>
+<p>The factors are</p>
+<pre class="r"><code>par(mfrow=c(1,3))
+for(i in 1:ncol(ff1)){
+  barplot(ff1[,i], main = paste0(&#39;Factor &#39;, i, &#39;, pve=&#39;, round(flash_get_pve(f1)[i],3)))
+}</code></pre>
+<p><img src="figure/HierarchicalFlash.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The factor 1 and 3 reflect the pattern in the simulated data. But for factor 2, we expect they have effect in the same direction. Factor 2 is not a pattern in the data. The real pattern is a combination of factor 1 and 2.</p>
+<p>Let’s check the L matrix</p>
+<pre class="r"><code>melted_Loading = melt(Loadings1)
+melted_Loading_zoom = melt(Loadings1[1001:1500,])
+p1 = plot_HP(&#39;Loading&#39;, melted_Loading)
+p2 = plot_HP(&#39;Loading 1001-1500&#39;, melted_Loading_zoom)
+gridExtra::grid.arrange(p1,p2, ncol = 2)</code></pre>
+<p><img src="figure/HierarchicalFlash.Rmd/unnamed-chunk-6-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>The Loadings for the last 500 samples (1001-1500) have opposite sign for factor 1 and 2.</p>
+<p>We perform flash analysis on L:</p>
+<pre class="r"><code>f1.l = flash(Loadings1, greedy = TRUE, backfit = TRUE)</code></pre>
+<pre><code>fitting factor/loading 1</code></pre>
+<pre><code>fitting factor/loading 2</code></pre>
+<pre><code>fitting factor/loading 3</code></pre>
+<pre><code>fitting factor/loading 4</code></pre>
+<pre class="r"><code>f1l.f = flash_get_ldf(f1.l)$f
+row.names(f1l.f) = paste0(&#39;Factor &#39;, 1:3)
+par(mfrow=c(1,3))
+for(i in 1:ncol(f1l.f)){
+  barplot(f1l.f[,i], main = paste0(&#39;Factor &#39;, i, &#39;, pve=&#39;, round(flash_get_pve(f1.l)[i],3)))
+}</code></pre>
+<p><img src="figure/HierarchicalFlash.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We see that one loading is positive and the other is negative.</p>
+<p>Check loadings (O) of Loadings:</p>
+<pre class="r"><code>melted_LLoading = melt(flash_get_ldf(f1.l)$l * flash_get_ldf(f1.l)$d)
+p3 = plot_HP(&#39;Loadings of Loadings&#39;, melted_LLoading)
+p3</code></pre>
+<p><img src="figure/HierarchicalFlash.Rmd/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;" /></p>
+</div>
+<div id="flash-with-fixed-factors-loading-same-sign" class="section level2">
+<h2>Flash with fixed factors (loading same sign)</h2>
+<pre class="r"><code>f2 = flash_add_fixed_f(data$Y, FF=cbind(c(1,1,1,1,1), c(1,1,0,0,0), c(0,0,0,0,1)))
+f2 = flash_backfit(data$Y, f2)
+Loading.fix = flash_get_ldf(f2)$l * flash_get_ldf(f2)$d
+# Check loadings
+melted_LoadingFix = melt(Loading.fix)
+melted_LoadingFix_zoom = melt(Loading.fix[1001:1500,])
+p4 = plot_HP(&#39;Loading&#39;, melted_LoadingFix)
+p5 = plot_HP(&#39;Loading_zoom&#39;, melted_LoadingFix_zoom)
+gridExtra::grid.arrange(p4,p5, ncol = 2)</code></pre>
+<p><img src="figure/HierarchicalFlash.Rmd/unnamed-chunk-9-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p>The Loadings for the last 500 samples (1001-1500) have same sign for factor 1 and 2.</p>
+<p>Flash on loadings</p>
+<pre class="r"><code>f2.l = flash(Loading.fix, greedy = TRUE, backfit = TRUE)</code></pre>
+<pre><code>fitting factor/loading 1</code></pre>
+<pre><code>fitting factor/loading 2</code></pre>
+<pre><code>fitting factor/loading 3</code></pre>
+<pre><code>fitting factor/loading 4</code></pre>
+<pre class="r"><code>f2l.f = flash_get_ldf(f2.l)$f
+row.names(f2l.f) = paste0(&#39;Factor &#39;, 1:3)
+par(mfrow=c(1,3))
+for(i in 1:ncol(f2l.f)){
+  barplot(f2l.f[,i], main = paste0(&#39;Factor &#39;, i, &#39;, pve=&#39;, round(flash_get_pve(f2.l)[i],3)))
+}</code></pre>
+<p><img src="figure/HierarchicalFlash.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Check Loading of Loaing</p>
+<pre class="r"><code>melted_LLoading.fix = melt(flash_get_ldf(f2.l)$l * flash_get_ldf(f2.l)$d)
+p6 = plot_HP(&#39;Loadings of Loadings&#39;, melted_LLoading.fix)
+p6</code></pre>
+<p><img src="figure/HierarchicalFlash.Rmd/unnamed-chunk-11-1.png" width="480" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="session-information" class="section level1">
+<h1>Session information</h1>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.4.4 (2018-03-15)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.5
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.4/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] reshape2_1.4.3 ggplot2_3.0.0  flashr_0.5-12 
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.17      bindr_0.1.1       compiler_3.4.4   
+ [4] pillar_1.2.2      git2r_0.21.0      plyr_1.8.4       
+ [7] iterators_1.0.9   tools_3.4.4       digest_0.6.15    
+[10] evaluate_0.10.1   tibble_1.4.2      gtable_0.2.0     
+[13] lattice_0.20-35   pkgconfig_2.0.1   rlang_0.2.1      
+[16] Matrix_1.2-14     foreach_1.4.4     yaml_2.1.19      
+[19] parallel_3.4.4    ebnm_0.1-12       bindrcpp_0.2.2   
+[22] gridExtra_2.3     withr_2.1.2       stringr_1.3.0    
+[25] dplyr_0.7.4       knitr_1.20        rprojroot_1.3-2  
+[28] grid_3.4.4        glue_1.2.0        R6_2.2.2         
+[31] rmarkdown_1.9     ashr_2.2-7        magrittr_1.5     
+[34] backports_1.1.2   scales_0.5.0      codetools_0.2-15 
+[37] htmltools_0.3.6   MASS_7.3-50       assertthat_0.2.0 
+[40] softImpute_1.4    colorspace_1.3-2  labeling_0.3     
+[43] stringi_1.2.2     lazyeval_0.2.1    pscl_1.5.2       
+[46] doParallel_1.0.11 munsell_0.4.3     truncnorm_1.0-8  
+[49] SQUAREM_2017.10-1</code></pre>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
