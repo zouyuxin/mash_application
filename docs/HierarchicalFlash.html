@@ -338,7 +338,7 @@ div.section {
 <p><strong>Last updated:</strong> 2018-07-14</p>
 <!-- Insert the code version (Git commit SHA1) if Git repository exists and R
  package git2r is installed -->
-<p><strong>Code version:</strong> 51f2ca3</p>
+<p><strong>Code version:</strong> 2c8172d</p>
 <pre class="r"><code>library(flashr); library(ggplot2); library(reshape2)</code></pre>
 <p>Plot function:</p>
 <pre class="r"><code>plot_HP = function(title_name, mat, absolute = TRUE){
@@ -364,7 +364,7 @@ L_{n\times k} = O_{n\times r} A_{k\times r}^{T} + R_{n\times k}
 <li><p>Question:</p>
 <p>We interprete the factor as a pattern in the data <code>Y</code>. For example, in GTEx data, we say a factor with approximately equal weight for every tissue reflects that many eQTLs have similar effects accross all tissues. I doubt whether our interpretation is correct. <strong>The pattern in Y depends on L</strong>. If some rows of L have 2 large entries, then those samples depend on 2 factors. The pattern in <code>Y</code> is actually a linear combination of the 2 factors. Therefore, we perform factor analysis on <code>L</code> again. Using the new factors <code>A</code>, we check if there is a linear combination of factors <code>F</code>.</p>
 <p>My question is that the actual pattern in <code>Y</code> is still depending on the new loading <code>O</code>. The rows of loading <code>O</code> could also have several large entries, which suggests that the pattern in <code>Y</code> depends on a combination of factors. I don’t have an example for this case yet. So I think we cannot say the factors summarize the patterns in the data.</p>
-<p>The problem is that the pattern in the data depends on loadings, and we don’t have any summary about the loadings.</p></li>
+<p>The pattern in the data depends on loadings, and we don’t have any summary about the loadings.</p></li>
 </ul>
 </div>
 <div id="simulation" class="section level1">
