@@ -65,7 +65,7 @@ I simulate Y with 5 conditions (p = 5). Some have equal effect in all conditions
 
     My question is that the actual pattern in `Y` is still depending on the new loading `O`. The rows of loading `O` could also have several large entries, which suggests that the pattern in `Y` depends on a combination of factors. I don't have an example for this case yet. So I think we cannot say the factors summarize the patterns in the data. 
     
-    The problem is that the pattern in the data depends on loadings, and we don't have any summary about the loadings.
+    The pattern in the data depends on loadings, and we don't have any summary about the loadings.
 
 # Simulation
 ```{r}
