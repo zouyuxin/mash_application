@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yuxin Zou" />
+
+<meta name="date" content="2018-07-24" />
+
+<title>Estimate cor – max</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mash_application</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Estimate cor – max</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>2018-07-24</em></h4>
+
+</div>
+
+
+<!-- Update knitr chunk options -->
+<p><span class="math display">\[
+\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) | \left(\begin{matrix} x \\ y \end{matrix} \right) \sim N(\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) ; \left(\begin{matrix} x \\ y \end{matrix} \right), \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right))
+\]</span> <span class="math display">\[
+\left(\begin{matrix} x \\ y \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} x \\ y \end{matrix} \right); 0, U_{k} )
+\]</span> <span class="math inline">\(\Rightarrow\)</span> <span class="math display">\[
+\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right); 0, \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + U_{k} )
+\]</span> <span class="math display">\[
+\Sigma_{k} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + U_{k} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + \left( \begin{matrix} u_{k11} &amp; u_{k12} \\ u_{k21} &amp; u_{k22} \end{matrix} \right) = \left( \begin{matrix} 1+u_{k11} &amp; \rho+u_{k12} \\ \rho+u_{k21} &amp; 1+u_{k22} \end{matrix} \right)
+\]</span> Let <span class="math inline">\(\sigma_{k11} = \sqrt{1+u_{k11}}\)</span>, <span class="math inline">\(\sigma_{k22} = \sqrt{1+u_{k22}}\)</span>, <span class="math inline">\(\phi_{k}=\frac{\rho+u_{k12}}{\sigma_{k11}\sigma_{k22}}\)</span></p>
+<pre class="r"><code>library(mashr)</code></pre>
+<pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>set.seed(1)
+n &lt;- 10000; pi &lt;- c(0.8,0.2); rho &lt;- 0.8
+V &lt;- matrix(c(1,rho,rho,1),2,2)
+U0 &lt;- matrix(0,2,2)
+U1 &lt;- diag(2)
+X0 &lt;- mvtnorm::rmvnorm(n*pi[1], sigma = V + U0)
+X1 &lt;- mvtnorm::rmvnorm(n*pi[2], sigma = V + U1)
+X &lt;- rbind(X0,X1)
+
+U2 &lt;- matrix(1,2,2)
+U3 &lt;- matrix(0,2,2); U3[1,1] &lt;- 1
+U4 &lt;- matrix(0,2,2); U4[2,2] &lt;- 1
+Ulist &lt;- list(U0 = U0, U1 = U1, U2=U2, U3 = U3, U4=U4)</code></pre>
+<div id="mle" class="section level1">
+<h1>MLE</h1>
+<p>The loglikelihood is (with penalty) <span class="math display">\[
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}N(x_{i}; 0, \Sigma_{k}) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+\]</span></p>
+<p>The penalty on <span class="math inline">\(\pi\)</span> encourages over-estimation of <span class="math inline">\(\pi_{0}\)</span>, <span class="math inline">\(\lambda_{k}\geq 1\)</span>.</p>
+<p><span class="math display">\[
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}\frac{1}{2\pi\sigma_{k11}\sigma_{k22}\sqrt{1-\phi_{k}^2}} \exp\left( -\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]  \right) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+\]</span></p>
+<p>Algorithm:</p>
+<pre class="text"><code>Input: X, init_pi, init_rho, Ulist
+Compute loglikelihood
+delta = 1
+while delta &gt; 10^(-5)
+  Given rho, estimate pi by max loglikelihood
+  Given pi, estimate rho by max loglikelihood
+  Compute loglikelihood
+  Update delta</code></pre>
+<pre class="r"><code>get_sigma &lt;- function(rho, Ulist){
+  V &lt;- matrix(c(1,rho,rho,1), 2,2)
+  lapply(Ulist, function(U) U + V)
+}
+
+penalty &lt;- function(prior){
+  subset &lt;- (prior != 1.0)
+  sum((prior-1)[subset]*log(pi[subset]))
+}
+
+compute.log.lik &lt;- function(L, p, prior){
+  pi = normalize(pmax(0,pi))
+  L &lt;- t(t(L) * p)
+  return(sum(log(rowSums(L))) + penalty(prior))
+}
+
+normalize &lt;- function(x){
+  x/sum(x)
+}
+
+optimize_pi_rho_times &lt;- function(X, Ulist, init_pi=NULL, init_rho=0, tol=1e-5, prior=c(&quot;nullbiased&quot;, &quot;uniform&quot;), optmethod = c(&quot;mixIP&quot;,&quot;mixEM&quot;,&quot;cxxMixSquarem&quot;)){
+  times = length(init_rho)
+  result = list()
+  for(i in 1:times){
+    result[[i]] = optimize_pi_rho(X, Ulist, init_pi=NULL, init_rho=init_rho[i], tol=1e-5, prior=c(&quot;nullbiased&quot;, &quot;uniform&quot;), optmethod = c(&quot;mixIP&quot;,&quot;mixEM&quot;,&quot;cxxMixSquarem&quot;))
+  }
+  return(result)
+}
+
+optimize_pi_rho &lt;- function(X, Ulist, init_pi=NULL, init_rho=0, tol=1e-5, prior=c(&quot;nullbiased&quot;, &quot;uniform&quot;), optmethod = c(&quot;mixIP&quot;,&quot;mixEM&quot;,&quot;cxxMixSquarem&quot;)){
+  optmethod &lt;- match.arg(optmethod)
+  prior &lt;- match.arg(prior)
+  if(length(Ulist) &lt;= 1){
+    stop(&#39;Please provide more U! With only one U, the correlation could be estimated directly using mle.&#39;)
+  }
+  prior &lt;- mashr:::set_prior(length(Ulist), prior)
+  if(is.null(init_pi)){
+    init_pi &lt;- normalize(prior)
+  }
+  Sigma &lt;- get_sigma(init_rho, Ulist)
+  L &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
+  log_liks &lt;- c()
+  ll       &lt;- compute.log.lik(L, init_pi, prior)
+  log_liks &lt;- c(log_liks, ll)
+  delta.ll &lt;- 1
+  iter &lt;- 0
+  rho_s &lt;- init_rho
+  while( delta.ll &gt; tol){
+    # max pi
+    pi_s &lt;- mashr:::optimize_pi(L,prior=prior,optmethod=optmethod)
+    # max_rho
+    rho_s &lt;- optim(rho_s, optimize_rho, lower = -1, upper = 1, X = X, Ulist=Ulist, pi_s = pi_s, prior = prior, method = &#39;Brent&#39;)$par
+    
+    # compute loglike
+    Sigma &lt;- get_sigma(rho_s, Ulist)
+    L &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
+    ll &lt;- compute.log.lik(L, pi_s, prior)
+    log_liks &lt;- c(log_liks, ll)
+    # Update delta
+    delta.ll &lt;- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
+    iter &lt;- iter + 1
+  }
+  return(list(pi = pi_s, rho=rho_s, loglik = log_liks, iter = iter))
+}
+
+optimize_rho &lt;- function(rho, X, Ulist, pi_s, prior){
+  Sigma &lt;- get_sigma(rho, Ulist)
+  L &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
+  -compute.log.lik(L, pi_s, prior)
+}</code></pre>
+<pre class="r"><code>result &lt;- optimize_pi_rho_times(X, Ulist)
+plot(result[[1]]$loglik)</code></pre>
+<p><img src="figure/EstimateCorMax.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> The estimated <span class="math inline">\(\rho\)</span> is 0.7998163.</p>
+</div>
+<div id="em" class="section level1">
+<h1>EM</h1>
+<div id="e-step" class="section level2">
+<h2>E step</h2>
+<p><span class="math display">\[
+P(X,Z|\rho, \pi) = \prod_{i=1}^{n} \prod_{k=0}^{K}\left[\pi_{k}N(x_{i}; 0, \Sigma_{k})\right]^{\mathbb{I}(z_{i}=k)} \prod_{k=0}^{K}\pi_{k}^{\lambda_{k}-1}
+\]</span> <span class="math display">\[
+\mathbb{E}_{Z|X} \log P(X,Z|\rho, \pi) = \sum_{i=1}^{n} \sum_{k=0}^{K} P(z_{i}=k|X)\left[ \log \pi_{k} + \log N(x_{i}; 0, \Sigma_{k})\right] + \sum_{k=0}^{K} (\lambda_{k}-1)\log \pi_{k}
+\]</span> <span class="math display">\[
+\gamma_{Z_{i}}(k) = P(z_{i}=k|X_{i}) = \frac{\pi_{k}N(x_{i}; 0, \Sigma_{k})}{\sum_{k&#39;=0}^{K}\pi_{k&#39;}N(x_{i}; 0, \Sigma_{k&#39;})}
+\]</span></p>
+</div>
+<div id="m-step" class="section level2">
+<h2>M step</h2>
+<p><span class="math inline">\(\pi\)</span>: <span class="math display">\[
+\sum_{i=1}^{n} \gamma_{Z_{i}}(k) \frac{1}{\pi_{k}} + \frac{\lambda_{k}-1}{\pi_{k}} - \lambda = 0 \quad \rightarrow \pi_{k} = \frac{1}{\lambda} \left(\sum_{i=1}^{n} \gamma_{Z_{i}}(k) + \lambda_{k}-1\right) \quad \lambda = n + \sum_{k=1}^{K}\lambda_{k} - K 
+\]</span></p>
+<p><span class="math display">\[
+\hat{\pi}_{k} = \frac{\sum_{i=1}^{n} \gamma_{Z_{i}}(k) + \lambda_{k} - 1 }{n + \sum_{k=1}^{K}\lambda_{k} - K } 
+\]</span></p>
+<p><span class="math inline">\(\rho\)</span>: <span class="math display">\[
+\begin{align*}
+f(\rho) &amp;= \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{Z_{i}}(k)\left[ -\frac{1}{2}\log (1-\phi_{k}^2)-\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right] \right]\\
+f(\rho)&#39; &amp;= \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{Z_{i}}(k)\left[ \frac{\phi_{k}}{1-\phi_{k}^2}-\frac{\phi_{k}}{(1-\phi_{k}^2)^2}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2}\right] - \frac{\phi_{k}+1}{(1-\phi_{k}^2)^2}\frac{x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]\frac{1}{\sigma_{k11}\sigma_{k22}} = 0
+\end{align*}
+\]</span> <span class="math inline">\(\phi_k = \frac{\rho + u_{k12}}{\sigma_{k11}\sigma_{k22}}\)</span>, <span class="math inline">\(\phi_{k}\)</span> is a function of <span class="math inline">\(\rho\)</span>.</p>
+<p>Algorithm:</p>
+<pre class="r"><code>Input: X, Ulist, init_rho, init_pi
+Compute loglikelihood
+delta = 1
+while delta &gt; tol
+  E step: update Z
+  M step: update pi, update rho
+  Compute loglikelihood
+  Update delta</code></pre>
+<pre class="r"><code>mixture.EM &lt;- function(X, Ulist, init_rho=0, init_pi = NULL, iter=50) {
+  prior &lt;- mashr:::set_prior(length(Ulist), &#39;nullbiased&#39;)
+  if (is.null(init_pi)){
+    init_pi &lt;- normalize(prior)
+  }
+  log_liks &lt;- c()
+  Sigma &lt;- get_sigma(init_rho, Ulist)
+  L &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
+  ll &lt;- compute.log.lik(L, init_pi, prior)
+  log_liks &lt;- c(log_liks, ll)
+  delta.ll &lt;- 1
+  para = list(rho = init_rho, pi = init_pi)
+  
+  for(i in 1:iter){
+    para &lt;- EM.iter(para, L, X, Ulist)
+    Sigma = get_sigma(para$rho, Ulist)
+    L &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
+    ll       &lt;- compute.log.lik(L, para$pi, prior)
+    log_liks &lt;- c(log_liks, ll)
+    delta.ll &lt;- log_liks[length(log_liks)]  - log_liks[length(log_liks)-1]
+  }
+  
+  return(list(estimate = para, loglikelihood = log_liks))
+}
+
+EM.iter &lt;- function(para, L, X, Ulist, ...) {
+  
+  # E-step: compute E_{Z|X,w0}[I(Z_i = k)]
+  z_ik &lt;- L
+  for(k in seq_len(ncol(L))) {
+    z_ik[,k] &lt;- para$pi[k]*z_ik[,k]
+  }
+  z_ik &lt;- z_ik / rowSums(z_ik)
+  
+  # M-step
+  pi.next   &lt;- colSums(z_ik)/sum(z_ik)
+  
+  rho.next = optimize(EMloglikelihood, interval = c(-1,1), maximum = TRUE, X = X, Ulist = Ulist, z = z_ik)$maximum
+  
+  rho.seq = seq(-0.99,0.99,by=0.01)
+  ll.seq = numeric(length(rho.seq))
+  for(i in 1:length(rho.seq)){
+    ll.seq[i] = EMloglikelihood(rho.seq[i], X, Ulist, z_ik)
+  }
+  plot(rho.seq, ll.seq, type = &#39;l&#39;)
+  print(rho.seq[which.max(ll.seq)])
+  print(rho.next)
+  
+  nex = list(pi = pi.next, rho = rho.next)
+  return(nex)
+}
+
+EMloglikelihood = function(rho, X, Ulist, z){
+  Sigma = get_sigma(rho, Ulist)
+  L = t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+  sum(L * z)
+}</code></pre>
+<pre class="r"><code># result.em = mixture.EM(X, Ulist, iter=20)</code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
