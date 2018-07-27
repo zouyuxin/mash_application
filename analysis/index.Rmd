@@ -32,3 +32,9 @@ output:
 * [Hierarchical Flash model simulation](HierarchicalFlash.html)
 
 * [UKBioBank](UKBio.html)
+
+* Estimate cor in `mashr`:
+    
+    [Estimate cor problem](EstimateCor.html)
+    [Estimate cor mle](EstimateCorMax.html)
+    [Estimate cor in mash](EstimateCorMaxMash.html)
