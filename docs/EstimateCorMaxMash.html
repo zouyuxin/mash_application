@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yuxin Zou" />
+
+<meta name="date" content="2018-07-25" />
+
+<title>Estimate cor—max MASH</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mash_application</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Estimate cor—max MASH</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>2018-07-25</em></h4>
+
+</div>
+
+
+<!-- Update knitr chunk options -->
+<!-- Insert the date the file was last updated -->
+<p><strong>Last updated:</strong> 2018-08-03</p>
+<pre class="r"><code>library(mashr)</code></pre>
+<pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
+source(&#39;../code/estimate_cor.R&#39;)
+library(knitr)
+library(kableExtra)</code></pre>
+<div id="one-example" class="section level1">
+<h1>One example</h1>
+<p><span class="math display">\[
+\hat{\beta}|\beta \sim N_{3}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.7 &amp; 0.1 \\
+                                          0.7 &amp; 1 &amp; 0.5 \\ 
+                                          0.1 &amp; 0.5 &amp; 1 \end{matrix}\right))
+\]</span></p>
+<p><span class="math display">\[
+\beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{3}(0, \left(\begin{matrix} 1 &amp; 0 &amp;0\\
+                                          0 &amp; 0 &amp; 0 \\
+                                          0 &amp; 0 &amp; 0 \end{matrix}\right)) + \frac{1}{4}N_{3}(0, \left(\begin{matrix} 1 &amp; 0 &amp; 0 \\
+                     0 &amp; 1 &amp; 0 \\
+                     0 &amp; 0 &amp; 0 \end{matrix}\right)) + \frac{1}{4}N_{3}(0, \left(\begin{matrix} 1 &amp; 1 &amp; 1 \\
+                     1 &amp; 1 &amp; 1 \\
+                     1 &amp; 1 &amp; 1 \end{matrix}\right))
+\]</span></p>
+<pre class="r"><code>set.seed(1)
+Sigma = cbind(c(1,0.7,0.1), c(0.7,1,0.5), c(0.1,0.5,1))
+U0 = matrix(0,3,3)
+U1 = matrix(0,3,3); U1[1,1] = 1
+U2 = diag(3); U2[3,3] = 0
+U3 = matrix(1,3,3)
+data = generate_data(n=500, p=3, V=Sigma, Utrue = list(U0=U0, U1=U1,U2=U2,U3=U3))</code></pre>
+<pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
+m.1by1 = mash_1by1(m.data)
+strong = get_significant_results(m.1by1)
+
+U.pca = cov_pca(m.data, 3, subset = strong)
+U.ed = cov_ed(m.data, U.pca, subset = strong)
+U.c = cov_canonical(m.data)</code></pre>
+<p>We run the algorithm in <a href="EstimateCorMax.html">estimate cor mle</a> with 3 different initial points for <span class="math inline">\(\rho\)</span>. The estimated correlation is</p>
+<pre class="r"><code>Vhat.max = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-3)
+Vhat.max$V</code></pre>
+<pre><code>          [,1]      [,2]      [,3]
+[1,] 1.0000000 0.7131869 0.1343278
+[2,] 0.7131869 1.0000000 0.5022083
+[3,] 0.1343278 0.5022083 1.0000000</code></pre>
+<p>The running time for each pairwise correlation is</p>
+<pre class="r"><code>table = data.frame(t(Vhat.max$ttime))
+colnames(table) = c(&#39;12&#39;,&#39;13&#39;,&#39;23&#39;)
+table %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+12
+</th>
+<th style="text-align:right;">
+13
+</th>
+<th style="text-align:right;">
+23
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+110.395
+</td>
+<td style="text-align:right;">
+56.69
+</td>
+<td style="text-align:right;">
+26.003
+</td>
+</tr>
+</tbody>
+</table>
+<p>The time is the total running time with different initial point.</p>
+<p>Using the original truncated correlation:</p>
+<pre class="r"><code>Vhat.tru = estimate_null_correlation(m.data)
+Vhat.tru</code></pre>
+<pre><code>           [,1]      [,2]       [,3]
+[1,] 1.00000000 0.4621643 0.07423134
+[2,] 0.46216433 1.0000000 0.41652572
+[3,] 0.07423134 0.4165257 1.00000000</code></pre>
+<p>Checking the estiamted error:</p>
+<pre class="r"><code>maxError = c(max(abs(Vhat.max$V - Sigma)),
+max(abs(Vhat.tru - Sigma)))
+OpError = c(svd(Vhat.max$V - Sigma)$d[1],
+svd(Vhat.tru - Sigma)$d[1])
+table = data.frame(maxError = maxError, OpError = OpError, row.names = c(&#39;mle&#39;,&#39;trunc&#39;))
+table %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+maxError
+</th>
+<th style="text-align:right;">
+OpError
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+mle
+</td>
+<td style="text-align:right;">
+0.0343278
+</td>
+<td style="text-align:right;">
+0.0375554
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+trunc
+</td>
+<td style="text-align:right;">
+0.2378357
+</td>
+<td style="text-align:right;">
+0.2609944
+</td>
+</tr>
+</tbody>
+</table>
+<p>In mash model, the model with correlation from mle has larger loglikelihood.</p>
+<pre class="r"><code>m.data.mle = mash_set_data(data$Bhat, data$Shat, V=Vhat.max$V)
+m.model.mle = mash(m.data.mle, c(U.c,U.ed), verbose = FALSE)</code></pre>
+<pre class="r"><code>m.data.trunc = mash_set_data(data$Bhat, data$Shat, V=Vhat.tru)
+m.model.trunc = mash(m.data.trunc, c(U.c,U.ed), verbose = FALSE)</code></pre>
+<pre class="r"><code>table = data.frame(log_likelihood = c(get_loglik(m.model.mle), get_loglik(m.model.trunc)), row.names = c(&#39;mle&#39;, &#39;trunc&#39;))
+t(table) %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+mle
+</th>
+<th style="text-align:right;">
+trunc
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+log_likelihood
+</td>
+<td style="text-align:right;">
+-8905.915
+</td>
+<td style="text-align:right;">
+-8942.591
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="more-simulations" class="section level1">
+<h1>More simulations</h1>
+<p>I randomly generate 10 positive definite correlation matrices, V. The sample size is 2000.</p>
+<p><span class="math display">\[
+\hat{z}|z \sim N_{5}(z, V)
+\]</span> <span class="math display">\[
+z\sim\frac{1}{4}\delta_{0} + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 1 &amp; \mathbf{0}_{1\times 4} \\ \mathbf{0}_{4\times 1} &amp; \mathbf{0}_{4\times 4} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\left(\begin{matrix} \mathbf{1}_{2\times 2} &amp; \mathbf{0}_{1\times 3} \\ \mathbf{0}_{3\times 1} &amp; \mathbf{0}_{3\times 3} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\mathbf{1}_{5\times 5})
+\]</span></p>
+<pre class="r"><code>library(mashr)
+n=500; p = 5
+U0 = matrix(0,p,p)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[c(1:2), c(1:2)] = 1
+U3 = matrix(1, p,p)
+Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
+result = V.simulation(n,p,10,Utrue)
+saveRDS(result, &#39;../output/MASH.10.mle.result.rds&#39;)</code></pre>
+<pre class="r"><code>result = readRDS(&#39;../output/MASH.10.mle.result.rds&#39;)</code></pre>
+<p>The max elementwise norm is</p>
+<pre class="r"><code>temp = rbind(result$mMaxE.max, result$mMaxE.trun)
+barplot(temp, axes=T,
+        main=&quot;max elementwise error&quot;,
+        names.arg = 1:10,
+        legend.text = c(&quot;MLE&quot;, &quot;Trunc&quot;),
+        ylim = c(0, max(colSums(temp))*2))</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The spectral norm is</p>
+<pre class="r"><code>temp = rbind(result$m2E.max, result$m2E.trun)
+barplot(temp, axes=T,
+        main=&quot;Matrix 2 norm error&quot;,
+        names.arg = 1:10,
+        legend.text = c(&quot;MLE&quot;, &quot;Trunc&quot;),
+        ylim = c(0, max(colSums(temp))*2))</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The 10 estimated correlation matrices are all positive definite.</p>
+<p>The total running time for each matrix is</p>
+<pre class="r"><code>t(result$Time) %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:right;">
+777.223
+</td>
+<td style="text-align:right;">
+1078.659
+</td>
+<td style="text-align:right;">
+651.365
+</td>
+<td style="text-align:right;">
+745.071
+</td>
+<td style="text-align:right;">
+1064.722
+</td>
+<td style="text-align:right;">
+893.494
+</td>
+<td style="text-align:right;">
+924.456
+</td>
+<td style="text-align:right;">
+697.97
+</td>
+<td style="text-align:right;">
+741.843
+</td>
+<td style="text-align:right;">
+716.978
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="session-information" class="section level1">
+<h1>Session information</h1>
+<!-- Insert the session information into the document -->
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-9      ashr_2.2-10     
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18             highr_0.7               
+ [3] compiler_3.5.1           pillar_1.3.0            
+ [5] plyr_1.8.4               iterators_1.0.10        
+ [7] tools_3.5.1              digest_0.6.15           
+ [9] viridisLite_0.3.0        evaluate_0.11           
+[11] tibble_1.4.2             lattice_0.20-35         
+[13] pkgconfig_2.0.1          rlang_0.2.1             
+[15] Matrix_1.2-14            foreach_1.4.4           
+[17] rstudioapi_0.7           yaml_2.2.0              
+[19] parallel_3.5.1           mvtnorm_1.0-8           
+[21] xml2_1.2.0               httr_1.3.1              
+[23] stringr_1.3.1            REBayes_1.3             
+[25] hms_0.4.2                rprojroot_1.3-2         
+[27] grid_3.5.1               R6_2.2.2                
+[29] rmarkdown_1.10           rmeta_3.0               
+[31] readr_1.1.1              magrittr_1.5            
+[33] scales_0.5.0             backports_1.1.2         
+[35] codetools_0.2-15         htmltools_0.3.6         
+[37] MASS_7.3-50              rvest_0.3.2             
+[39] assertthat_0.2.0         colorspace_1.3-2        
+[41] stringi_1.2.4            Rmosek_8.0.69           
+[43] munsell_0.5.0            pscl_1.5.2              
+[45] doParallel_1.0.11        truncnorm_1.0-8         
+[47] SQUAREM_2017.10-1        ExtremeDeconvolution_1.3
+[49] crayon_1.3.4            </code></pre>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+</p>
+<hr>
+
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+<!-- disqus
+  <div id="disqus_thread"></div>
+    <script type="text/javascript">
+        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
+
+        /* * * DON'T EDIT BELOW THIS LINE * * */
+        (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+-->
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
