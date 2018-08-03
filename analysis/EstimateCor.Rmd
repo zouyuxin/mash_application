@@ -15,13 +15,17 @@ knitr::read_chunk("chunks.R")
 ```{r knitr-opts-chunk, include=FALSE}
 ```
 
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
 ```{r library}
 library(mashr)
 ```
 
-In my simple simulation, the current approach underestimate the null correlation. We need to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of sum( pi_{lk} N_{2}(0, V + w_{l}U_{k})) for any pair of conditions
+In my simple simulation, the current approach underestimate the null correlation. We need to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of $\sum{\pi_{lk} N_{2}(0, V + w_{l}U_{k})}$ for any pair of conditions.
 
-Simple simulation in R^2 to illustrate the problem:
+Simple simulation in $R^2$ to illustrate the problem:
 $$
 \hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.5 \\
                                           0.5 & 1 \end{matrix}\right))
@@ -81,7 +85,7 @@ The loglikelihood is
 get_loglik(m.V)
 ```
 
-Let's try what will happen if overestimate correlation
+Let's see what will happen if we overestimate correlation
 ```{r}
 # If we overestimate cor
 V.o = matrix(c(1,0.75,0.75,1),2,2)
@@ -89,7 +93,7 @@ mash.data.Vo = mash_set_data(Bhat, SE, V=V.o)
 m.Vo = mash(mash.data.Vo, U.c)
 barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7)
 ```
-The lohlikelihood is 
+The loglikelihood is 
 ```{r}
 get_loglik(m.Vo)
 ```
@@ -107,7 +111,7 @@ The loglikelihood is
 get_loglik(m.correct)
 ```
 
-# mash 1 by 1
+# Sol1: mash 1 by 1
 
 We run ash for each condition, and estimate correlation matrix based on the non-significant genes. The estimated cor is closer to the truth. It overestimates the cor.
 ```{r}
@@ -128,7 +132,7 @@ The loglikelihood is
 get_loglik(m.V1by1)
 ```
 
-# MLE
+# Sol2: MLE
 
 ## K=1
 
@@ -157,12 +161,13 @@ l(\rho)'' &= \frac{n(\rho^2+1)}{(1-\rho^2)^2} - \frac{1}{2}\left( \frac{8\rho^2}
 \end{align*}
 $$
 
-The log likelihood is not a concave function in general. The score function has either 1 or 3 real solutions. 
+**The log likelihood is not a concave function in general.** The score function has either 1 or 3 real solutions. 
 
 Kendall and Stuart (1979) noted that at least one of the roots is real and lies in
 the interval [−1, 1]. However, it is possible that all three roots are real and in the admissible interval, in which case the likelihood can be evaluated at each root to determine the true maximum likelihood estimate. 
 
-I simulate the data with $\rho=0.75$
+I simulate the data with $\rho=0.75$ and plot the loglikelihood function:
+
 ```{r echo=FALSE}
 n = 1000; rho = 0.75
 V = matrix(c(1,rho,rho,1),2,2)
@@ -178,7 +183,6 @@ for(i in 1:199){
   loglik[i] = sum(mvtnorm::dmvnorm(x=z.null, sigma=V+U, log=TRUE))
 }
 plot(rho.seq, loglik, type='l', ylab = 'log likelihood')
-rho.seq[which.max(loglik)]
 ```
 
 $l(\rho)'$ has one real solution
@@ -189,3 +193,9 @@ polyroot(c(- sum(z.null[,1]*z.null[,2]),  - (n - sum(z.null[,1]^2 + z.null[,2]^2
 ## In general
 
 The general derivation is in [estimate correlation mle](EstimateCorMax.html)
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
