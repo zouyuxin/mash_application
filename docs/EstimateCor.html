@@ -340,10 +340,12 @@ div.section {
 
 
 <!-- Update knitr chunk options -->
+<!-- Insert the date the file was last updated -->
+<p><strong>Last updated:</strong> 2018-08-03</p>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
-<p>In my simple simulation, the current approach underestimate the null correlation. We need to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of sum( pi_{lk} N_{2}(0, V + w_{l}U_{k})) for any pair of conditions</p>
-<p>Simple simulation in R^2 to illustrate the problem: <span class="math display">\[
+<p>In my simple simulation, the current approach underestimate the null correlation. We need to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of <span class="math inline">\(\sum{\pi_{lk} N_{2}(0, V + w_{l}U_{k})}\)</span> for any pair of conditions.</p>
+<p>Simple simulation in <span class="math inline">\(R^2\)</span> to illustrate the problem: <span class="math display">\[
 \hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.5 \\
                                           0.5 &amp; 1 \end{matrix}\right))
 \]</span></p>
@@ -388,26 +390,26 @@ m.V = mash(mash.data.V, U.c)</code></pre>
 <pre><code> - Computing 2000 x 106 likelihood matrix.
  - Likelihood calculations took 0.02 seconds.
  - Fitting model with 106 mixture components.
- - Model fitting took 0.31 seconds.
+ - Model fitting took 0.23 seconds.
  - Computing posterior matrices.
  - Computation allocated took 0.02 seconds.</code></pre>
 <pre class="r"><code>barplot(get_estimated_pi(m.V), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/EstimateCor.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /> The loglikelihood is</p>
 <pre class="r"><code>get_loglik(m.V)</code></pre>
 <pre><code>[1] -6299.462</code></pre>
-<p>Let’s try what will happen if overestimate correlation</p>
+<p>Let’s see what will happen if we overestimate correlation</p>
 <pre class="r"><code># If we overestimate cor
 V.o = matrix(c(1,0.75,0.75,1),2,2)
 mash.data.Vo = mash_set_data(Bhat, SE, V=V.o)
 m.Vo = mash(mash.data.Vo, U.c)</code></pre>
 <pre><code> - Computing 2000 x 106 likelihood matrix.
- - Likelihood calculations took 0.02 seconds.
+ - Likelihood calculations took 0.01 seconds.
  - Fitting model with 106 mixture components.
- - Model fitting took 0.21 seconds.
+ - Model fitting took 0.15 seconds.
  - Computing posterior matrices.
- - Computation allocated took 0.02 seconds.</code></pre>
+ - Computation allocated took 0.01 seconds.</code></pre>
 <pre class="r"><code>barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7)</code></pre>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /> The lohlikelihood is</p>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /> The loglikelihood is</p>
 <pre class="r"><code>get_loglik(m.Vo)</code></pre>
 <pre><code>[1] -6295.582</code></pre>
 <p>What will happen if we have correct correlation</p>
@@ -417,7 +419,7 @@ m.correct = mash(mash.data.correct, U.c)</code></pre>
 <pre><code> - Computing 2000 x 106 likelihood matrix.
  - Likelihood calculations took 0.02 seconds.
  - Fitting model with 106 mixture components.
- - Model fitting took 0.16 seconds.
+ - Model fitting took 0.17 seconds.
  - Computing posterior matrices.
  - Computation allocated took 0.00 seconds.</code></pre>
 <pre class="r"><code>barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7)</code></pre>
@@ -425,8 +427,8 @@ m.correct = mash(mash.data.correct, U.c)</code></pre>
 <p>The loglikelihood is</p>
 <pre class="r"><code>get_loglik(m.correct)</code></pre>
 <pre><code>[1] -6297.108</code></pre>
-<div id="mash-1-by-1" class="section level1">
-<h1>mash 1 by 1</h1>
+<div id="sol1-mash-1-by-1" class="section level1">
+<h1>Sol1: mash 1 by 1</h1>
 <p>We run ash for each condition, and estimate correlation matrix based on the non-significant genes. The estimated cor is closer to the truth. It overestimates the cor.</p>
 <pre class="r"><code>m.1by1 = mash_1by1(mash.data)
 strong = get_significant_results(m.1by1)
@@ -449,8 +451,8 @@ m.V1by1 = mash(mash.data.1by1, U.c)</code></pre>
 <pre class="r"><code>get_loglik(m.V1by1)</code></pre>
 <pre><code>[1] -6296.748</code></pre>
 </div>
-<div id="mle" class="section level1">
-<h1>MLE</h1>
+<div id="sol2-mle" class="section level1">
+<h1>Sol2: MLE</h1>
 <div id="k1" class="section level2">
 <h2>K=1</h2>
 <p>Suppose a simple extreme case <span class="math display">\[
@@ -470,10 +472,10 @@ l(\rho)&#39; &amp;= \frac{n\rho}{1-\rho^2} - \frac{\rho}{(1-\rho^2)^2} \sum_{i=1
 l(\rho)&#39;&#39; &amp;= \frac{n(\rho^2+1)}{(1-\rho^2)^2} - \frac{1}{2}\left( \frac{8\rho^2}{(1-\rho^2)^{3}} + \frac{2}{(1-\rho^2)^2} \right)\sum_{i=1}^{n}(x_{i}^2 + y_{i}^2) + \{ \left( \frac{8\rho^2}{(1-\rho^2)^{3}} + \frac{2}{(1-\rho^2)^2} \right)\rho + \frac{4\rho}{(1-\rho^2)^2} \}\sum_{i=1}^{n}x_{i}y_{i}
 \end{align*}
 \]</span></p>
-<p>The log likelihood is not a concave function in general. The score function has either 1 or 3 real solutions.</p>
+<p><strong>The log likelihood is not a concave function in general.</strong> The score function has either 1 or 3 real solutions.</p>
 <p>Kendall and Stuart (1979) noted that at least one of the roots is real and lies in the interval [−1, 1]. However, it is possible that all three roots are real and in the admissible interval, in which case the likelihood can be evaluated at each root to determine the true maximum likelihood estimate.</p>
-<p>I simulate the data with <span class="math inline">\(\rho=0.75\)</span> <img src="figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre><code>[1] 0.73</code></pre>
+<p>I simulate the data with <span class="math inline">\(\rho=0.75\)</span> and plot the loglikelihood function:</p>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p><span class="math inline">\(l(\rho)&#39;\)</span> has one real solution</p>
 <pre class="r"><code>polyroot(c(- sum(z.null[,1]*z.null[,2]),  - (n - sum(z.null[,1]^2 + z.null[,2]^2)), - sum(z.null[,1]*z.null[,2]), n))</code></pre>
 <pre><code>[1] 0.7331235-0.000000i 0.0340672+1.044881i 0.0340672-1.044881i</code></pre>
@@ -482,6 +484,40 @@ l(\rho)&#39;&#39; &amp;= \frac{n(\rho^2+1)}{(1-\rho^2)^2} - \frac{1}{2}\left( \f
 <h2>In general</h2>
 <p>The general derivation is in <a href="EstimateCorMax.html">estimate correlation mle</a></p>
 </div>
+</div>
+<div id="session-information" class="section level1">
+<h1>Session information</h1>
+<!-- Insert the session information into the document -->
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] mashr_0.2-9 ashr_2.2-10
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18      knitr_1.20        magrittr_1.5     
+ [4] REBayes_1.3       MASS_7.3-50       doParallel_1.0.11
+ [7] pscl_1.5.2        SQUAREM_2017.10-1 lattice_0.20-35  
+[10] foreach_1.4.4     plyr_1.8.4        stringr_1.3.1    
+[13] tools_3.5.1       parallel_3.5.1    grid_3.5.1       
+[16] rmeta_3.0         htmltools_0.3.6   iterators_1.0.10 
+[19] assertthat_0.2.0  yaml_2.2.0        rprojroot_1.3-2  
+[22] digest_0.6.15     Matrix_1.2-14     codetools_0.2-15 
+[25] evaluate_0.11     rmarkdown_1.10    stringi_1.2.4    
+[28] compiler_3.5.1    Rmosek_8.0.69     backports_1.1.2  
+[31] mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
