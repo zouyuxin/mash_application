@@ -1,0 +1,171 @@
+---
+title: "Estimate cor—max MASH"
+author: "Yuxin Zou"
+date: 2018-07-25
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+```{r}
+library(mashr)
+source('../code/generateDataV.R')
+source('../code/estimate_cor.R')
+library(knitr)
+library(kableExtra)
+```
+
+# One example
+$$
+\hat{\beta}|\beta \sim N_{3}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.7 & 0.1 \\
+                                          0.7 & 1 & 0.5 \\ 
+                                          0.1 & 0.5 & 1 \end{matrix}\right))
+$$
+
+$$
+\beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{3}(0, \left(\begin{matrix} 1 & 0 &0\\
+                                          0 & 0 & 0 \\
+                                          0 & 0 & 0 \end{matrix}\right)) + \frac{1}{4}N_{3}(0, \left(\begin{matrix} 1 & 0 & 0 \\
+                     0 & 1 & 0 \\
+                     0 & 0 & 0 \end{matrix}\right)) + \frac{1}{4}N_{3}(0, \left(\begin{matrix} 1 & 1 & 1 \\
+                     1 & 1 & 1 \\
+                     1 & 1 & 1 \end{matrix}\right))
+$$
+
+```{r}
+set.seed(1)
+Sigma = cbind(c(1,0.7,0.1), c(0.7,1,0.5), c(0.1,0.5,1))
+U0 = matrix(0,3,3)
+U1 = matrix(0,3,3); U1[1,1] = 1
+U2 = diag(3); U2[3,3] = 0
+U3 = matrix(1,3,3)
+data = generate_data(n=500, p=3, V=Sigma, Utrue = list(U0=U0, U1=U1,U2=U2,U3=U3))
+```
+
+```{r}
+m.data = mash_set_data(data$Bhat, data$Shat)
+m.1by1 = mash_1by1(m.data)
+strong = get_significant_results(m.1by1)
+
+U.pca = cov_pca(m.data, 3, subset = strong)
+U.ed = cov_ed(m.data, U.pca, subset = strong)
+U.c = cov_canonical(m.data)
+```
+
+We run the algorithm in [estimate cor mle](EstimateCorMax.html) with 3 different initial points for $\rho$. The estimated correlation is
+
+```{r, warning=FALSE}
+Vhat.max = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-3)
+Vhat.max$V
+```
+
+The running time for each pairwise correlation is 
+```{r}
+table = data.frame(t(Vhat.max$ttime))
+colnames(table) = c('12','13','23')
+table %>% kable() %>% kable_styling()
+```
+The time is the total running time with different initial point.
+
+Using the original truncated correlation:
+```{r}
+Vhat.tru = estimate_null_correlation(m.data)
+Vhat.tru
+```
+
+Checking the estiamted error:
+```{r}
+maxError = c(max(abs(Vhat.max$V - Sigma)),
+max(abs(Vhat.tru - Sigma)))
+OpError = c(svd(Vhat.max$V - Sigma)$d[1],
+svd(Vhat.tru - Sigma)$d[1])
+table = data.frame(maxError = maxError, OpError = OpError, row.names = c('mle','trunc'))
+table %>% kable() %>% kable_styling()
+```
+In mash model, the model with correlation from mle has larger loglikelihood.
+
+```{r}
+m.data.mle = mash_set_data(data$Bhat, data$Shat, V=Vhat.max$V)
+m.model.mle = mash(m.data.mle, c(U.c,U.ed), verbose = FALSE)
+```
+
+```{r}
+m.data.trunc = mash_set_data(data$Bhat, data$Shat, V=Vhat.tru)
+m.model.trunc = mash(m.data.trunc, c(U.c,U.ed), verbose = FALSE)
+```
+
+```{r}
+table = data.frame(log_likelihood = c(get_loglik(m.model.mle), get_loglik(m.model.trunc)), row.names = c('mle', 'trunc'))
+t(table) %>% kable() %>% kable_styling()
+```
+
+# More simulations
+
+I randomly generate 10 positive definite correlation matrices, V. The sample size is 2000.
+
+$$
+\hat{z}|z \sim N_{5}(z, V)
+$$
+$$
+z\sim\frac{1}{4}\delta_{0} + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 1 & \mathbf{0}_{1\times 4} \\ \mathbf{0}_{4\times 1} & \mathbf{0}_{4\times 4} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\left(\begin{matrix} \mathbf{1}_{2\times 2} & \mathbf{0}_{1\times 3} \\ \mathbf{0}_{3\times 1} & \mathbf{0}_{3\times 3} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\mathbf{1}_{5\times 5})
+$$
+
+```{r, warning=FALSE, eval=FALSE}
+library(mashr)
+n=500; p = 5
+U0 = matrix(0,p,p)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[c(1:2), c(1:2)] = 1
+U3 = matrix(1, p,p)
+Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
+result = V.simulation(n,p,10,Utrue)
+saveRDS(result, '../output/MASH.10.mle.result.rds')
+```
+```{r}
+result = readRDS('../output/MASH.10.mle.result.rds')
+```
+
+The max elementwise norm is
+```{r}
+temp = rbind(result$mMaxE.max, result$mMaxE.trun)
+barplot(temp, axes=T,
+        main="max elementwise error",
+        names.arg = 1:10,
+        legend.text = c("MLE", "Trunc"),
+        ylim = c(0, max(colSums(temp))*2))
+```
+
+The spectral norm is
+```{r}
+temp = rbind(result$m2E.max, result$m2E.trun)
+barplot(temp, axes=T,
+        main="Matrix 2 norm error",
+        names.arg = 1:10,
+        legend.text = c("MLE", "Trunc"),
+        ylim = c(0, max(colSums(temp))*2))
+```
+
+The 10 estimated correlation matrices are all positive definite.
+
+The total running time for each matrix is
+```{r}
+t(result$Time) %>% kable() %>% kable_styling()
+```
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
