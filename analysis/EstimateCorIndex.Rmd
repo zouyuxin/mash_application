@@ -1,0 +1,14 @@
+---
+title: "Estimate cor in `mashr`"
+output:
+  html_document:
+    toc: false
+---
+
+* [Estimate cor problem](EstimateCor.html)
+    
+* [Estimate cor mle](EstimateCorMax.html)
+
+* [Estimate cor EM](EstimateCorMaxEM2.html)
+    
+* [Estimate cor in mash](EstimateCorMaxMash.html)

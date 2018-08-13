@@ -33,8 +33,6 @@ output:
 
 * [UKBioBank](UKBio.html)
 
-* Estimate cor in `mashr`:
+* [Estimate cor in `mashr`](EstimateCorIndex.html)
     
-    [Estimate cor problem](EstimateCor.html)
-    [Estimate cor mle](EstimateCorMax.html)
-    [Estimate cor in mash](EstimateCorMaxMash.html)
+ 
