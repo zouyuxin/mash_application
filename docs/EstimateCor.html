@@ -530,14 +530,14 @@ barplot(get_estimated_pi(m.V), las=2, cex.names = 0.7, main=&#39;Truncate&#39;, 
 barplot(get_estimated_pi(m.V1by1), las=2, cex.names = 0.7, main=&#39;m.1by1&#39;, ylim=c(0,0.8))
 barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7, main=&#39;True&#39;, ylim=c(0,0.8))
 barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7, main=&#39;OverEst&#39;, ylim=c(0,0.8))</code></pre>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The ROC curve:</p>
 <pre class="r"><code>m.I.seq = ROC.table(data$B, m.I)
 m.V.seq = ROC.table(data$B, m.V)
 m.Vo.seq = ROC.table(data$B, m.Vo)
 m.V1by1.seq = ROC.table(data$B, m.V1by1)
 m.correct.seq = ROC.table(data$B, m.correct)</code></pre>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Comparing accuracy</p>
 <pre class="r"><code>rrmse = RRMSE(data$B, data$Bhat, list(m.I, m.V, m.V1by1, m.correct, m.Vo))
 barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c(&#39;Identity&#39;,&#39;V.trun&#39;,&#39;V.1by1&#39;,&#39;V.true&#39;,&#39;V.over&#39;), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
