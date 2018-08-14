@@ -539,9 +539,57 @@ m.V1by1.seq = ROC.table(data$B, m.V1by1)
 m.correct.seq = ROC.table(data$B, m.correct)</code></pre>
 <p><img src="figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Comparing accuracy</p>
-<pre class="r"><code>rrmse = RRMSE(data$B, data$Bhat, list(m.I, m.V, m.V1by1, m.correct, m.Vo))
-barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c(&#39;Identity&#39;,&#39;V.trun&#39;,&#39;V.1by1&#39;,&#39;V.true&#39;,&#39;V.over&#39;), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.I, m.V, m.V1by1, m.correct, m.Vo)))
+colnames(rrmse) = c(&#39;Identity&#39;,&#39;V.trun&#39;,&#39;V.1by1&#39;,&#39;V.true&#39;,&#39;V.over&#39;)
+row.names(rrmse) = &#39;RRMSE&#39;
+rrmse %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Identity
+</th>
+<th style="text-align:right;">
+V.trun
+</th>
+<th style="text-align:right;">
+V.1by1
+</th>
+<th style="text-align:right;">
+V.true
+</th>
+<th style="text-align:right;">
+V.over
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+RRMSE
+</td>
+<td style="text-align:right;">
+0.6522463
+</td>
+<td style="text-align:right;">
+0.5925754
+</td>
+<td style="text-align:right;">
+0.5811472
+</td>
+<td style="text-align:right;">
+0.5817699
+</td>
+<td style="text-align:right;">
+0.6052702
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c(&#39;Identity&#39;,&#39;V.trun&#39;,&#39;V.1by1&#39;,&#39;V.true&#39;,&#39;V.over&#39;), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="solution-mle" class="section level1">
 <h1>Solution: MLE</h1>
 <div id="k1" class="section level2">
@@ -566,7 +614,7 @@ l(\rho)&#39;&#39; &amp;= \frac{n(\rho^2+1)}{(1-\rho^2)^2} - \frac{1}{2}\left( \f
 <p><strong>The log likelihood is not a concave function in general.</strong> The score function has either 1 or 3 real solutions.</p>
 <p>Kendall and Stuart (1979) noted that at least one of the roots is real and lies in the interval [−1, 1]. However, it is possible that all three roots are real and in the admissible interval, in which case the likelihood can be evaluated at each root to determine the true maximum likelihood estimate.</p>
 <p>I simulate the data with <span class="math inline">\(\rho=0.6\)</span> and plot the loglikelihood function:</p>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p><span class="math inline">\(l(\rho)&#39;\)</span> has one real solution</p>
 <pre class="r"><code>polyroot(c(- sum(data$Bhat[,1]*data$Bhat[,2]),  - (n - sum(data$Bhat[,1]^2 + data$Bhat[,2]^2)), - sum(data$Bhat[,1]*data$Bhat[,2]), n))</code></pre>
 <pre><code>[1] 0.6193031+0.000000i 0.0058209+1.009339i 0.0058209-1.009339i</code></pre>

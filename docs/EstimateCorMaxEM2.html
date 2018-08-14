@@ -11,9 +11,8 @@
 
 <meta name="author" content="Yuxin Zou" />
 
-<meta name="date" content="2018-07-24" />
 
-<title>Estimate cor – max</title>
+<title>Estimate cor — MLE EM rho</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -332,9 +331,9 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Estimate cor – max</h1>
+<h1 class="title toc-ignore">Estimate cor — MLE EM rho</h1>
 <h4 class="author"><em>Yuxin Zou</em></h4>
-<h4 class="date"><em>2018-07-24</em></h4>
+<h4 class="date"><em>2018-8-3</em></h4>
 
 </div>
 
@@ -344,39 +343,73 @@ div.section {
 <p><strong>Last updated:</strong> 2018-08-13</p>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
-<pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
-source(&#39;../code/estimate_cor.R&#39;)
-source(&#39;../code/summary.R&#39;)
+<pre class="r"><code>library(knitr)
 library(kableExtra)
-library(knitr)</code></pre>
+source(&#39;../code/estimate_cor.R&#39;)
+source(&#39;../code/generateDataV.R&#39;)
+source(&#39;../code/summary.R&#39;)</code></pre>
+<div id="em" class="section level1">
+<h1>EM</h1>
+<p>We use EM algorithm to update <code>\rho</code>.</p>
+<div id="e-step" class="section level2">
+<h2>E step</h2>
 <p><span class="math display">\[
-\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) | \left(\begin{matrix} x \\ y \end{matrix} \right) \sim N(\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) ; \left(\begin{matrix} x \\ y \end{matrix} \right), \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right))
-\]</span> <span class="math display">\[
-\left(\begin{matrix} x \\ y \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} x \\ y \end{matrix} \right); 0, U_{k} )
-\]</span> <span class="math inline">\(\Rightarrow\)</span> <span class="math display">\[
-\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right); 0, \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + U_{k} )
-\]</span> <span class="math display">\[
-\Sigma_{k} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + U_{k} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + \left( \begin{matrix} u_{k11} &amp; u_{k12} \\ u_{k21} &amp; u_{k22} \end{matrix} \right) = \left( \begin{matrix} 1+u_{k11} &amp; \rho+u_{k12} \\ \rho+u_{k21} &amp; 1+u_{k22} \end{matrix} \right)
-\]</span> Let <span class="math inline">\(\sigma_{k11} = \sqrt{1+u_{k11}}\)</span>, <span class="math inline">\(\sigma_{k22} = \sqrt{1+u_{k22}}\)</span>, <span class="math inline">\(\phi_{k}=\frac{\rho+u_{k12}}{\sigma_{k11}\sigma_{k22}}\)</span></p>
-<div id="mle" class="section level1">
-<h1>MLE</h1>
-<p>The loglikelihood is (with penalty) <span class="math display">\[
-l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}N(x_{i}; 0, \Sigma_{k}) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+P(\hat{B},B,Z|\rho, \pi) = \prod_{i=1}^{n} \prod_{k=0}^{K}\left[\pi_{k}N(\hat{b}_{i}; b_{i}, V)N(b_{i}; 0, U_{k})\right]^{\mathbb{I}(z_{i}=k)}
 \]</span></p>
-<p>The penalty on <span class="math inline">\(\pi\)</span> encourages over-estimation of <span class="math inline">\(\pi_{0}\)</span>, <span class="math inline">\(\lambda_{k}\geq 1\)</span>.</p>
 <p><span class="math display">\[
-l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}\frac{1}{2\pi\sigma_{k11}\sigma_{k22}\sqrt{1-\phi_{k}^2}} \exp\left( -\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]  \right) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+\mathbb{E}_{Z,B|\hat{B}} \log P(\hat{B},B,Z|\rho, \pi) = \sum_{i=1}^{n} \sum_{k=0}^{K} P(z_{i}=k|\hat{b}_{i})\left[ \log \pi_{k} + \mathbb{E}_{B|\hat{B}}(\log N(\hat{b}_{i}; b_{i}, V)) + \mathbb{E}_{B|\hat{B}}(\log N(b_{i}; 0, U_{k})) \right]
 \]</span></p>
-<p><strong>Note:</strong> This probelm is convex with respect to <span class="math inline">\(\pi\)</span>. In terms of <span class="math inline">\(\rho\)</span>, the covenxity depends on the data.</p>
+<p><span class="math display">\[
+\begin{align*}
+\log N(\hat{b}_{i}; b_{i}, V) + \log N(b_{i}; 0, U_{k}) &amp;= -\frac{p}{2}\log 2\pi -\frac{1}{2}\log |V| - \frac{1}{2}(\hat{b}_{i}-b_{i})^{T}V^{-1}(\hat{b}_{i}-b_{i}) -\frac{p}{2}\log 2\pi -\frac{1}{2}\log |U_{k}| - \frac{1}{2}b_{i}^{T}U_{k}^{-1}b_{i} \\
+&amp;= -p\log 2\pi -\frac{1}{2}\log |U_{k}| -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \hat{b}_{i}^{T}V^{-1}b_{i} -\frac{1}{2}b_{i}^{T}V^{-1}b_{i} - \frac{1}{2}b_{i}^{T}U_{k}^{-1}b_{i} \\
+\mathbb{E}_{b_{i}|\hat{b}_{i}}\left[ \log N(\hat{b}_{i}; b_{i}, V) + \log N(b_{i}; 0, U_{k}) \right] &amp;= -p\log 2\pi -\frac{1}{2}\log |U_{k}| -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \hat{b}_{i}^{T}V^{-1}\mathbb{E}(b_{i}|\hat{b}_{i}) -\frac{1}{2}tr\left(V^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right) - \frac{1}{2}tr\left(U_{k}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right)
+\end{align*}
+\]</span> <span class="math display">\[
+V = \left( \begin{matrix}1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right)
+\]</span> Let <span class="math inline">\(\mu_{i} = \mathbb{E}(b_{i}|\hat{b}_{i})\)</span> <span class="math display">\[
+\begin{align*}
+\mathbb{E}_{b_{i}|\hat{b}_{i}}\left[ \log N(\hat{b}_{i}; b_{i}, V) + \log N(b_{i}; 0, U_{k}) \right] &amp;= -2\log 2\pi -\frac{1}{2}\log |U_{k}| -\frac{1}{2}\log(1-\rho^2) - \frac{1}{2(1-\rho^2)}\left(\hat{b}_{i1}^2 + \hat{b}_{i2}^2 -2\hat{b}_{i1} \mu_{i1} -2\hat{b}_{i2} \mu_{i2} + \mathbb{E}(b_{i1}^2|\hat{b}_{i}) + \mathbb{E}(b_{i2}^2|\hat{b}_{i}) - 2\hat{b}_{i1}\hat{b}_{i2}\rho + 2 \hat{b}_{i1}\mu_{i2}\rho +2\hat{b}_{i2}\mu_{i1}\rho - 2\rho\mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) -  \frac{1}{2}tr\left(U_{k}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right)
+\end{align*}
+\]</span></p>
+<p><span class="math display">\[
+\gamma_{Z_{i}}(k) = P(z_{i}=k|X_{i}) = \frac{\pi_{k}N(x_{i}; 0, V+U_{k})}{\sum_{k&#39;=0}^{K}\pi_{k&#39;}N(x_{i}; 0, V + U_{k&#39;})}
+\]</span></p>
+</div>
+<div id="m-step" class="section level2">
+<h2>M step</h2>
+<p><span class="math inline">\(V\)</span>: <span class="math display">\[
+\begin{align*}
+f(V^{-1}) = \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[ -p\log 2\pi -\frac{1}{2}\log |U_{k}| -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \hat{b}_{i}^{T}V^{-1}\mathbb{E}(b_{i}|\hat{b}_{i}) -\frac{1}{2}tr\left(V^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right) - \frac{1}{2}tr\left(U_{k}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right) \right]
+\end{align*}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
+f(V^{-1})&#39; &amp;= \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[ \frac{1}{2}V - \frac{1}{2}\hat{b}_{i}\hat{b}_{i}^{T} + \mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} - \frac{1}{2} \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] = 0 \\
+\frac{1}{2}Vn &amp;= \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[\frac{1}{2}\hat{b}_{i}\hat{b}_{i}^{T} - \mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \frac{1}{2} \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] \\
+\hat{V} &amp;= \frac{1}{n} \sum_{i=1}^{n} \left[\hat{b}_{i}\hat{b}_{i}^{T} - 2\mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right]
+\end{align*}
+\]</span></p>
+<p><span class="math inline">\(\rho\)</span>: $$ f() = <em>{i=1}^{n} </em>{k=1}^{K} <em>{Z</em>{i}}(k)</p>
+<p>$$</p>
+<p><span class="math display">\[
+\begin{align*}
+f(\rho)&#39; = \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{Z_{i}}(k)\left[ \frac{\rho}{1-\rho^2} -\frac{\rho}{(1-\rho^2)^2}\left( \hat{b}_{i1}^2 + \hat{b}_{i2}^2 -2\hat{b}_{i1} \mu_{i1} -2\hat{b}_{i2} \mu_{i2} + \mathbb{E}(b_{i1}^2|\hat{b}_{i}) + \mathbb{E}(b_{i2}^2|\hat{b}_{i}) \right) -\frac{\rho^2+1}{(1-\rho^2)^2}\left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) \right] &amp;= 0 \\
+\rho(1-\rho^2)n - \rho \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{Z_{i}}(k) \left( \hat{b}_{i1}^2 + \hat{b}_{i2}^2 -2\hat{b}_{i1} \mu_{i1} -2\hat{b}_{i2} \mu_{i2} + \mathbb{E}(b_{i1}^2|\hat{b}_{i}) + \mathbb{E}(b_{i2}^2|\hat{b}_{i}) \right) - (\rho^2 + 1) \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{Z_{i}}(k)\left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) &amp;= 0 \\
+-n\rho^{3} - \rho^2 \sum_{i=1}^{n} \left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) - \rho(\sum_{i=1}^{n} \left( \hat{b}_{i1}^2 + \hat{b}_{i2}^2 -2\hat{b}_{i1} \mu_{i1} -2\hat{b}_{i2} \mu_{i2} + \mathbb{E}(b_{i1}^2|\hat{b}_{i}) + \mathbb{E}(b_{i2}^2|\hat{b}_{i}) \right) - n) - \sum_{i=1}^{n} \left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) &amp;= 0
+\end{align*}
+\]</span></p>
+<p>The polynomial has either 1 or 3 real roots in (-1, 1).</p>
 <p>Algorithm:</p>
-<pre class="text"><code>Input: X, init_pi, init_rho, Ulist
+<pre class="r"><code>Input: X, Ulist, init_rho
 Compute loglikelihood
 delta = 1
 while delta &gt; tol
-  Given pi, estimate rho by max loglikelihood (optim function)
-  Given rho, estimate pi by max loglikelihood (convex problem)
+  Given rho, Estimate pi using convex method (current mash method)
+  M step: update rho: find all roots of polynomial, if it has three real roots, choose the one with higher loglikelihood.
   Compute loglikelihood
   Update delta</code></pre>
+</div>
 </div>
 <div id="data" class="section level1">
 <h1>Data</h1>
@@ -405,29 +438,23 @@ U.c = cov_canonical(m.data)
 grid = mashr:::autoselect_grid(m.data, sqrt(2))
 Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
-result &lt;- optimize_pi_rho_times(data$Bhat, xUlist, init_rho = c(-0.7,0,0.7))</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.0627889120852815,
-0.0114523005348735, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre class="r"><code>plot(result[[1]]$loglik)</code></pre>
-<p><img src="figure/EstimateCorMax.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> The estimated <span class="math inline">\(\rho\)</span> is 0.6124039.</p>
-<pre class="r"><code>m.data.mle = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result[[1]]$rho,result[[1]]$rho,1),2,2))
-U.c = cov_canonical(m.data.mle)
-m.mle = mash(m.data.mle, U.c, verbose= FALSE)
+result &lt;- mixture.EM2.times(data$Bhat, xUlist, init_rho = c(-0.7,0,0.7), grid=1)
+plot(result$result$log_liks)</code></pre>
+<p><img src="figure/EstimateCorMaxEM2.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> The estimated <span class="math inline">\(\rho\)</span> is 0.5576293.</p>
+<pre class="r"><code>m.data.em = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result[[1]]$rho,result[[1]]$rho,1),2,2))
+U.c = cov_canonical(m.data.em)
+m.em = mash(m.data.em, U.c, verbose= FALSE)
 null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
-<p>The log likelihood is -1.23017710^{4}. There are 55 significant samples, 2 false positives. The RRMSE is 0.5964282.</p>
+<p>The log likelihood is -1.230210610^{4}. There are 37 significant samples, 1 false positives. The RRMSE is 0.5871084.</p>
 <p>The estimated <code>pi</code> is</p>
-<pre class="r"><code>barplot(get_estimated_pi(m.mle), las=2, cex.names = 0.7, main=&#39;OverEst&#39;, ylim=c(0,0.8))</code></pre>
-<p><img src="figure/EstimateCorMax.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barplot(get_estimated_pi(m.em), las=2, cex.names = 0.7, main=&#39;OverEst&#39;, ylim=c(0,0.8))</code></pre>
+<p><img src="figure/EstimateCorMaxEM2.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The ROC curve:</p>
 <pre class="r"><code>m.data.correct = mash_set_data(data$Bhat, data$Shat, V=Sigma)
 m.correct = mash(m.data.correct, U.c, verbose = FALSE)
 m.correct.seq = ROC.table(data$B, m.correct)
-m.mle.seq = ROC.table(data$B, m.mle)</code></pre>
-<p><img src="figure/EstimateCorMax.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+m.em.seq = ROC.table(data$B, m.em)</code></pre>
+<p><img src="figure/EstimateCorMaxEM2.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
@@ -448,7 +475,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] knitr_1.20       kableExtra_0.9.0 mashr_0.2-11     ashr_2.2-10     
+[1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-11     ashr_2.2-10     
 
 loaded via a namespace (and not attached):
  [1] Rcpp_0.12.18      compiler_3.5.1    pillar_1.3.0     
