@@ -341,7 +341,7 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-08-13</p>
+<p><strong>Last updated:</strong> 2018-08-14</p>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
@@ -420,7 +420,7 @@ m.mle = mash(m.data.mle, U.c, verbose= FALSE)
 null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
 <p>The log likelihood is -1.23017710^{4}. There are 55 significant samples, 2 false positives. The RRMSE is 0.5964282.</p>
 <p>The estimated <code>pi</code> is</p>
-<pre class="r"><code>barplot(get_estimated_pi(m.mle), las=2, cex.names = 0.7, main=&#39;OverEst&#39;, ylim=c(0,0.8))</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(m.mle), las=2, cex.names = 0.7, main=&#39;MLE&#39;, ylim=c(0,0.8))</code></pre>
 <p><img src="figure/EstimateCorMax.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The ROC curve:</p>
 <pre class="r"><code>m.data.correct = mash_set_data(data$Bhat, data$Shat, V=Sigma)
