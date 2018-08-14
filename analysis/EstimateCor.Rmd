@@ -142,7 +142,7 @@ temp %>% kable() %>% kable_styling()
 ```
 
 The estimated `pi` is
-```{r fig.width = 4, fig.align = "center"}
+```{r fig.align = "center"}
 par(mfrow=c(2,3))
 barplot(get_estimated_pi(m.I), las=2, cex.names = 0.7, main='Identity', ylim=c(0,0.8))
 barplot(get_estimated_pi(m.V), las=2, cex.names = 0.7, main='Truncate', ylim=c(0,0.8))
@@ -160,7 +160,7 @@ m.V1by1.seq = ROC.table(data$B, m.V1by1)
 m.correct.seq = ROC.table(data$B, m.correct)
 ```
 
-```{r echo=FALSE, fig.width = 4, fig.align = "center"}
+```{r echo=FALSE, fig.align = "center"}
 {plot(m.correct.seq[,'FPR'], m.correct.seq[,'TPR'],type='l',xlab = 'FPR', ylab='TPR', main='True Positive vs False Positive', cex=1.5, lwd = 1.5)
 lines(m.I.seq[,'FPR'], m.I.seq[,'TPR'], col='red', lwd = 1.5)
 lines(m.V.seq[,'FPR'], m.V.seq[,'TPR'], col='green', lwd = 1.5)
