@@ -83,7 +83,6 @@ $$
 $\rho$:
 $$
 f(\rho) = \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{Z_{i}}(k)\left[-2\log 2\pi -\frac{1}{2}\log |U_{k}| -\frac{1}{2}\log(1-\rho^2) - \frac{1}{2(1-\rho^2)}\left(\hat{b}_{i1}^2 + \hat{b}_{i2}^2 -2\hat{b}_{i1} \mu_{i1} -2\hat{b}_{i2} \mu_{i2} + \mathbb{E}(b_{i1}^2|\hat{b}_{i}) + \mathbb{E}(b_{i2}^2|\hat{b}_{i}) - 2\hat{b}_{i1}\hat{b}_{i2}\rho + 2 \hat{b}_{i1}\mu_{i2}\rho +2\hat{b}_{i2}\mu_{i1}\rho - 2\rho\mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) -  \frac{1}{2}tr\left(U_{k}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right)\right]
-
 $$
 
 $$
@@ -97,7 +96,7 @@ $$
 The polynomial has either 1 or 3 real roots in (-1, 1).
 
 Algorithm: 
-```{r, eval=FALSE, tindy = FALSE}
+```{r, eval=FALSE, tidy=FALSE, highlight=FALSE}
 Input: X, Ulist, init_rho
 Compute loglikelihood
 delta = 1
@@ -154,7 +153,7 @@ m.em = mash(m.data.em, U.c, verbose= FALSE)
 null.ind = which(apply(data$B,1,sum) == 0)
 ```
 
-The log likelihood is `r get_loglik(m.em)`. There are `r length(get_significant_results(m.em))` significant samples, `r sum(get_significant_results(m.em) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.em))`.
+The log likelihood is `r round(get_loglik(m.em),2)`. There are `r length(get_significant_results(m.em))` significant samples, `r sum(get_significant_results(m.em) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.em))`.
 
 The estimated `pi` is
 ```{r}

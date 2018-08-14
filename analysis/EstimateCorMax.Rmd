@@ -116,11 +116,11 @@ m.mle = mash(m.data.mle, U.c, verbose= FALSE)
 null.ind = which(apply(data$B,1,sum) == 0)
 ```
 
-The log likelihood is `r get_loglik(m.mle)`. There are `r length(get_significant_results(m.mle))` significant samples, `r sum(get_significant_results(m.mle) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.mle))`.
+The log likelihood is `r round(get_loglik(m.mle),2)`. There are `r length(get_significant_results(m.mle))` significant samples, `r sum(get_significant_results(m.mle) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.mle))`.
 
 The estimated `pi` is
 ```{r}
-barplot(get_estimated_pi(m.mle), las=2, cex.names = 0.7, main='OverEst', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.mle), las=2, cex.names = 0.7, main='MLE', ylim=c(0,0.8))
 ```
 
 
