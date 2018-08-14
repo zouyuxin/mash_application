@@ -21,9 +21,15 @@ knitr::read_chunk("chunks.R")
 
 ```{r library}
 library(mashr)
+library(knitr)
+library(kableExtra)
+source('../code/generateDataV.R')
+source('../code/summary.R')
 ```
 
-In my simple simulation, the current approach underestimate the null correlation. We need to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of $\sum{\pi_{lk} N_{2}(0, V + w_{l}U_{k})}$ for any pair of conditions.
+We illustrate the problem about estimating the correlation matrix in `mashr`. 
+
+In my simple simulation, the current approach underestimates the null correlation. We need to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of $\sum_{l,k} \pi_{lk} N_{2}(0, V + w_{l}U_{k})$ for any pair of conditions.
 
 Simple simulation in $R^2$ to illustrate the problem:
 $$
@@ -47,92 +53,129 @@ $$
 1.5 & 2 \end{matrix} \right))
 $$
 
+n = 4000
+
 ```{r}
 set.seed(1)
-n = 500; p = 2
+n = 4000; p = 2
 Sigma = matrix(c(1,0.5,0.5,1),p,p)
-beta.0 = beta.1 = beta.2 = beta.3 = matrix(0,n,p)
-beta.1[,1] = rnorm(n)
-beta.2[,2] = rnorm(n)
-beta.3[,1] = rnorm(n)
-beta.3[,2] = beta.3[,1]
-Beta = rbind(beta.0, beta.1, beta.2, beta.3)
-E = MASS::mvrnorm(n*4, rep(0, p), Sigma)
-Bhat = Beta + E
-SE = 1
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)
 ```
 
-Using truncated empirical correlation 
+Let's check the result of `mash` under different correlation matrix:
+
+1. Identity
+$$
+V.I = I_{2}
+$$
+
 ```{r}
-mash.data = mash_set_data(Bhat, SE)
-Vhat = estimate_null_correlation(mash.data, apply_lower_bound = FALSE)
+m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+m.I = mash(m.data, U.c, verbose= FALSE)
+```
+
+2. The truncated empirical correlation $V.trun$
+```{r}
+Vhat = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
 Vhat
 ```
 
-We underestimate the correlation among measurement errors.
-
-Let's see the result from mash
+It underestimates the correlation.
 
 ```{r}
 # Use underestimate cor
-mash.data.V = mash_set_data(Bhat, SE, V=Vhat)
-U.c = cov_canonical(mash.data.V)
-m.V = mash(mash.data.V, U.c)
-barplot(get_estimated_pi(m.V), las=2, cex.names = 0.7)
-```
-The loglikelihood is
-```{r}
-get_loglik(m.V)
+m.data.V = mash_set_data(data$Bhat, data$Shat, V=Vhat)
+m.V = mash(m.data.V, U.c, verbose = FALSE)
 ```
 
-Let's see what will happen if we overestimate correlation
+3. Overestimate correlation
+$$
+V.o = \left( \begin{matrix} 1 & 0.65 \\ 0.65 & 1\end{matrix}  \right)
+$$
 ```{r}
 # If we overestimate cor
-V.o = matrix(c(1,0.75,0.75,1),2,2)
-mash.data.Vo = mash_set_data(Bhat, SE, V=V.o)
-m.Vo = mash(mash.data.Vo, U.c)
-barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7)
-```
-The loglikelihood is 
-```{r}
-get_loglik(m.Vo)
+V.o = matrix(c(1,0.65,0.65,1),2,2)
+m.data.Vo = mash_set_data(data$Bhat, data$Shat, V=V.o)
+m.Vo = mash(m.data.Vo, U.c, verbose=FALSE)
 ```
 
-What will happen if we have correct correlation
-```{r}
-# With correct cor
-mash.data.correct = mash_set_data(Bhat, SE, V=Sigma)
-m.correct = mash(mash.data.correct, U.c)
-barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7)
-```
+4. mash.1by1
 
-The loglikelihood is 
+We run ash for each condition, and estimate correlation matrix based on the non-significant genes. The estimated cor is closer to the truth.
 ```{r}
-get_loglik(m.correct)
-```
-
-# Sol1: mash 1 by 1
-
-We run ash for each condition, and estimate correlation matrix based on the non-significant genes. The estimated cor is closer to the truth. It overestimates the cor.
-```{r}
-m.1by1 = mash_1by1(mash.data)
+m.1by1 = mash_1by1(m.data)
 strong = get_significant_results(m.1by1)
-V.mash = cor(Bhat[-strong,])
+V.mash = cor(data$Bhat[-strong,])
 V.mash
 ```
 
 ```{r}
-mash.data.1by1 = mash_set_data(Bhat, SE, V=V.mash)
-m.V1by1 = mash(mash.data.1by1, U.c)
-barplot(get_estimated_pi(m.V1by1), las=2, cex.names = 0.7)
+m.data.1by1 = mash_set_data(data$Bhat, data$Shat, V=V.mash)
+m.V1by1 = mash(m.data.1by1, U.c, verbose = FALSE)
 ```
 
-The loglikelihood is
+5. True correlation
 ```{r}
-get_loglik(m.V1by1)
+# With correct cor
+m.data.correct = mash_set_data(data$Bhat, data$Shat, V=Sigma)
+m.correct = mash(m.data.correct, U.c, verbose = FALSE)
 ```
 
-# Sol2: MLE
+The results are summarized in table:
+```{r}
+null.ind = which(apply(data$B,1,sum) == 0)
+V.trun = c(get_loglik(m.V), length(get_significant_results(m.V)), sum(get_significant_results(m.V) %in% null.ind))
+V.I = c(get_loglik(m.I), length(get_significant_results(m.I)), sum(get_significant_results(m.I) %in% null.ind))
+V.over = c(get_loglik(m.Vo), length(get_significant_results(m.Vo)), sum(get_significant_results(m.Vo) %in% null.ind))
+V.1by1 = c(get_loglik(m.V1by1), length(get_significant_results(m.V1by1)), sum(get_significant_results(m.V1by1) %in% null.ind))
+V.correct = c(get_loglik(m.correct), length(get_significant_results(m.correct)), sum(get_significant_results(m.correct) %in% null.ind))
+temp = cbind(V.I, V.trun, V.1by1, V.correct, V.over)
+colnames(temp) = c('Identity','truncate', 'm.1by1', 'true', 'overestimate')
+row.names(temp) = c('log likelihood', '# significance', '# False positive')
+temp %>% kable() %>% kable_styling()
+```
+
+The estimated `pi` is
+```{r fig.width = 4, fig.align = "center"}
+par(mfrow=c(2,3))
+barplot(get_estimated_pi(m.I), las=2, cex.names = 0.7, main='Identity', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.V), las=2, cex.names = 0.7, main='Truncate', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.V1by1), las=2, cex.names = 0.7, main='m.1by1', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7, main='True', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7, main='OverEst', ylim=c(0,0.8))
+```
+
+The ROC curve:
+```{r}
+m.I.seq = ROC.table(data$B, m.I)
+m.V.seq = ROC.table(data$B, m.V)
+m.Vo.seq = ROC.table(data$B, m.Vo)
+m.V1by1.seq = ROC.table(data$B, m.V1by1)
+m.correct.seq = ROC.table(data$B, m.correct)
+```
+
+```{r echo=FALSE, fig.width = 4, fig.align = "center"}
+{plot(m.correct.seq[,'FPR'], m.correct.seq[,'TPR'],type='l',xlab = 'FPR', ylab='TPR', main='True Positive vs False Positive', cex=1.5, lwd = 1.5)
+lines(m.I.seq[,'FPR'], m.I.seq[,'TPR'], col='red', lwd = 1.5)
+lines(m.V.seq[,'FPR'], m.V.seq[,'TPR'], col='green', lwd = 1.5)
+lines(m.Vo.seq[,'FPR'], m.Vo.seq[,'TPR'], col='blue', lwd = 1.5)
+lines(m.V1by1.seq[,'FPR'], m.V1by1.seq[,'TPR'], col='cyan', lwd = 1.5)
+legend('bottomright', c('True','Identity','Trunc', 'OverEst', 'm.1by1'),col=c('black','red','green', 'blue', 'cyan'),lty=c(1,1,1,1,1), lwd=c(1.5,1.5,1.5,1.5,1.5))}
+```
+
+Comparing accuracy
+```{r}
+rrmse = RRMSE(data$B, data$Bhat, list(m.I, m.V, m.V1by1, m.correct, m.Vo))
+barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c('Identity','V.trun','V.1by1','V.true','V.over'), las=2, cex.names = 0.7, main='RRMSE')
+```
+
+# Solution: MLE
 
 ## K=1
 
@@ -166,28 +209,26 @@ $$
 Kendall and Stuart (1979) noted that at least one of the roots is real and lies in
 the interval [−1, 1]. However, it is possible that all three roots are real and in the admissible interval, in which case the likelihood can be evaluated at each root to determine the true maximum likelihood estimate. 
 
-I simulate the data with $\rho=0.75$ and plot the loglikelihood function:
+I simulate the data with $\rho=0.6$ and plot the loglikelihood function:
 
 ```{r echo=FALSE}
-n = 1000; rho = 0.75
-V = matrix(c(1,rho,rho,1),2,2)
-U = matrix(0,2,2)
-set.seed(1)
-X.0 = MASS::mvrnorm(n, rep(0, 2), Sigma = V+U)
-z.null = X.0
+n = 1000; rho = 0.6
+Sigma = matrix(c(1,rho,rho,1),2,2)
+Utrue = list(U0=matrix(0,2,2))
+data = generate_data(n,2,Sigma, Utrue)
 
 rho.seq = seq(-0.99,0.99,by=0.01)
 loglik = numeric(199)
 for(i in 1:199){
   V = matrix(c(1,rho.seq[i], rho.seq[i], 1), 2, 2)
-  loglik[i] = sum(mvtnorm::dmvnorm(x=z.null, sigma=V+U, log=TRUE))
+  loglik[i] = sum(mvtnorm::dmvnorm(x=data$Bhat, sigma=V, log=TRUE))
 }
 plot(rho.seq, loglik, type='l', ylab = 'log likelihood')
 ```
 
 $l(\rho)'$ has one real solution
 ```{r}
-polyroot(c(- sum(z.null[,1]*z.null[,2]),  - (n - sum(z.null[,1]^2 + z.null[,2]^2)), - sum(z.null[,1]*z.null[,2]), n))
+polyroot(c(- sum(data$Bhat[,1]*data$Bhat[,2]),  - (n - sum(data$Bhat[,1]^2 + data$Bhat[,2]^2)), - sum(data$Bhat[,1]*data$Bhat[,2]), n))
 ```
 
 ## In general
