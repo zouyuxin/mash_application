@@ -28,6 +28,7 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
 <script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
 <script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
@@ -341,10 +342,15 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-08-03</p>
+<p><strong>Last updated:</strong> 2018-08-13</p>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
-<p>In my simple simulation, the current approach underestimate the null correlation. We need to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of <span class="math inline">\(\sum{\pi_{lk} N_{2}(0, V + w_{l}U_{k})}\)</span> for any pair of conditions.</p>
+<pre class="r"><code>library(knitr)
+library(kableExtra)
+source(&#39;../code/generateDataV.R&#39;)
+source(&#39;../code/summary.R&#39;)</code></pre>
+<p>We illustrate the problem about estimating the correlation matrix in <code>mashr</code>.</p>
+<p>In my simple simulation, the current approach underestimates the null correlation. We need to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of <span class="math inline">\(\sum_{l,k} \pi_{lk} N_{2}(0, V + w_{l}U_{k})\)</span> for any pair of conditions.</p>
 <p>Simple simulation in <span class="math inline">\(R^2\)</span> to illustrate the problem: <span class="math display">\[
 \hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.5 \\
                                           0.5 &amp; 1 \end{matrix}\right))
@@ -362,97 +368,182 @@ div.section {
 0.5 &amp; 2 \end{matrix} \right)) + \frac{1}{4}N_{2}(0, \left( \begin{matrix} 2 &amp; 1.5 \\
 1.5 &amp; 2 \end{matrix} \right))
 \]</span></p>
+<p>n = 4000</p>
 <pre class="r"><code>set.seed(1)
-n = 500; p = 2
+n = 4000; p = 2
 Sigma = matrix(c(1,0.5,0.5,1),p,p)
-beta.0 = beta.1 = beta.2 = beta.3 = matrix(0,n,p)
-beta.1[,1] = rnorm(n)
-beta.2[,2] = rnorm(n)
-beta.3[,1] = rnorm(n)
-beta.3[,2] = beta.3[,1]
-Beta = rbind(beta.0, beta.1, beta.2, beta.3)
-E = MASS::mvrnorm(n*4, rep(0, p), Sigma)
-Bhat = Beta + E
-SE = 1</code></pre>
-<p>Using truncated empirical correlation</p>
-<pre class="r"><code>mash.data = mash_set_data(Bhat, SE)
-Vhat = estimate_null_correlation(mash.data, apply_lower_bound = FALSE)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)</code></pre>
+<p>Let’s check the result of <code>mash</code> under different correlation matrix:</p>
+<ol style="list-style-type: decimal">
+<li>Identity <span class="math display">\[
+V.I = I_{2}
+\]</span></li>
+</ol>
+<pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+m.I = mash(m.data, U.c, verbose= FALSE)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>The truncated empirical correlation <span class="math inline">\(V.trun\)</span></li>
+</ol>
+<pre class="r"><code>Vhat = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
 Vhat</code></pre>
 <pre><code>          [,1]      [,2]
-[1,] 1.0000000 0.3877533
-[2,] 0.3877533 1.0000000</code></pre>
-<p>We underestimate the correlation among measurement errors.</p>
-<p>Let’s see the result from mash</p>
+[1,] 1.0000000 0.3439205
+[2,] 0.3439205 1.0000000</code></pre>
+<p>It underestimates the correlation.</p>
 <pre class="r"><code># Use underestimate cor
-mash.data.V = mash_set_data(Bhat, SE, V=Vhat)
-U.c = cov_canonical(mash.data.V)
-m.V = mash(mash.data.V, U.c)</code></pre>
-<pre><code> - Computing 2000 x 106 likelihood matrix.
- - Likelihood calculations took 0.02 seconds.
- - Fitting model with 106 mixture components.
- - Model fitting took 0.23 seconds.
- - Computing posterior matrices.
- - Computation allocated took 0.02 seconds.</code></pre>
-<pre class="r"><code>barplot(get_estimated_pi(m.V), las=2, cex.names = 0.7)</code></pre>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /> The loglikelihood is</p>
-<pre class="r"><code>get_loglik(m.V)</code></pre>
-<pre><code>[1] -6299.462</code></pre>
-<p>Let’s see what will happen if we overestimate correlation</p>
+m.data.V = mash_set_data(data$Bhat, data$Shat, V=Vhat)
+m.V = mash(m.data.V, U.c, verbose = FALSE)</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Overestimate correlation <span class="math display">\[
+V.o = \left( \begin{matrix} 1 &amp; 0.65 \\ 0.65 &amp; 1\end{matrix}  \right)
+\]</span></li>
+</ol>
 <pre class="r"><code># If we overestimate cor
-V.o = matrix(c(1,0.75,0.75,1),2,2)
-mash.data.Vo = mash_set_data(Bhat, SE, V=V.o)
-m.Vo = mash(mash.data.Vo, U.c)</code></pre>
-<pre><code> - Computing 2000 x 106 likelihood matrix.
- - Likelihood calculations took 0.01 seconds.
- - Fitting model with 106 mixture components.
- - Model fitting took 0.15 seconds.
- - Computing posterior matrices.
- - Computation allocated took 0.01 seconds.</code></pre>
-<pre class="r"><code>barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7)</code></pre>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /> The loglikelihood is</p>
-<pre class="r"><code>get_loglik(m.Vo)</code></pre>
-<pre><code>[1] -6295.582</code></pre>
-<p>What will happen if we have correct correlation</p>
-<pre class="r"><code># With correct cor
-mash.data.correct = mash_set_data(Bhat, SE, V=Sigma)
-m.correct = mash(mash.data.correct, U.c)</code></pre>
-<pre><code> - Computing 2000 x 106 likelihood matrix.
- - Likelihood calculations took 0.02 seconds.
- - Fitting model with 106 mixture components.
- - Model fitting took 0.17 seconds.
- - Computing posterior matrices.
- - Computation allocated took 0.00 seconds.</code></pre>
-<pre class="r"><code>barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7)</code></pre>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The loglikelihood is</p>
-<pre class="r"><code>get_loglik(m.correct)</code></pre>
-<pre><code>[1] -6297.108</code></pre>
-<div id="sol1-mash-1-by-1" class="section level1">
-<h1>Sol1: mash 1 by 1</h1>
-<p>We run ash for each condition, and estimate correlation matrix based on the non-significant genes. The estimated cor is closer to the truth. It overestimates the cor.</p>
-<pre class="r"><code>m.1by1 = mash_1by1(mash.data)
+V.o = matrix(c(1,0.65,0.65,1),2,2)
+m.data.Vo = mash_set_data(data$Bhat, data$Shat, V=V.o)
+m.Vo = mash(m.data.Vo, U.c, verbose=FALSE)</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>mash.1by1</li>
+</ol>
+<p>We run ash for each condition, and estimate correlation matrix based on the non-significant genes. The estimated cor is closer to the truth.</p>
+<pre class="r"><code>m.1by1 = mash_1by1(m.data)
 strong = get_significant_results(m.1by1)
-V.mash = cor(Bhat[-strong,])
+V.mash = cor(data$Bhat[-strong,])
 V.mash</code></pre>
-<pre><code>         [,1]     [,2]
-[1,] 1.000000 0.519426
-[2,] 0.519426 1.000000</code></pre>
-<pre class="r"><code>mash.data.1by1 = mash_set_data(Bhat, SE, V=V.mash)
-m.V1by1 = mash(mash.data.1by1, U.c)</code></pre>
-<pre><code> - Computing 2000 x 106 likelihood matrix.
- - Likelihood calculations took 0.02 seconds.
- - Fitting model with 106 mixture components.
- - Model fitting took 0.16 seconds.
- - Computing posterior matrices.
- - Computation allocated took 0.00 seconds.</code></pre>
-<pre class="r"><code>barplot(get_estimated_pi(m.V1by1), las=2, cex.names = 0.7)</code></pre>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The loglikelihood is</p>
-<pre class="r"><code>get_loglik(m.V1by1)</code></pre>
-<pre><code>[1] -6296.748</code></pre>
-</div>
-<div id="sol2-mle" class="section level1">
-<h1>Sol2: MLE</h1>
+<pre><code>          [,1]      [,2]
+[1,] 1.0000000 0.4597745
+[2,] 0.4597745 1.0000000</code></pre>
+<pre class="r"><code>m.data.1by1 = mash_set_data(data$Bhat, data$Shat, V=V.mash)
+m.V1by1 = mash(m.data.1by1, U.c, verbose = FALSE)</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>True correlation</li>
+</ol>
+<pre class="r"><code># With correct cor
+m.data.correct = mash_set_data(data$Bhat, data$Shat, V=Sigma)
+m.correct = mash(m.data.correct, U.c, verbose = FALSE)</code></pre>
+<p>The results are summarized in table:</p>
+<pre class="r"><code>null.ind = which(apply(data$B,1,sum) == 0)
+V.trun = c(get_loglik(m.V), length(get_significant_results(m.V)), sum(get_significant_results(m.V) %in% null.ind))
+V.I = c(get_loglik(m.I), length(get_significant_results(m.I)), sum(get_significant_results(m.I) %in% null.ind))
+V.over = c(get_loglik(m.Vo), length(get_significant_results(m.Vo)), sum(get_significant_results(m.Vo) %in% null.ind))
+V.1by1 = c(get_loglik(m.V1by1), length(get_significant_results(m.V1by1)), sum(get_significant_results(m.V1by1) %in% null.ind))
+V.correct = c(get_loglik(m.correct), length(get_significant_results(m.correct)), sum(get_significant_results(m.correct) %in% null.ind))
+temp = cbind(V.I, V.trun, V.1by1, V.correct, V.over)
+colnames(temp) = c(&#39;Identity&#39;,&#39;truncate&#39;, &#39;m.1by1&#39;, &#39;true&#39;, &#39;overestimate&#39;)
+row.names(temp) = c(&#39;log likelihood&#39;, &#39;# significance&#39;, &#39;# False positive&#39;)
+temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Identity
+</th>
+<th style="text-align:right;">
+truncate
+</th>
+<th style="text-align:right;">
+m.1by1
+</th>
+<th style="text-align:right;">
+true
+</th>
+<th style="text-align:right;">
+overestimate
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+log likelihood
+</td>
+<td style="text-align:right;">
+-12390.14
+</td>
+<td style="text-align:right;">
+-12307.65
+</td>
+<td style="text-align:right;">
+-12304.13
+</td>
+<td style="text-align:right;">
+-12302.62
+</td>
+<td style="text-align:right;">
+-12301.81
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+# significance
+</td>
+<td style="text-align:right;">
+166.00
+</td>
+<td style="text-align:right;">
+30.00
+</td>
+<td style="text-align:right;">
+25.00
+</td>
+<td style="text-align:right;">
+25.00
+</td>
+<td style="text-align:right;">
+70.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+# False positive
+</td>
+<td style="text-align:right;">
+14.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+</tr>
+</tbody>
+</table>
+<p>The estimated <code>pi</code> is</p>
+<pre class="r"><code>par(mfrow=c(2,3))
+barplot(get_estimated_pi(m.I), las=2, cex.names = 0.7, main=&#39;Identity&#39;, ylim=c(0,0.8))
+barplot(get_estimated_pi(m.V), las=2, cex.names = 0.7, main=&#39;Truncate&#39;, ylim=c(0,0.8))
+barplot(get_estimated_pi(m.V1by1), las=2, cex.names = 0.7, main=&#39;m.1by1&#39;, ylim=c(0,0.8))
+barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7, main=&#39;True&#39;, ylim=c(0,0.8))
+barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7, main=&#39;OverEst&#39;, ylim=c(0,0.8))</code></pre>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>The ROC curve:</p>
+<pre class="r"><code>m.I.seq = ROC.table(data$B, m.I)
+m.V.seq = ROC.table(data$B, m.V)
+m.Vo.seq = ROC.table(data$B, m.Vo)
+m.V1by1.seq = ROC.table(data$B, m.V1by1)
+m.correct.seq = ROC.table(data$B, m.correct)</code></pre>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" width="384" style="display: block; margin: auto;" /></p>
+<p>Comparing accuracy</p>
+<pre class="r"><code>rrmse = RRMSE(data$B, data$Bhat, list(m.I, m.V, m.V1by1, m.correct, m.Vo))
+barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c(&#39;Identity&#39;,&#39;V.trun&#39;,&#39;V.1by1&#39;,&#39;V.true&#39;,&#39;V.over&#39;), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="solution-mle" class="section level1">
+<h1>Solution: MLE</h1>
 <div id="k1" class="section level2">
 <h2>K=1</h2>
 <p>Suppose a simple extreme case <span class="math display">\[
@@ -474,11 +565,11 @@ l(\rho)&#39;&#39; &amp;= \frac{n(\rho^2+1)}{(1-\rho^2)^2} - \frac{1}{2}\left( \f
 \]</span></p>
 <p><strong>The log likelihood is not a concave function in general.</strong> The score function has either 1 or 3 real solutions.</p>
 <p>Kendall and Stuart (1979) noted that at least one of the roots is real and lies in the interval [−1, 1]. However, it is possible that all three roots are real and in the admissible interval, in which case the likelihood can be evaluated at each root to determine the true maximum likelihood estimate.</p>
-<p>I simulate the data with <span class="math inline">\(\rho=0.75\)</span> and plot the loglikelihood function:</p>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>I simulate the data with <span class="math inline">\(\rho=0.6\)</span> and plot the loglikelihood function:</p>
+<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p><span class="math inline">\(l(\rho)&#39;\)</span> has one real solution</p>
-<pre class="r"><code>polyroot(c(- sum(z.null[,1]*z.null[,2]),  - (n - sum(z.null[,1]^2 + z.null[,2]^2)), - sum(z.null[,1]*z.null[,2]), n))</code></pre>
-<pre><code>[1] 0.7331235-0.000000i 0.0340672+1.044881i 0.0340672-1.044881i</code></pre>
+<pre class="r"><code>polyroot(c(- sum(data$Bhat[,1]*data$Bhat[,2]),  - (n - sum(data$Bhat[,1]^2 + data$Bhat[,2]^2)), - sum(data$Bhat[,1]*data$Bhat[,2]), n))</code></pre>
+<pre><code>[1] 0.6193031+0.000000i 0.0058209+1.009339i 0.0058209-1.009339i</code></pre>
 </div>
 <div id="in-general" class="section level2">
 <h2>In general</h2>
@@ -504,20 +595,25 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2-9 ashr_2.2-10
+[1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-11     ashr_2.2-10     
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.18      knitr_1.20        magrittr_1.5     
- [4] REBayes_1.3       MASS_7.3-50       doParallel_1.0.11
- [7] pscl_1.5.2        SQUAREM_2017.10-1 lattice_0.20-35  
-[10] foreach_1.4.4     plyr_1.8.4        stringr_1.3.1    
-[13] tools_3.5.1       parallel_3.5.1    grid_3.5.1       
-[16] rmeta_3.0         htmltools_0.3.6   iterators_1.0.10 
-[19] assertthat_0.2.0  yaml_2.2.0        rprojroot_1.3-2  
-[22] digest_0.6.15     Matrix_1.2-14     codetools_0.2-15 
-[25] evaluate_0.11     rmarkdown_1.10    stringi_1.2.4    
-[28] compiler_3.5.1    Rmosek_8.0.69     backports_1.1.2  
-[31] mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
+ [1] Rcpp_0.12.18      highr_0.7         compiler_3.5.1   
+ [4] pillar_1.3.0      plyr_1.8.4        iterators_1.0.10 
+ [7] tools_3.5.1       digest_0.6.15     viridisLite_0.3.0
+[10] evaluate_0.11     tibble_1.4.2      lattice_0.20-35  
+[13] pkgconfig_2.0.1   rlang_0.2.1       Matrix_1.2-14    
+[16] foreach_1.4.4     rstudioapi_0.7    yaml_2.2.0       
+[19] parallel_3.5.1    mvtnorm_1.0-8     xml2_1.2.0       
+[22] httr_1.3.1        stringr_1.3.1     REBayes_1.3      
+[25] hms_0.4.2         rprojroot_1.3-2   grid_3.5.1       
+[28] R6_2.2.2          rmarkdown_1.10    rmeta_3.0        
+[31] readr_1.1.1       magrittr_1.5      scales_0.5.0     
+[34] backports_1.1.2   codetools_0.2-15  htmltools_0.3.6  
+[37] MASS_7.3-50       rvest_0.3.2       assertthat_0.2.0 
+[40] colorspace_1.3-2  stringi_1.2.4     Rmosek_8.0.69    
+[43] munsell_0.5.0     pscl_1.5.2        doParallel_1.0.11
+[46] truncnorm_1.0-8   SQUAREM_2017.10-1 crayon_1.3.4     </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
