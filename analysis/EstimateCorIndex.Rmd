@@ -7,8 +7,10 @@ output:
 
 * [Estimate cor problem](EstimateCor.html)
     
-* [Estimate cor mle](EstimateCorMax.html)
+* Using `optim` function to estimate cor: [Estimate cor mle](EstimateCorMax.html)
 
-* [Estimate cor EM](EstimateCorMaxEM2.html)
+* Using EM to estimate cor ($\rho$): [Estimate cor EM](EstimateCorMaxEM2.html)
+
+* Using EM to estimate cor ($V$): [Estimate cor EM](EstimateCorMaxEM2.html) (performs bad)
     
 * [Estimate cor in mash](EstimateCorMaxMash.html)

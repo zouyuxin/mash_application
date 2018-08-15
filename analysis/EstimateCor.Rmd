@@ -171,13 +171,13 @@ legend('bottomright', c('True','Identity','Trunc', 'OverEst', 'm.1by1'),col=c('b
 
 Comparing accuracy
 ```{r}
-rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.I, m.V, m.V1by1, m.correct, m.Vo)))
+rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.I = m.I, m.V = m.V, m.1by1 = m.V1by1, m.true = m.correct, m.over = m.Vo)))
 colnames(rrmse) = c('Identity','V.trun','V.1by1','V.true','V.over')
 row.names(rrmse) = 'RRMSE'
 rrmse %>% kable() %>% kable_styling()
 ```
 ```{r}
-barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c('Identity','V.trun','V.1by1','V.true','V.over'), las=2, cex.names = 0.7, main='RRMSE')
+barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main='RRMSE')
 ```
 
 # Solution: MLE
