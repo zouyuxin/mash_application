@@ -342,7 +342,7 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-08-13</p>
+<p><strong>Last updated:</strong> 2018-08-15</p>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>library(knitr)
@@ -539,7 +539,7 @@ m.V1by1.seq = ROC.table(data$B, m.V1by1)
 m.correct.seq = ROC.table(data$B, m.correct)</code></pre>
 <p><img src="figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>Comparing accuracy</p>
-<pre class="r"><code>rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.I, m.V, m.V1by1, m.correct, m.Vo)))
+<pre class="r"><code>rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.I = m.I, m.V = m.V, m.1by1 = m.V1by1, m.true = m.correct, m.over = m.Vo)))
 colnames(rrmse) = c(&#39;Identity&#39;,&#39;V.trun&#39;,&#39;V.1by1&#39;,&#39;V.true&#39;,&#39;V.over&#39;)
 row.names(rrmse) = &#39;RRMSE&#39;
 rrmse %&gt;% kable() %&gt;% kable_styling()</code></pre>
@@ -588,7 +588,7 @@ RRMSE
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c(&#39;Identity&#39;,&#39;V.trun&#39;,&#39;V.1by1&#39;,&#39;V.true&#39;,&#39;V.over&#39;), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
+<pre class="r"><code>barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
 <p><img src="figure/EstimateCor.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
 <div id="solution-mle" class="section level1">
 <h1>Solution: MLE</h1>
