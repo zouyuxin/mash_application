@@ -30,7 +30,7 @@ source('../code/summary.R')
 
 # EM
 
-We use EM algorithm to update `\rho`.
+We use EM algorithm to update $\rho$.
 
 ## E step
 
@@ -157,7 +157,7 @@ The log likelihood is `r round(get_loglik(m.em),2)`. There are `r length(get_sig
 
 The estimated `pi` is
 ```{r}
-barplot(get_estimated_pi(m.em), las=2, cex.names = 0.7, main='OverEst', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.em), las=2, cex.names = 0.7, main='EM rho', ylim=c(0,0.8))
 ```
 
 

@@ -29,7 +29,9 @@ source('../code/summary.R')
 
 We illustrate the problem about estimating the correlation matrix in `mashr`. 
 
-In my simple simulation, the current approach underestimates the null correlation. We need to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of $\sum_{l,k} \pi_{lk} N_{2}(0, V + w_{l}U_{k})$ for any pair of conditions.
+In my simple simulation, the current approach underestimates the null correlation. We want to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of $\sum_{l,k} \pi_{lk} N_{2}(0, V + w_{l}U_{k})$ for any pair of conditions.
+
+# Problem
 
 Simple simulation in $R^2$ to illustrate the problem:
 $$
@@ -80,7 +82,7 @@ U.c = cov_canonical(m.data)
 m.I = mash(m.data, U.c, verbose= FALSE)
 ```
 
-2. The truncated empirical correlation $V.trun$
+2. The current approach: truncated empirical correlation $V.trun$
 ```{r}
 Vhat = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
 Vhat

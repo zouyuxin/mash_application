@@ -91,7 +91,7 @@ plotCor(U.ed$ED_PCA_3, 'PCA3')
 plotCor(U.ed$ED_tPCA, 'tPCA')
 ```
 
-1. We run the algorithm in [estimate cor mle](EstimateCorMax.html) with 3 different initial points for $\rho$ (-0.5,0,0.5). The $\rho$ in each iteration is estimated using `optim` function. The estimated correlation is
+1. We run the algorithm in [estimate cor mle](EstimateCorMax.html) with 3 different initial points for $\rho$, (-0.5,0,0.5). The $\rho$ in each iteration is estimated using `optim` function. The estimated correlation is
 
 ```{r, warning=FALSE}
 Vhat.mle = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = 'mle')
@@ -128,7 +128,7 @@ Vhat.tru
 
 The truncated correlation underestimates the correlations.
 
-5. mash 1by1
+5. mash 1by1: Run ash for each condition, and estimate correlation matrix based on the non-significant samples.
 
 ```{r}
 V.mash = cor((data$Bhat/data$Shat)[-strong,])
