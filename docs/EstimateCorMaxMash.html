@@ -342,19 +342,21 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-08-03</p>
+<p><strong>Last updated:</strong> 2018-08-15</p>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
 source(&#39;../code/estimate_cor.R&#39;)
+source(&#39;../code/summary.R&#39;)
 library(knitr)
 library(kableExtra)</code></pre>
+<p>Apply the max methods for correlation matrix on mash data. The estimated V from MLE and EM perform better than the truncated correlation (error, mash log likelihood, ROC).</p>
 <div id="one-example" class="section level1">
 <h1>One example</h1>
 <p><span class="math display">\[
-\hat{\beta}|\beta \sim N_{3}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.7 &amp; 0.1 \\
-                                          0.7 &amp; 1 &amp; 0.5 \\ 
-                                          0.1 &amp; 0.5 &amp; 1 \end{matrix}\right))
+\hat{\beta}|\beta \sim N_{3}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.7 &amp; 0.2 \\
+                                          0.7 &amp; 1 &amp; 0.4 \\ 
+                                          0.2 &amp; 0.4 &amp; 1 \end{matrix}\right))
 \]</span></p>
 <p><span class="math display">\[
 \beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{3}(0, \left(\begin{matrix} 1 &amp; 0 &amp;0\\
@@ -366,12 +368,12 @@ library(kableExtra)</code></pre>
                      1 &amp; 1 &amp; 1 \end{matrix}\right))
 \]</span></p>
 <pre class="r"><code>set.seed(1)
-Sigma = cbind(c(1,0.7,0.1), c(0.7,1,0.5), c(0.1,0.5,1))
+Sigma = cbind(c(1,0.7,0.2), c(0.7,1,0.4), c(0.2,0.4,1))
 U0 = matrix(0,3,3)
 U1 = matrix(0,3,3); U1[1,1] = 1
 U2 = diag(3); U2[3,3] = 0
 U3 = matrix(1,3,3)
-data = generate_data(n=500, p=3, V=Sigma, Utrue = list(U0=U0, U1=U1,U2=U2,U3=U3))</code></pre>
+data = generate_data(n=4000, p=3, V=Sigma, Utrue = list(U0=U0, U1=U1,U2=U2,U3=U3))</code></pre>
 <pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
 m.1by1 = mash_1by1(m.data)
 strong = get_significant_results(m.1by1)
@@ -379,20 +381,34 @@ strong = get_significant_results(m.1by1)
 U.pca = cov_pca(m.data, 3, subset = strong)
 U.ed = cov_ed(m.data, U.pca, subset = strong)
 U.c = cov_canonical(m.data)</code></pre>
-<p>We run the algorithm in <a href="EstimateCorMax.html">estimate cor mle</a> with 3 different initial points for <span class="math inline">\(\rho\)</span>. The estimated correlation is</p>
-<pre class="r"><code>Vhat.max = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-3)
-Vhat.max$V</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<ol style="list-style-type: decimal">
+<li>We run the algorithm in <a href="EstimateCorMax.html">estimate cor mle</a> with 3 different initial points for <span class="math inline">\(\rho\)</span> (-0.5,0,0.5). The <span class="math inline">\(\rho\)</span> in each iteration is estimated using <code>optim</code> function. The estimated correlation is</li>
+</ol>
+<pre class="r"><code>Vhat.mle = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;mle&#39;)
+Vhat.mle$V</code></pre>
 <pre><code>          [,1]      [,2]      [,3]
-[1,] 1.0000000 0.7131869 0.1343278
-[2,] 0.7131869 1.0000000 0.5022083
-[3,] 0.1343278 0.5022083 1.0000000</code></pre>
-<p>The running time for each pairwise correlation is</p>
-<pre class="r"><code>table = data.frame(t(Vhat.max$ttime))
+[1,] 1.0000000 0.7009268 0.1588733
+[2,] 0.7009268 1.0000000 0.4001842
+[3,] 0.1588733 0.4001842 1.0000000</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>The result uses algorithm in <a href="EstimateCorMaxEM2.html">estimate cor em</a>. <span class="math inline">\(\rho\)</span> in each iteration is the root of a third degree polynomial.</li>
+</ol>
+<pre class="r"><code>Vhat.em = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol = 1e-4, optmethod = &#39;em2&#39;)
+Vhat.em$V</code></pre>
+<pre><code>          [,1]      [,2]      [,3]
+[1,] 1.0000000 0.7086927 0.1706391
+[2,] 0.7086927 1.0000000 0.4187296
+[3,] 0.1706391 0.4187296 1.0000000</code></pre>
+<p>The running time (in sec.) for each pairwise correlation is</p>
+<pre class="r"><code>table = data.frame(rbind(Vhat.mle$ttime, Vhat.em$ttime), row.names = c(&#39;mle&#39;, &#39;em&#39;))
 colnames(table) = c(&#39;12&#39;,&#39;13&#39;,&#39;23&#39;)
 table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
+<th style="text-align:left;">
+</th>
 <th style="text-align:right;">
 12
 </th>
@@ -406,32 +422,78 @@ table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:right;">
-110.395
+<td style="text-align:left;">
+mle
 </td>
 <td style="text-align:right;">
-56.69
+286.089
 </td>
 <td style="text-align:right;">
-26.003
+208.604
+</td>
+<td style="text-align:right;">
+70.226
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+em
+</td>
+<td style="text-align:right;">
+167.105
+</td>
+<td style="text-align:right;">
+63.067
+</td>
+<td style="text-align:right;">
+51.075
 </td>
 </tr>
 </tbody>
 </table>
 <p>The time is the total running time with different initial point.</p>
-<p>Using the original truncated correlation:</p>
+<ol start="3" style="list-style-type: decimal">
+<li>The result uses algorithm in <a href="EstimateCorMaxEMV.html">estimate cor em V</a>.</li>
+</ol>
+<pre class="r"><code>Vhat.emV = estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(3), clusterGeneration::rcorrmatrix(3)), tol = 1e-4, optmethod = &#39;emV&#39;)
+Vhat.emV$V</code></pre>
+<pre><code>          [,1]      [,2]      [,3]
+[1,] 1.0000000 0.5487183 0.2669639
+[2,] 0.5487183 1.0000000 0.4654711
+[3,] 0.2669639 0.4654711 1.0000000</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Using the original truncated correlation:</li>
+</ol>
 <pre class="r"><code>Vhat.tru = estimate_null_correlation(m.data)
 Vhat.tru</code></pre>
-<pre><code>           [,1]      [,2]       [,3]
-[1,] 1.00000000 0.4621643 0.07423134
-[2,] 0.46216433 1.0000000 0.41652572
-[3,] 0.07423134 0.4165257 1.00000000</code></pre>
-<p>Checking the estiamted error:</p>
-<pre class="r"><code>maxError = c(max(abs(Vhat.max$V - Sigma)),
-max(abs(Vhat.tru - Sigma)))
-OpError = c(svd(Vhat.max$V - Sigma)$d[1],
-svd(Vhat.tru - Sigma)$d[1])
-table = data.frame(maxError = maxError, OpError = OpError, row.names = c(&#39;mle&#39;,&#39;trunc&#39;))
+<pre><code>          [,1]      [,2]      [,3]
+[1,] 1.0000000 0.4296283 0.1222433
+[2,] 0.4296283 1.0000000 0.3324459
+[3,] 0.1222433 0.3324459 1.0000000</code></pre>
+<p>The truncated correlation underestimates the correlations.</p>
+<ol start="5" style="list-style-type: decimal">
+<li>mash 1by1</li>
+</ol>
+<pre class="r"><code>V.mash = cor((data$Bhat/data$Shat)[-strong,])
+V.mash</code></pre>
+<pre><code>          [,1]      [,2]      [,3]
+[1,] 1.0000000 0.5313446 0.2445663
+[2,] 0.5313446 1.0000000 0.4490049
+[3,] 0.2445663 0.4490049 1.0000000</code></pre>
+<div id="error" class="section level2">
+<h2>Error</h2>
+<p>Checking the estimation error:</p>
+<pre class="r"><code>FError = c(norm(Vhat.mle$V - Sigma, &#39;F&#39;),
+           norm(Vhat.em$V - Sigma, &#39;F&#39;),
+           norm(Vhat.emV$V - Sigma, &#39;F&#39;),
+           norm(Vhat.tru - Sigma, &#39;F&#39;),
+           norm(V.mash - Sigma, &#39;F&#39;))
+OpError = c(norm(Vhat.mle$V - Sigma, &#39;2&#39;),
+           norm(Vhat.em$V - Sigma, &#39;2&#39;),
+           norm(Vhat.emV$V - Sigma, &#39;2&#39;),
+           norm(Vhat.tru - Sigma, &#39;2&#39;),
+           norm(V.mash - Sigma, &#39;2&#39;))
+table = data.frame(FError = FError, OpError = OpError, row.names = c(&#39;mle&#39;,&#39;em&#39;,&#39;emV&#39;,&#39;trunc&#39;,&#39;m.1by1&#39;))
 table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -439,7 +501,7 @@ table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <th style="text-align:left;">
 </th>
 <th style="text-align:right;">
-maxError
+FError
 </th>
 <th style="text-align:right;">
 OpError
@@ -452,10 +514,32 @@ OpError
 mle
 </td>
 <td style="text-align:right;">
-0.0343278
+0.0581773
 </td>
 <td style="text-align:right;">
-0.0375554
+0.0411417
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+em
+</td>
+<td style="text-align:right;">
+0.0507627
+</td>
+<td style="text-align:right;">
+0.0391489
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+emV
+</td>
+<td style="text-align:right;">
+0.2516219
+</td>
+<td style="text-align:right;">
+0.1960202
 </td>
 </tr>
 <tr>
@@ -463,122 +547,1308 @@ mle
 trunc
 </td>
 <td style="text-align:right;">
-0.2378357
+0.4091712
 </td>
 <td style="text-align:right;">
-0.2609944
+0.3049974
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.1by1
+</td>
+<td style="text-align:right;">
+0.2562509
+</td>
+<td style="text-align:right;">
+0.1915171
 </td>
 </tr>
 </tbody>
 </table>
+</div>
+<div id="mash-log-likelihood" class="section level2">
+<h2>mash log likelihood</h2>
 <p>In mash model, the model with correlation from mle has larger loglikelihood.</p>
-<pre class="r"><code>m.data.mle = mash_set_data(data$Bhat, data$Shat, V=Vhat.max$V)
+<pre class="r"><code>m.data.mle = mash_set_data(data$Bhat, data$Shat, V=Vhat.mle$V)
 m.model.mle = mash(m.data.mle, c(U.c,U.ed), verbose = FALSE)</code></pre>
+<pre class="r"><code>m.data.em = mash_set_data(data$Bhat, data$Shat, V=Vhat.em$V)
+m.model.em = mash(m.data.em, c(U.c,U.ed), verbose = FALSE)</code></pre>
+<pre class="r"><code>m.data.emV = mash_set_data(data$Bhat, data$Shat, V=Vhat.emV$V)
+m.model.emV = mash(m.data.emV, c(U.c,U.ed), verbose = FALSE)</code></pre>
 <pre class="r"><code>m.data.trunc = mash_set_data(data$Bhat, data$Shat, V=Vhat.tru)
 m.model.trunc = mash(m.data.trunc, c(U.c,U.ed), verbose = FALSE)</code></pre>
-<pre class="r"><code>table = data.frame(log_likelihood = c(get_loglik(m.model.mle), get_loglik(m.model.trunc)), row.names = c(&#39;mle&#39;, &#39;trunc&#39;))
-t(table) %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<pre class="r"><code>m.data.1by1 = mash_set_data(data$Bhat, data$Shat, V=V.mash)
+m.model.1by1 = mash(m.data.1by1, c(U.c,U.ed), verbose = FALSE)</code></pre>
+<pre class="r"><code>m.data.correct = mash_set_data(data$Bhat, data$Shat, V=Sigma)
+m.model.correct = mash(m.data.correct, c(U.c,U.ed), verbose = FALSE)</code></pre>
+<p>The results are summarized in table:</p>
+<pre class="r"><code>null.ind = which(apply(data$B,1,sum) == 0)
+V.trun = c(get_loglik(m.model.trunc), length(get_significant_results(m.model.trunc)), sum(get_significant_results(m.model.trunc) %in% null.ind))
+V.mle = c(get_loglik(m.model.mle), length(get_significant_results(m.model.mle)), sum(get_significant_results(m.model.mle) %in% null.ind))
+V.em = c(get_loglik(m.model.em), length(get_significant_results(m.model.em)), sum(get_significant_results(m.model.em) %in% null.ind))
+V.emV = c(get_loglik(m.model.emV), length(get_significant_results(m.model.emV)), sum(get_significant_results(m.model.emV) %in% null.ind))
+V.1by1 = c(get_loglik(m.model.1by1), length(get_significant_results(m.model.1by1)), sum(get_significant_results(m.model.1by1) %in% null.ind))
+V.correct = c(get_loglik(m.model.correct), length(get_significant_results(m.model.correct)), sum(get_significant_results(m.model.correct) %in% null.ind))
+temp = cbind(V.mle, V.em, V.emV, V.trun, V.1by1, V.correct)
+colnames(temp) = c(&#39;MLE&#39;,&#39;EM&#39;,&#39;EMV&#39;, &#39;Truncate&#39;, &#39;m.1by1&#39;, &#39;True&#39;)
+row.names(temp) = c(&#39;log likelihood&#39;, &#39;# significance&#39;, &#39;# False positive&#39;)
+temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
 <th style="text-align:left;">
 </th>
 <th style="text-align:right;">
-mle
+MLE
 </th>
 <th style="text-align:right;">
-trunc
+EM
+</th>
+<th style="text-align:right;">
+EMV
+</th>
+<th style="text-align:right;">
+Truncate
+</th>
+<th style="text-align:right;">
+m.1by1
+</th>
+<th style="text-align:right;">
+True
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-log_likelihood
+log likelihood
 </td>
 <td style="text-align:right;">
--8905.915
+-17917.69
 </td>
 <td style="text-align:right;">
--8942.591
+-17919.23
+</td>
+<td style="text-align:right;">
+-17945.16
+</td>
+<td style="text-align:right;">
+-17951.46
+</td>
+<td style="text-align:right;">
+-17943.49
+</td>
+<td style="text-align:right;">
+-17913.58
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+# significance
+</td>
+<td style="text-align:right;">
+146.00
+</td>
+<td style="text-align:right;">
+149.00
+</td>
+<td style="text-align:right;">
+82.00
+</td>
+<td style="text-align:right;">
+85.00
+</td>
+<td style="text-align:right;">
+73.00
+</td>
+<td style="text-align:right;">
+149.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+# False positive
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.00
 </td>
 </tr>
 </tbody>
 </table>
+<p>The estimated <code>pi</code> is</p>
+<pre class="r"><code>par(mfrow=c(2,3))
+barplot(get_estimated_pi(m.model.mle), las=2, cex.names = 0.7, main=&#39;MLE&#39;, ylim=c(0,0.8))
+barplot(get_estimated_pi(m.model.em), las=2, cex.names = 0.7, main=&#39;EM&#39;, ylim=c(0,0.8))
+barplot(get_estimated_pi(m.model.emV), las=2, cex.names = 0.7, main=&#39;EMV&#39;, ylim=c(0,0.8))
+barplot(get_estimated_pi(m.model.trunc), las=2, cex.names = 0.7, main=&#39;Truncate&#39;, ylim=c(0,0.8))
+barplot(get_estimated_pi(m.model.1by1), las=2, cex.names = 0.7, main=&#39;m.1by1&#39;, ylim=c(0,0.8))
+barplot(get_estimated_pi(m.model.correct), las=2, cex.names = 0.7, main=&#39;True&#39;, ylim=c(0,0.8))</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="roc" class="section level2">
+<h2>ROC</h2>
+<pre class="r"><code>m.mle.seq = ROC.table(data$B, m.model.mle)
+m.em.seq = ROC.table(data$B, m.model.em)
+m.emV.seq = ROC.table(data$B, m.model.emV)
+m.trun.seq = ROC.table(data$B, m.model.trunc)
+m.1by1.seq = ROC.table(data$B, m.model.1by1)
+m.correct.seq = ROC.table(data$B, m.model.correct)</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="rrmse" class="section level2">
+<h2>RRMSE</h2>
+<pre class="r"><code>rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.model.mle, m.model.em, m.model.emV, m.model.trunc, m.model.1by1, m.model.correct)))
+colnames(rrmse) = c(&#39;MLE&#39;,&#39;EM&#39;,&#39;EMV&#39;, &#39;Truncate&#39;,&#39;m.1by1&#39;,&#39;True&#39;)
+row.names(rrmse) = &#39;RRMSE&#39;
+rrmse %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+MLE
+</th>
+<th style="text-align:right;">
+EM
+</th>
+<th style="text-align:right;">
+EMV
+</th>
+<th style="text-align:right;">
+Truncate
+</th>
+<th style="text-align:right;">
+m.1by1
+</th>
+<th style="text-align:right;">
+True
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+RRMSE
+</td>
+<td style="text-align:right;">
+0.5277488
+</td>
+<td style="text-align:right;">
+0.5285126
+</td>
+<td style="text-align:right;">
+0.5437355
+</td>
+<td style="text-align:right;">
+0.5592648
+</td>
+<td style="text-align:right;">
+0.5442074
+</td>
+<td style="text-align:right;">
+0.5283068
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c(&#39;MLE&#39;,&#39;EM&#39;, &#39;EMV&#39;,&#39;Truncate&#39;,&#39;m.1by1&#39;,&#39;True&#39;), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 <div id="more-simulations" class="section level1">
 <h1>More simulations</h1>
-<p>I randomly generate 10 positive definite correlation matrices, V. The sample size is 2000.</p>
+<p>I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.</p>
 <p><span class="math display">\[
 \hat{z}|z \sim N_{5}(z, V)
 \]</span> <span class="math display">\[
 z\sim\frac{1}{4}\delta_{0} + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 1 &amp; \mathbf{0}_{1\times 4} \\ \mathbf{0}_{4\times 1} &amp; \mathbf{0}_{4\times 4} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\left(\begin{matrix} \mathbf{1}_{2\times 2} &amp; \mathbf{0}_{1\times 3} \\ \mathbf{0}_{3\times 1} &amp; \mathbf{0}_{3\times 3} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\mathbf{1}_{5\times 5})
 \]</span></p>
-<pre class="r"><code>library(mashr)
-n=500; p = 5
+<pre class="r"><code>set.seed(100)
+n=4000; p = 5
 U0 = matrix(0,p,p)
 U1 = U0; U1[1,1] = 1
 U2 = U0; U2[c(1:2), c(1:2)] = 1
 U3 = matrix(1, p,p)
 Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
-result = V.simulation(n,p,10,Utrue)
-saveRDS(result, &#39;../output/MASH.10.mle.result.rds&#39;)</code></pre>
-<pre class="r"><code>result = readRDS(&#39;../output/MASH.10.mle.result.rds&#39;)</code></pre>
-<p>The max elementwise norm is</p>
-<pre class="r"><code>temp = rbind(result$mMaxE.max, result$mMaxE.trun)
-barplot(temp, axes=T,
-        main=&quot;max elementwise error&quot;,
-        names.arg = 1:10,
-        legend.text = c(&quot;MLE&quot;, &quot;Trunc&quot;),
-        ylim = c(0, max(colSums(temp))*2))</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The spectral norm is</p>
-<pre class="r"><code>temp = rbind(result$m2E.max, result$m2E.trun)
-barplot(temp, axes=T,
-        main=&quot;Matrix 2 norm error&quot;,
-        names.arg = 1:10,
-        legend.text = c(&quot;MLE&quot;, &quot;Trunc&quot;),
-        ylim = c(0, max(colSums(temp))*2))</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The 10 estimated correlation matrices are all positive definite.</p>
-<p>The total running time for each matrix is</p>
-<pre class="r"><code>t(result$Time) %&gt;% kable() %&gt;% kable_styling()</code></pre>
+for(t in 1:10){
+  Vtrue = clusterGeneration::rcorrmatrix(p)
+  data = generate_data(n, p, Vtrue, Utrue)
+  # mash cov
+  m.data = mash_set_data(Bhat = data$Bhat, Shat = data$Shat)
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+  U.c = cov_canonical(m.data)
+  Vhat.mle &lt;- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;mle&#39;)
+  Vhat.em &lt;- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;em2&#39;)
+  Vhat.emV &lt;- estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(p), clusterGeneration::rcorrmatrix(p)),tol=1e-4, optmethod = &#39;emV&#39;)
+  saveRDS(list(V.true = Vtrue, V.mle = Vhat.mle, V.em = Vhat.em, V.emV = Vhat.emV, data = data, strong=strong),
+          paste0(&#39;../output/MASH.result.&#39;,t,&#39;.rds&#39;))
+}</code></pre>
+<pre class="r"><code>files = dir(&quot;../output/AddEMV/&quot;); files = files[grep(&quot;MASH.result&quot;,files)]
+times = length(files)
+result = vector(mode=&quot;list&quot;,length = times)
+for(i in 1:times) {
+  result[[i]] = readRDS(paste(&quot;../output/AddEMV/&quot;, files[[i]], sep=&quot;&quot;))
+}</code></pre>
+<pre class="r"><code>mle.pd = numeric(times)
+em.pd = numeric(times)
+for(i in 1:times){
+  m.data = mash_set_data(result[[i]]$data$Bhat, result[[i]]$data$Shat)
+  
+  result[[i]]$V.trun = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+  result[[i]]$V.1by1 = cor(m.data$Bhat[-strong,])
+  U.c = cov_canonical(m.data)
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+
+  m.data.true = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.true)
+  m.model.true = mash(m.data.true, c(U.c,U.ed), verbose = FALSE)
+  
+  m.data.trunc = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.trun)
+  m.model.trunc = mash(m.data.trunc, c(U.c,U.ed), verbose = FALSE)
+  
+  m.data.1by1 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.1by1)
+  m.model.1by1 = mash(m.data.1by1, c(U.c,U.ed), verbose = FALSE)
+  
+  m.data.emV = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.emV$V)
+  m.model.emV = mash(m.data.emV, c(U.c,U.ed), verbose = FALSE)
+  
+  # MLE
+  
+  m.model.mle = m.model.mle.F = m.model.mle.2 = list()
+  R &lt;- tryCatch(chol(result[[i]]$V.mle$V),error = function (e) FALSE)
+  if(is.matrix(R)){
+    mle.pd[i] = 1
+    m.data.mle = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.mle$V)
+    m.model.mle = mash(m.data.mle, c(U.c,U.ed), verbose = FALSE)
+  }else{
+    V.mle.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.mle$V, conv.norm.type = &#39;F&#39;, keepDiag = TRUE)$mat)
+    V.mle.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.mle$V, conv.norm.type = &#39;2&#39;, keepDiag = TRUE)$mat)
+    
+    result[[i]]$V.mle.F = V.mle.near.F
+    result[[i]]$V.mle.2 = V.mle.near.2
+    
+    # mashmodel
+    m.data.mle.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mle.near.F)
+    m.model.mle.F = mash(m.data.mle.F, c(U.c,U.ed), verbose = FALSE)
+    
+    m.data.mle.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mle.near.2)
+    m.model.mle.2 = mash(m.data.mle.2, c(U.c,U.ed), verbose = FALSE)
+  }
+  
+  # EM
+  m.model.em = m.model.em.F = m.model.em.2 = list()
+  R &lt;- tryCatch(chol(result[[i]]$V.em$V),error = function (e) FALSE)
+  if(is.matrix(R)){
+    em.pd[i] = 1
+    m.data.em = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.em$V)
+    m.model.em = mash(m.data.em, c(U.c,U.ed), verbose = FALSE)
+  }else{
+    V.em.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.em$V, conv.norm.type = &#39;F&#39;, keepDiag = TRUE)$mat)
+    V.em.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.em$V, conv.norm.type = &#39;2&#39;, keepDiag = TRUE)$mat)
+    
+    result[[i]]$V.em.F = V.em.near.F
+    result[[i]]$V.em.2 = V.em.near.2
+    
+    # mashmodel
+    m.data.em.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.em.near.F)
+    m.model.em.F = mash(m.data.em.F, c(U.c,U.ed), verbose = FALSE)
+      
+    m.data.em.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.em.near.2)
+    m.model.em.2 = mash(m.data.em.2, c(U.c,U.ed), verbose = FALSE)
+  }
+  
+  result[[i]]$m.model = list(m.model.true = m.model.true, m.model.trunc = m.model.trunc, 
+                             m.model.1by1 = m.model.1by1, m.model.emV = m.model.emV,
+                             m.model.mle = m.model.mle,
+                             m.model.mle.F = m.model.mle.F, m.model.mle.2 = m.model.mle.2, 
+                             m.model.em = m.model.em,
+                             m.model.em.F = m.model.em.F, m.model.em.2 = m.model.em.2)
+}</code></pre>
+<div id="error-1" class="section level2">
+<h2>Error</h2>
+<p>The Frobenius norm is</p>
+<pre class="r"><code>temp = matrix(0,nrow = times, ncol = 7)
+for(i in 1:times){
+  temp[i, ] = error.cor(result[[i]], norm.type=&#39;F&#39;, mle.pd = mle.pd[i], em.pd = em.pd[i])
+}
+colnames(temp) = c(&#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;MLE&#39;,&#39;MLE.F&#39;, &#39;EM&#39;, &#39;EM.F&#39;, &#39;EMV&#39;)
+temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+Trunc
+</th>
+<th style="text-align:right;">
+m.1by1
+</th>
+<th style="text-align:right;">
+MLE
+</th>
+<th style="text-align:right;">
+MLE.F
+</th>
+<th style="text-align:right;">
+EM
+</th>
+<th style="text-align:right;">
+EM.F
+</th>
+<th style="text-align:right;">
+EMV
+</th>
+</tr>
+</thead>
 <tbody>
 <tr>
 <td style="text-align:right;">
-777.223
+0.5847549
 </td>
 <td style="text-align:right;">
-1078.659
+0.9286016
 </td>
 <td style="text-align:right;">
-651.365
+0.3185293
 </td>
 <td style="text-align:right;">
-745.071
+0.3053278
 </td>
 <td style="text-align:right;">
-1064.722
+0.0941757
 </td>
 <td style="text-align:right;">
-893.494
+0.0000000
 </td>
 <td style="text-align:right;">
-924.456
+1.0198618
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.6345196
 </td>
 <td style="text-align:right;">
-697.97
+0.8140108
 </td>
 <td style="text-align:right;">
-741.843
+0.1169154
 </td>
 <td style="text-align:right;">
-716.978
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0981075
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.8913631
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.7201453
+</td>
+<td style="text-align:right;">
+0.9531300
+</td>
+<td style="text-align:right;">
+0.2344733
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.1734402
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+1.0216638
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.8370832
+</td>
+<td style="text-align:right;">
+1.0534335
+</td>
+<td style="text-align:right;">
+0.1968091
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.2411372
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+1.1115619
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.8206008
+</td>
+<td style="text-align:right;">
+0.8466408
+</td>
+<td style="text-align:right;">
+0.1194142
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.1189734
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.9176794
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.8455747
+</td>
+<td style="text-align:right;">
+1.1393764
+</td>
+<td style="text-align:right;">
+0.1650726
+</td>
+<td style="text-align:right;">
+0.1479670
+</td>
+<td style="text-align:right;">
+0.1653665
+</td>
+<td style="text-align:right;">
+0.1516188
+</td>
+<td style="text-align:right;">
+1.2178752
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.5173056
+</td>
+<td style="text-align:right;">
+0.8194980
+</td>
+<td style="text-align:right;">
+0.1211599
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0861518
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.8914736
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.8840057
+</td>
+<td style="text-align:right;">
+0.9546138
+</td>
+<td style="text-align:right;">
+0.1642744
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.1563607
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+1.0169747
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.6535878
+</td>
+<td style="text-align:right;">
+1.0554833
+</td>
+<td style="text-align:right;">
+0.1240352
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.1323659
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+1.1491978
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.6425639
+</td>
+<td style="text-align:right;">
+0.9346341
+</td>
+<td style="text-align:right;">
+0.0794776
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0700813
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+1.0196620
 </td>
 </tr>
 </tbody>
 </table>
+<p>The spectral norm is</p>
+<pre class="r"><code>temp = matrix(0,nrow = times, ncol = 7)
+for(i in 1:times){
+  temp[i, ] = error.cor(result[[i]], norm.type=&#39;2&#39;, mle.pd = mle.pd[i], em.pd = em.pd[i])
+}
+colnames(temp) = c(&#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;MLE&#39;,&#39;MLE.2&#39;, &#39;EM&#39;, &#39;EM.2&#39;, &#39;EMV&#39;)
+temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+Trunc
+</th>
+<th style="text-align:right;">
+m.1by1
+</th>
+<th style="text-align:right;">
+MLE
+</th>
+<th style="text-align:right;">
+MLE.2
+</th>
+<th style="text-align:right;">
+EM
+</th>
+<th style="text-align:right;">
+EM.2
+</th>
+<th style="text-align:right;">
+EMV
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+0.4230698
+</td>
+<td style="text-align:right;">
+0.7526315
+</td>
+<td style="text-align:right;">
+0.2258153
+</td>
+<td style="text-align:right;">
+0.2205340
+</td>
+<td style="text-align:right;">
+0.0662442
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.8335745
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.5228925
+</td>
+<td style="text-align:right;">
+0.6281308
+</td>
+<td style="text-align:right;">
+0.0783098
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0677285
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.7069909
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.5156642
+</td>
+<td style="text-align:right;">
+0.7945237
+</td>
+<td style="text-align:right;">
+0.1750836
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.1239438
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.8577274
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.6529121
+</td>
+<td style="text-align:right;">
+0.8335401
+</td>
+<td style="text-align:right;">
+0.1484773
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.1768351
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.8944724
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.6500336
+</td>
+<td style="text-align:right;">
+0.6377762
+</td>
+<td style="text-align:right;">
+0.0778356
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0849870
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.7052165
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.5607948
+</td>
+<td style="text-align:right;">
+0.8613851
+</td>
+<td style="text-align:right;">
+0.1001500
+</td>
+<td style="text-align:right;">
+0.0937816
+</td>
+<td style="text-align:right;">
+0.1085885
+</td>
+<td style="text-align:right;">
+0.1015186
+</td>
+<td style="text-align:right;">
+0.9343139
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.3157614
+</td>
+<td style="text-align:right;">
+0.6406310
+</td>
+<td style="text-align:right;">
+0.0795125
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0659174
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.6982291
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.7134025
+</td>
+<td style="text-align:right;">
+0.7290570
+</td>
+<td style="text-align:right;">
+0.1090477
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.1103719
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.7987348
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.4767534
+</td>
+<td style="text-align:right;">
+0.8894951
+</td>
+<td style="text-align:right;">
+0.0964157
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0957622
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.9760343
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.4591215
+</td>
+<td style="text-align:right;">
+0.7926789
+</td>
+<td style="text-align:right;">
+0.0568252
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0558999
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.8740268
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="time" class="section level2">
+<h2>Time</h2>
+<p>The total running time for each matrix is</p>
+<pre class="r"><code>mle.time = em.time = numeric(times)
+for(i in 1:times){
+  mle.time[i] = sum(result[[i]]$V.mle$ttime)
+  em.time[i] = sum(result[[i]]$V.em$ttime)
+}
+temp = cbind(mle.time, em.time)
+colnames(temp) = c(&#39;MLE&#39;, &#39;EM&#39;)
+row.names(temp) = 1:10
+temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+MLE
+</th>
+<th style="text-align:right;">
+EM
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+3171.983
+</td>
+<td style="text-align:right;">
+848.351
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2341.424
+</td>
+<td style="text-align:right;">
+704.601
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1990.764
+</td>
+<td style="text-align:right;">
+740.046
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+3249.162
+</td>
+<td style="text-align:right;">
+1072.233
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1988.220
+</td>
+<td style="text-align:right;">
+717.808
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2580.794
+</td>
+<td style="text-align:right;">
+958.710
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1928.634
+</td>
+<td style="text-align:right;">
+597.511
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2992.277
+</td>
+<td style="text-align:right;">
+1114.932
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2339.513
+</td>
+<td style="text-align:right;">
+708.779
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2727.560
+</td>
+<td style="text-align:right;">
+772.780
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="mash-log-likelihood-1" class="section level2">
+<h2>mash log likelihood</h2>
+<pre class="r"><code>temp = matrix(0,nrow = times, ncol = 10)
+for(i in 1:times){
+  temp[i, ] = loglik.cor(result[[i]]$m.model, mle.pd = mle.pd[i], em.pd = em.pd[i])
+}
+colnames(temp) = c(&#39;True&#39;, &#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;MLE&#39;,&#39;MLE.F&#39;, &#39;MLE.2&#39;, &#39;EM&#39;, &#39;EM.F&#39;, &#39;EM.2&#39;,&#39;EMV&#39;)
+temp[temp == 0] = NA
+temp[,-c(6,9)] %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+True
+</th>
+<th style="text-align:right;">
+Trunc
+</th>
+<th style="text-align:right;">
+m.1by1
+</th>
+<th style="text-align:right;">
+MLE
+</th>
+<th style="text-align:right;">
+MLE.F
+</th>
+<th style="text-align:right;">
+EM
+</th>
+<th style="text-align:right;">
+EM.F
+</th>
+<th style="text-align:right;">
+EMV
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+-26039.92
+</td>
+<td style="text-align:right;">
+-26130.50
+</td>
+<td style="text-align:right;">
+-26112.94
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-26265.49
+</td>
+<td style="text-align:right;">
+-26120.81
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-26136.19
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-25669.59
+</td>
+<td style="text-align:right;">
+-26997.92
+</td>
+<td style="text-align:right;">
+-26950.67
+</td>
+<td style="text-align:right;">
+-26028.96
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-25859.86
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-26967.47
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-27473.71
+</td>
+<td style="text-align:right;">
+-27547.11
+</td>
+<td style="text-align:right;">
+-27535.67
+</td>
+<td style="text-align:right;">
+-27465.76
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-27463.43
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-27551.75
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-28215.48
+</td>
+<td style="text-align:right;">
+-28604.98
+</td>
+<td style="text-align:right;">
+-28646.72
+</td>
+<td style="text-align:right;">
+-28301.41
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-28338.57
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-28669.24
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-24988.68
+</td>
+<td style="text-align:right;">
+-25236.18
+</td>
+<td style="text-align:right;">
+-25110.41
+</td>
+<td style="text-align:right;">
+-25056.59
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-25048.86
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-25123.96
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-24299.89
+</td>
+<td style="text-align:right;">
+-24978.79
+</td>
+<td style="text-align:right;">
+-24972.25
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-24492.32
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-24478.09
+</td>
+<td style="text-align:right;">
+-25020.38
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-27574.71
+</td>
+<td style="text-align:right;">
+-27698.40
+</td>
+<td style="text-align:right;">
+-27662.48
+</td>
+<td style="text-align:right;">
+-27517.65
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-27540.65
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-27684.83
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-27941.86
+</td>
+<td style="text-align:right;">
+-28159.65
+</td>
+<td style="text-align:right;">
+-28182.04
+</td>
+<td style="text-align:right;">
+-27979.99
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-27953.02
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-28222.45
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-29788.75
+</td>
+<td style="text-align:right;">
+-29824.45
+</td>
+<td style="text-align:right;">
+-29921.87
+</td>
+<td style="text-align:right;">
+-29760.81
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-29759.50
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-29954.96
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+-28542.34
+</td>
+<td style="text-align:right;">
+-28922.58
+</td>
+<td style="text-align:right;">
+-29163.51
+</td>
+<td style="text-align:right;">
+-28537.96
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-28550.73
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+-29221.61
+</td>
+</tr>
+</tbody>
+</table>
+<p>The <code>NA</code> means the estimated correlation matrix is not positive definite.</p>
+</div>
+<div id="roc-1" class="section level2">
+<h2>ROC</h2>
+<pre class="r"><code>par(mfrow=c(1,2))
+for(i in 1:times){
+  plotROC(result[[i]]$data$B, result[[i]]$m.model, mle.pd = mle.pd[i], em.pd = em.pd[i], title=paste0(&#39;Data&#39;, i, &#39; &#39;))
+}</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-5.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="rrmse-1" class="section level2">
+<h2>RRMSE</h2>
+<pre class="r"><code>par(mfrow=c(1,2))
+for(i in 1:times){
+  rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result[[i]]$m.model))
+  barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)
+}</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-5.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
 </div>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
@@ -599,34 +1869,35 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-9      ashr_2.2-10     
+[1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-11     ashr_2.2-10     
 
 loaded via a namespace (and not attached):
  [1] Rcpp_0.12.18             highr_0.7               
  [3] compiler_3.5.1           pillar_1.3.0            
  [5] plyr_1.8.4               iterators_1.0.10        
- [7] tools_3.5.1              digest_0.6.15           
- [9] viridisLite_0.3.0        evaluate_0.11           
-[11] tibble_1.4.2             lattice_0.20-35         
-[13] pkgconfig_2.0.1          rlang_0.2.1             
-[15] Matrix_1.2-14            foreach_1.4.4           
-[17] rstudioapi_0.7           yaml_2.2.0              
-[19] parallel_3.5.1           mvtnorm_1.0-8           
-[21] xml2_1.2.0               httr_1.3.1              
-[23] stringr_1.3.1            REBayes_1.3             
-[25] hms_0.4.2                rprojroot_1.3-2         
-[27] grid_3.5.1               R6_2.2.2                
-[29] rmarkdown_1.10           rmeta_3.0               
-[31] readr_1.1.1              magrittr_1.5            
-[33] scales_0.5.0             backports_1.1.2         
-[35] codetools_0.2-15         htmltools_0.3.6         
-[37] MASS_7.3-50              rvest_0.3.2             
-[39] assertthat_0.2.0         colorspace_1.3-2        
-[41] stringi_1.2.4            Rmosek_8.0.69           
-[43] munsell_0.5.0            pscl_1.5.2              
-[45] doParallel_1.0.11        truncnorm_1.0-8         
-[47] SQUAREM_2017.10-1        ExtremeDeconvolution_1.3
-[49] crayon_1.3.4            </code></pre>
+ [7] tools_3.5.1              corrplot_0.84           
+ [9] digest_0.6.15            viridisLite_0.3.0       
+[11] evaluate_0.11            tibble_1.4.2            
+[13] lattice_0.20-35          pkgconfig_2.0.1         
+[15] rlang_0.2.1              Matrix_1.2-14           
+[17] foreach_1.4.4            rstudioapi_0.7          
+[19] yaml_2.2.0               parallel_3.5.1          
+[21] mvtnorm_1.0-8            xml2_1.2.0              
+[23] httr_1.3.1               stringr_1.3.1           
+[25] REBayes_1.3              hms_0.4.2               
+[27] rprojroot_1.3-2          grid_3.5.1              
+[29] R6_2.2.2                 rmarkdown_1.10          
+[31] rmeta_3.0                readr_1.1.1             
+[33] magrittr_1.5             scales_0.5.0            
+[35] backports_1.1.2          codetools_0.2-15        
+[37] htmltools_0.3.6          MASS_7.3-50             
+[39] rvest_0.3.2              assertthat_0.2.0        
+[41] colorspace_1.3-2         stringi_1.2.4           
+[43] Rmosek_8.0.69            munsell_0.5.0           
+[45] pscl_1.5.2               doParallel_1.0.11       
+[47] truncnorm_1.0-8          SQUAREM_2017.10-1       
+[49] clusterGeneration_1.3.4  ExtremeDeconvolution_1.3
+[51] crayon_1.3.4            </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
