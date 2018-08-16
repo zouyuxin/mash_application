@@ -1,0 +1,159 @@
+---
+title: "Estimate cor — MLE EM V"
+author: "Yuxin Zou"
+date: 2018-8-3
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r read-chunk, include=FALSE, cache=FALSE}
+knitr::read_chunk("chunks.R")
+```
+
+<!-- Update knitr chunk options -->
+```{r knitr-opts-chunk, include=FALSE}
+```
+
+<!-- Insert the date the file was last updated -->
+```{r last-updated, echo=FALSE, results='asis'}
+```
+
+```{r}
+library(mashr)
+library(knitr)
+library(kableExtra)
+source('../code/estimate_cor.R')
+source('../code/generateDataV.R')
+source('../code/summary.R')
+```
+
+# EM
+
+We use EM algorithm to update V.
+
+## E step
+
+$$
+P(\hat{B},B,Z|\rho, \pi) = \prod_{i=1}^{n} \prod_{k=0}^{K}\left[\pi_{k}N(\hat{b}_{i}; b_{i}, V)N(b_{i}; 0, U_{k})\right]^{\mathbb{I}(z_{i}=k)}
+$$
+
+$$
+\mathbb{E}_{Z,B|\hat{B}} \log P(\hat{B},B,Z|\rho, \pi) = \sum_{i=1}^{n} \sum_{k=0}^{K} P(z_{i}=k|\hat{b}_{i})\left[ \log \pi_{k} + \mathbb{E}_{B|\hat{B}}(\log N(\hat{b}_{i}; b_{i}, V)) + \mathbb{E}_{B|\hat{B}}(\log N(b_{i}; 0, U_{k})) \right]
+$$
+
+$$
+\begin{align*}
+\log N(\hat{b}_{i}; b_{i}, V) + \log N(b_{i}; 0, U_{k}) &= -\frac{p}{2}\log 2\pi -\frac{1}{2}\log |V| - \frac{1}{2}(\hat{b}_{i}-b_{i})^{T}V^{-1}(\hat{b}_{i}-b_{i}) -\frac{p}{2}\log 2\pi -\frac{1}{2}\log |U_{k}| - \frac{1}{2}b_{i}^{T}U_{k}^{-1}b_{i} \\
+&= -p\log 2\pi -\frac{1}{2}\log |U_{k}| -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \hat{b}_{i}^{T}V^{-1}b_{i} -\frac{1}{2}b_{i}^{T}V^{-1}b_{i} - \frac{1}{2}b_{i}^{T}U_{k}^{-1}b_{i} \\
+\mathbb{E}_{b_{i}|\hat{b}_{i}}\left[ \log N(\hat{b}_{i}; b_{i}, V) + \log N(b_{i}; 0, U_{k}) \right] &= -p\log 2\pi -\frac{1}{2}\log |U_{k}| -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \hat{b}_{i}^{T}V^{-1}\mathbb{E}(b_{i}|\hat{b}_{i}) -\frac{1}{2}tr\left(V^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right) - \frac{1}{2}tr\left(U_{k}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right)
+\end{align*}
+$$
+
+$$
+\gamma_{Z_{i}}(k) = P(z_{i}=k|X_{i}) = \frac{\pi_{k}N(x_{i}; 0, V+U_{k})}{\sum_{k'=0}^{K}\pi_{k'}N(x_{i}; 0, V + U_{k'})}
+$$
+
+## M step
+
+$V$:
+$$
+\begin{align*}
+f(V^{-1}) = \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[ -p\log 2\pi -\frac{1}{2}\log |U_{k}| -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \hat{b}_{i}^{T}V^{-1}\mathbb{E}(b_{i}|\hat{b}_{i}) -\frac{1}{2}tr\left(V^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right) - \frac{1}{2}tr\left(U_{k}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right) \right]
+\end{align*}
+$$
+
+$$
+\begin{align*}
+f(V^{-1})' &= \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[ \frac{1}{2}V - \frac{1}{2}\hat{b}_{i}\hat{b}_{i}^{T} + \mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} - \frac{1}{2} \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] = 0 \\
+\frac{1}{2}Vn &= \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[\frac{1}{2}\hat{b}_{i}\hat{b}_{i}^{T} - \mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \frac{1}{2} \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] \\
+\hat{V} &= \frac{1}{n} \sum_{i=1}^{n} \left[\hat{b}_{i}\hat{b}_{i}^{T} - 2\mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right]
+\end{align*}
+$$
+
+Algorithm: 
+```{r, eval=FALSE, tidy=FALSE, highlight=FALSE}
+Input: X, Ulist, init_V
+Compute loglikelihood
+delta = 1
+while delta > tol
+  Given rho, Estimate pi using convex method (current mash method)
+  M step: update V --> cov2cor(V)
+  Compute loglikelihood
+  Update delta
+```
+
+# Data
+
+$$
+\hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.5 \\
+                                          0.5 & 1 \end{matrix}\right))
+$$
+
+$$
+\beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 & 0 \\
+                                          0 & 0 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 0 & 0 \\
+                                          0 & 1 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 & 1 \\
+                                          1 & 1 \end{matrix}\right))
+$$
+
+n = 4000
+
+```{r}
+set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)
+```
+
+```{r}
+m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+grid = mashr:::autoselect_grid(m.data, sqrt(2))
+Ulist = mashr:::normalize_Ulist(U.c)
+xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
+result <- mixture.EMV.times(data$Bhat, xUlist, init_V = list(diag(ncol(data$Bhat)), matrix(c(1,-0.8,-0.8,1),2,2)), grid=1)
+plot(result$result$log_liks)
+```
+The estimated V is `r result$result$V`.
+
+```{r}
+m.data.em = mash_set_data(data$Bhat, data$Shat, V = result$result$V)
+U.c = cov_canonical(m.data.em)
+m.em = mash(m.data.em, U.c, verbose= FALSE)
+null.ind = which(apply(data$B,1,sum) == 0)
+```
+
+The log likelihood is `r round(get_loglik(m.em),2)`. There are `r length(get_significant_results(m.em))` significant samples, `r sum(get_significant_results(m.em) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.em))`.
+
+The estimated `pi` is
+```{r}
+barplot(get_estimated_pi(m.em), las=2, cex.names = 0.7, main='EM V', ylim=c(0,0.8))
+```
+
+
+The ROC curve:
+```{r}
+m.data.correct = mash_set_data(data$Bhat, data$Shat, V=Sigma)
+m.correct = mash(m.data.correct, U.c, verbose = FALSE)
+m.correct.seq = ROC.table(data$B, m.correct)
+m.em.seq = ROC.table(data$B, m.em)
+```
+
+```{r echo=FALSE, fig.align = "center"}
+{plot(m.correct.seq[,'FPR'], m.correct.seq[,'TPR'],type='l',xlab = 'FPR', ylab='TPR', main='True Positive vs False Positive', cex=1.5, lwd = 1.5)
+lines(m.em.seq[,'FPR'], m.em.seq[,'TPR'], col='red', lwd = 1.5)
+legend('bottomright', c('True','EM_V'),col=c('black','red'),lty=c(1,1), lwd=c(1.5,1.5))}
+```
+
+# Session information
+
+<!-- Insert the session information into the document -->
+```{r session-info}
+```
+
