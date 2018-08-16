@@ -352,7 +352,7 @@ library(knitr)
 library(kableExtra)</code></pre>
 <p>Apply the max methods for correlation matrix on mash data.</p>
 <p>The estimated V from MLE(<code>optim</code> function) and EM perform better than the truncated correlation (error, mash log likelihood, ROC).</p>
-<p>Comparing the estimated V from MLE and EM, EM algorithm tends to compute faster, and the estimated correlation is slightly better than the MLE in terms of estimation error, mash log likelihood, ROC.</p>
+<p>Comparing the estimated V from MLE and EM, EM algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.</p>
 <div id="one-example" class="section level1">
 <h1>One example</h1>
 <p><span class="math display">\[
@@ -429,13 +429,13 @@ table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 mle
 </td>
 <td style="text-align:right;">
-286.774
+290.737
 </td>
 <td style="text-align:right;">
-209.489
+207.046
 </td>
 <td style="text-align:right;">
-70.140
+68.977
 </td>
 </tr>
 <tr>
@@ -443,13 +443,13 @@ mle
 em
 </td>
 <td style="text-align:right;">
-168.111
+168.826
 </td>
 <td style="text-align:right;">
-63.291
+63.495
 </td>
 <td style="text-align:right;">
-51.631
+51.343
 </td>
 </tr>
 </tbody>
@@ -900,6 +900,7 @@ for(i in 1:times){
   temp[i, ] = error.cor(result[[i]], norm.type=&#39;F&#39;, mle.pd = mle.pd[i], em.pd = em.pd[i])
 }
 colnames(temp) = c(&#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;MLE&#39;,&#39;MLE.F&#39;, &#39;EM&#39;, &#39;EM.F&#39;, &#39;EMV&#39;)
+temp[temp==0] = NA
 temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -945,7 +946,7 @@ EMV
 0.0941757
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 1.0198618
@@ -962,13 +963,13 @@ EMV
 0.1169154
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.0981075
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.8913631
@@ -985,13 +986,13 @@ EMV
 0.2344733
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.1734402
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 1.0216638
@@ -1008,13 +1009,13 @@ EMV
 0.1968091
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.2411372
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 1.1115619
@@ -1031,13 +1032,13 @@ EMV
 0.1194142
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.1189734
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.9176794
@@ -1077,13 +1078,13 @@ EMV
 0.1211599
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.0861518
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.8914736
@@ -1100,13 +1101,13 @@ EMV
 0.1642744
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.1563607
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 1.0169747
@@ -1123,13 +1124,13 @@ EMV
 0.1240352
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.1323659
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 1.1491978
@@ -1146,13 +1147,13 @@ EMV
 0.0794776
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.0700813
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 1.0196620
@@ -1166,6 +1167,7 @@ for(i in 1:times){
   temp[i, ] = error.cor(result[[i]], norm.type=&#39;2&#39;, mle.pd = mle.pd[i], em.pd = em.pd[i])
 }
 colnames(temp) = c(&#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;MLE&#39;,&#39;MLE.2&#39;, &#39;EM&#39;, &#39;EM.2&#39;, &#39;EMV&#39;)
+temp[temp==0] = NA
 temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -1211,7 +1213,7 @@ EMV
 0.0662442
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.8335745
@@ -1228,13 +1230,13 @@ EMV
 0.0783098
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.0677285
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.7069909
@@ -1251,13 +1253,13 @@ EMV
 0.1750836
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.1239438
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.8577274
@@ -1274,13 +1276,13 @@ EMV
 0.1484773
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.1768351
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.8944724
@@ -1297,13 +1299,13 @@ EMV
 0.0778356
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.0849870
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.7052165
@@ -1343,13 +1345,13 @@ EMV
 0.0795125
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.0659174
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.6982291
@@ -1366,13 +1368,13 @@ EMV
 0.1090477
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.1103719
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.7987348
@@ -1389,13 +1391,13 @@ EMV
 0.0964157
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.0957622
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.9760343
@@ -1412,13 +1414,13 @@ EMV
 0.0568252
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.0558999
 </td>
 <td style="text-align:right;">
-0.0000000
+NA
 </td>
 <td style="text-align:right;">
 0.8740268
