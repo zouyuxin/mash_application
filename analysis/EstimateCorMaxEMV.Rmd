@@ -120,7 +120,10 @@ xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 result <- mixture.EMV.times(data$Bhat, xUlist, init_V = list(diag(ncol(data$Bhat)), matrix(c(1,-0.8,-0.8,1),2,2)), grid=1)
 plot(result$result$log_liks)
 ```
-The estimated V is `r result$result$V`.
+The estimated V is 
+```{r}
+result$result$V
+```
 
 ```{r}
 m.data.em = mash_set_data(data$Bhat, data$Shat, V = result$result$V)
