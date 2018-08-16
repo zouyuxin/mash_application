@@ -11,6 +11,6 @@ output:
 
 * Using EM to estimate cor ($\rho$): [Estimate cor EM](EstimateCorMaxEM2.html)
 
-* Using EM to estimate cor ($V$): [Estimate cor EM](EstimateCorMaxEM2.html) (performs bad)
+* Using EM to estimate cor ($V$): [Estimate cor EM](EstimateCorMaxEMV.html) (performs bad)
     
 * [Estimate cor in mash](EstimateCorMaxMash.html)
