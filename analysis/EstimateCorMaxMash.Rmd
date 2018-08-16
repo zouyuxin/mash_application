@@ -32,7 +32,7 @@ Apply the max methods for correlation matrix on mash data.
 
 The estimated V from MLE(`optim` function) and EM perform better than the truncated correlation (error, mash log likelihood, ROC).
 
-Comparing the estimated V from MLE and EM, EM algorithm tends to compute faster, and the estimated correlation is slightly better than the MLE in terms of estimation error, mash log likelihood, ROC.
+Comparing the estimated V from MLE and EM, EM algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.
 
 # One example
 $$
@@ -387,6 +387,7 @@ for(i in 1:times){
   temp[i, ] = error.cor(result[[i]], norm.type='F', mle.pd = mle.pd[i], em.pd = em.pd[i])
 }
 colnames(temp) = c('Trunc','m.1by1', 'MLE','MLE.F', 'EM', 'EM.F', 'EMV')
+temp[temp==0] = NA
 temp %>% kable() %>% kable_styling()
 ```
 
@@ -397,6 +398,7 @@ for(i in 1:times){
   temp[i, ] = error.cor(result[[i]], norm.type='2', mle.pd = mle.pd[i], em.pd = em.pd[i])
 }
 colnames(temp) = c('Trunc','m.1by1', 'MLE','MLE.2', 'EM', 'EM.2', 'EMV')
+temp[temp==0] = NA
 temp %>% kable() %>% kable_styling()
 ```
 
