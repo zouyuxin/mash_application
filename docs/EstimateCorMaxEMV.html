@@ -424,7 +424,11 @@ Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 result &lt;- mixture.EMV.times(data$Bhat, xUlist, init_V = list(diag(ncol(data$Bhat)), matrix(c(1,-0.8,-0.8,1),2,2)), grid=1)
 plot(result$result$log_liks)</code></pre>
-<p><img src="figure/EstimateCorMaxEMV.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> The estimated V is 1, 0.4679947, 0.4679947, 1.</p>
+<p><img src="figure/EstimateCorMaxEMV.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /> The estimated V is</p>
+<pre class="r"><code>result$result$V</code></pre>
+<pre><code>          [,1]      [,2]
+[1,] 1.0000000 0.4679947
+[2,] 0.4679947 1.0000000</code></pre>
 <pre class="r"><code>m.data.em = mash_set_data(data$Bhat, data$Shat, V = result$result$V)
 U.c = cov_canonical(m.data.em)
 m.em = mash(m.data.em, U.c, verbose= FALSE)
@@ -432,13 +436,13 @@ null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
 <p>The log likelihood is -1.23036710^{4}. There are 24 significant samples, 0 false positives. The RRMSE is 0.58112.</p>
 <p>The estimated <code>pi</code> is</p>
 <pre class="r"><code>barplot(get_estimated_pi(m.em), las=2, cex.names = 0.7, main=&#39;EM V&#39;, ylim=c(0,0.8))</code></pre>
-<p><img src="figure/EstimateCorMaxEMV.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxEMV.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The ROC curve:</p>
 <pre class="r"><code>m.data.correct = mash_set_data(data$Bhat, data$Shat, V=Sigma)
 m.correct = mash(m.data.correct, U.c, verbose = FALSE)
 m.correct.seq = ROC.table(data$B, m.correct)
 m.em.seq = ROC.table(data$B, m.em)</code></pre>
-<p><img src="figure/EstimateCorMaxEMV.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxEMV.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
