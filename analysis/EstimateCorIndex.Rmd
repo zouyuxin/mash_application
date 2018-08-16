@@ -12,5 +12,5 @@ output:
 * Using EM to estimate cor ($\rho$): [Estimate cor EM](EstimateCorMaxEM2.html)
 
 * Using EM to estimate cor ($V$): [Estimate cor EM V](EstimateCorMaxEMV.html) (performs bad)
-    
-* More simulations to compare different methods: [Estimate cor in mash](EstimateCorMaxMash.html)
+
+* The examples above are in $R^{2}$. Here are more simulations to compare different methods for $p > 2$ : [Estimate cor in mash](EstimateCorMaxMash.html)

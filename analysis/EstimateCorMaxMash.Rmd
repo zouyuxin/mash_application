@@ -30,11 +30,13 @@ library(kableExtra)
 
 Apply the max methods for correlation matrix on mash data. 
 
-The estimated V from MLE(`optim` function) and EM perform better than the truncated correlation (error, mash log likelihood, ROC).
+After we estimate each pairwise correlation, the final resulting $p\times p$ correlation matrix may not be positive definite. I estimate the nearest PD cor matrix with `nearPD` function.
 
-Comparing the estimated V from MLE and EM, EM algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.
+The estimated V from MLE(`optim` function) and $EM_\rho$ perform better than the truncated correlation (error, mash log likelihood, ROC).
 
-# One example
+Comparing the estimated V from MLE and EM, $EM_\rho$ algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.
+
+# One example: p = 3
 $$
 \hat{\beta}|\beta \sim N_{3}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.7 & 0.2 \\
                                           0.7 & 1 & 0.4 \\ 
@@ -134,6 +136,8 @@ The truncated correlation underestimates the correlations.
 V.mash = cor((data$Bhat/data$Shat)[-strong,])
 V.mash
 ```
+
+All the estimated correlation matrices above are positive definite.
 
 ## Error
 
@@ -246,7 +250,7 @@ rrmse %>% kable() %>% kable_styling()
 barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c('MLE','EM', 'EMV','Truncate','m.1by1','True'), las=2, cex.names = 0.7, main='RRMSE')
 ```
 
-# More simulations
+# More simulations: p = 5
 
 I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.
 
@@ -375,8 +379,6 @@ for(i in 1:times){
 ```
 
 ## Error
-
-Some estimated correlation matrices are not positive definite. So I estimate the nearest PD cor matrix with `nearPD` function.
 
 The column with `.F`, `.2` are from the nearest positive definite matrix with respect to Frobenius norm and spectral norm.
 
