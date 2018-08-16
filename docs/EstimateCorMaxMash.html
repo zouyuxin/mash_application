@@ -386,7 +386,7 @@ U.ed = cov_ed(m.data, U.pca, subset = strong)
 U.c = cov_canonical(m.data)</code></pre>
 <p>The PCA correlation matrices are: <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
 <ol style="list-style-type: decimal">
-<li>We run the algorithm in <a href="EstimateCorMax.html">estimate cor mle</a> with 3 different initial points for <span class="math inline">\(\rho\)</span> (-0.5,0,0.5). The <span class="math inline">\(\rho\)</span> in each iteration is estimated using <code>optim</code> function. The estimated correlation is</li>
+<li>We run the algorithm in <a href="EstimateCorMax.html">estimate cor mle</a> with 3 different initial points for <span class="math inline">\(\rho\)</span>, (-0.5,0,0.5). The <span class="math inline">\(\rho\)</span> in each iteration is estimated using <code>optim</code> function. The estimated correlation is</li>
 </ol>
 <pre class="r"><code>Vhat.mle = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;mle&#39;)
 Vhat.mle$V</code></pre>
@@ -429,13 +429,13 @@ table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 mle
 </td>
 <td style="text-align:right;">
-290.737
+288.973
 </td>
 <td style="text-align:right;">
-207.046
+211.264
 </td>
 <td style="text-align:right;">
-68.977
+70.920
 </td>
 </tr>
 <tr>
@@ -443,13 +443,13 @@ mle
 em
 </td>
 <td style="text-align:right;">
-168.826
+167.481
 </td>
 <td style="text-align:right;">
-63.495
+61.041
 </td>
 <td style="text-align:right;">
-51.343
+51.901
 </td>
 </tr>
 </tbody>
@@ -475,7 +475,7 @@ Vhat.tru</code></pre>
 [3,] 0.1222433 0.3324459 1.0000000</code></pre>
 <p>The truncated correlation underestimates the correlations.</p>
 <ol start="5" style="list-style-type: decimal">
-<li>mash 1by1</li>
+<li>mash 1by1: Run ash for each condition, and estimate correlation matrix based on the non-significant samples.</li>
 </ol>
 <pre class="r"><code>V.mash = cor((data$Bhat/data$Shat)[-strong,])
 V.mash</code></pre>
