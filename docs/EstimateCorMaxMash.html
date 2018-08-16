@@ -342,7 +342,7 @@ div.section {
 
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-08-15</p>
+<p><strong>Last updated:</strong> 2018-08-16</p>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
@@ -351,10 +351,11 @@ source(&#39;../code/summary.R&#39;)
 library(knitr)
 library(kableExtra)</code></pre>
 <p>Apply the max methods for correlation matrix on mash data.</p>
-<p>The estimated V from MLE(<code>optim</code> function) and EM perform better than the truncated correlation (error, mash log likelihood, ROC).</p>
-<p>Comparing the estimated V from MLE and EM, EM algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.</p>
-<div id="one-example" class="section level1">
-<h1>One example</h1>
+<p>After we estimate each pairwise correlation, the final resulting <span class="math inline">\(p\times p\)</span> correlation matrix may not be positive definite. I estimate the nearest PD cor matrix with <code>nearPD</code> function.</p>
+<p>The estimated V from MLE(<code>optim</code> function) and <span class="math inline">\(EM_\rho\)</span> perform better than the truncated correlation (error, mash log likelihood, ROC).</p>
+<p>Comparing the estimated V from MLE and EM, <span class="math inline">\(EM_\rho\)</span> algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.</p>
+<div id="one-example-p-3" class="section level1">
+<h1>One example: p = 3</h1>
 <p><span class="math display">\[
 \hat{\beta}|\beta \sim N_{3}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.7 &amp; 0.2 \\
                                           0.7 &amp; 1 &amp; 0.4 \\ 
@@ -429,13 +430,13 @@ table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 mle
 </td>
 <td style="text-align:right;">
-288.973
+323.868
 </td>
 <td style="text-align:right;">
-211.264
+222.129
 </td>
 <td style="text-align:right;">
-70.920
+74.992
 </td>
 </tr>
 <tr>
@@ -443,13 +444,13 @@ mle
 em
 </td>
 <td style="text-align:right;">
-167.481
+185.670
 </td>
 <td style="text-align:right;">
-61.041
+71.698
 </td>
 <td style="text-align:right;">
-51.901
+56.159
 </td>
 </tr>
 </tbody>
@@ -483,6 +484,7 @@ V.mash</code></pre>
 [1,] 1.0000000 0.5313446 0.2445663
 [2,] 0.5313446 1.0000000 0.4490049
 [3,] 0.2445663 0.4490049 1.0000000</code></pre>
+<p>All the estimated correlation matrices above are positive definite.</p>
 <div id="error" class="section level2">
 <h2>Error</h2>
 <p>Check the estimation error:</p>
@@ -775,8 +777,8 @@ RRMSE
 <p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
-<div id="more-simulations" class="section level1">
-<h1>More simulations</h1>
+<div id="more-simulations-p-5" class="section level1">
+<h1>More simulations: p = 5</h1>
 <p>I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.</p>
 <p><span class="math display">\[
 \hat{z}|z \sim N_{5}(z, V)
@@ -892,7 +894,6 @@ for(i in 1:times){
 }</code></pre>
 <div id="error-1" class="section level2">
 <h2>Error</h2>
-<p>Some estimated correlation matrices are not positive definite. So I estimate the nearest PD cor matrix with <code>nearPD</code> function.</p>
 <p>The column with <code>.F</code>, <code>.2</code> are from the nearest positive definite matrix with respect to Frobenius norm and spectral norm.</p>
 <p>The Frobenius norm is</p>
 <pre class="r"><code>temp = matrix(0,nrow = times, ncol = 7)
