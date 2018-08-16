@@ -350,7 +350,9 @@ source(&#39;../code/estimate_cor.R&#39;)
 source(&#39;../code/summary.R&#39;)
 library(knitr)
 library(kableExtra)</code></pre>
-<p>Apply the max methods for correlation matrix on mash data. The estimated V from MLE and EM perform better than the truncated correlation (error, mash log likelihood, ROC).</p>
+<p>Apply the max methods for correlation matrix on mash data.</p>
+<p>The estimated V from MLE(<code>optim</code> function) and EM perform better than the truncated correlation (error, mash log likelihood, ROC).</p>
+<p>Comparing the estimated V from MLE and EM, EM algorithm tends to compute faster, and the estimated correlation is slightly better than the MLE in terms of estimation error, mash log likelihood, ROC.</p>
 <div id="one-example" class="section level1">
 <h1>One example</h1>
 <p><span class="math display">\[
@@ -374,6 +376,7 @@ U1 = matrix(0,3,3); U1[1,1] = 1
 U2 = diag(3); U2[3,3] = 0
 U3 = matrix(1,3,3)
 data = generate_data(n=4000, p=3, V=Sigma, Utrue = list(U0=U0, U1=U1,U2=U2,U3=U3))</code></pre>
+<p>We find the estimate of V with canonical covariances and the PCA covariances.</p>
 <pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
 m.1by1 = mash_1by1(m.data)
 strong = get_significant_results(m.1by1)
@@ -381,7 +384,7 @@ strong = get_significant_results(m.1by1)
 U.pca = cov_pca(m.data, 3, subset = strong)
 U.ed = cov_ed(m.data, U.pca, subset = strong)
 U.c = cov_canonical(m.data)</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>The PCA correlation matrices are: <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
 <ol style="list-style-type: decimal">
 <li>We run the algorithm in <a href="EstimateCorMax.html">estimate cor mle</a> with 3 different initial points for <span class="math inline">\(\rho\)</span> (-0.5,0,0.5). The <span class="math inline">\(\rho\)</span> in each iteration is estimated using <code>optim</code> function. The estimated correlation is</li>
 </ol>
@@ -426,13 +429,13 @@ table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 mle
 </td>
 <td style="text-align:right;">
-286.089
+286.774
 </td>
 <td style="text-align:right;">
-208.604
+209.489
 </td>
 <td style="text-align:right;">
-70.226
+70.140
 </td>
 </tr>
 <tr>
@@ -440,13 +443,13 @@ mle
 em
 </td>
 <td style="text-align:right;">
-167.105
+168.111
 </td>
 <td style="text-align:right;">
-63.067
+63.291
 </td>
 <td style="text-align:right;">
-51.075
+51.631
 </td>
 </tr>
 </tbody>
@@ -482,7 +485,7 @@ V.mash</code></pre>
 [3,] 0.2445663 0.4490049 1.0000000</code></pre>
 <div id="error" class="section level2">
 <h2>Error</h2>
-<p>Checking the estimation error:</p>
+<p>Check the estimation error:</p>
 <pre class="r"><code>FError = c(norm(Vhat.mle$V - Sigma, &#39;F&#39;),
            norm(Vhat.em$V - Sigma, &#39;F&#39;),
            norm(Vhat.emV$V - Sigma, &#39;F&#39;),
@@ -493,7 +496,7 @@ OpError = c(norm(Vhat.mle$V - Sigma, &#39;2&#39;),
            norm(Vhat.emV$V - Sigma, &#39;2&#39;),
            norm(Vhat.tru - Sigma, &#39;2&#39;),
            norm(V.mash - Sigma, &#39;2&#39;))
-table = data.frame(FError = FError, OpError = OpError, row.names = c(&#39;mle&#39;,&#39;em&#39;,&#39;emV&#39;,&#39;trunc&#39;,&#39;m.1by1&#39;))
+table = data.frame(FrobeniusError = FError, SpectralError = OpError, row.names = c(&#39;mle&#39;,&#39;em&#39;,&#39;emV&#39;,&#39;trunc&#39;,&#39;m.1by1&#39;))
 table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -501,10 +504,10 @@ table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <th style="text-align:left;">
 </th>
 <th style="text-align:right;">
-FError
+FrobeniusError
 </th>
 <th style="text-align:right;">
-OpError
+SpectralError
 </th>
 </tr>
 </thead>
@@ -889,6 +892,8 @@ for(i in 1:times){
 }</code></pre>
 <div id="error-1" class="section level2">
 <h2>Error</h2>
+<p>Some estimated correlation matrices are not positive definite. So I estimate the nearest PD cor matrix with <code>nearPD</code> function.</p>
+<p>The column with <code>.F</code>, <code>.2</code> are from the nearest positive definite matrix with respect to Frobenius norm and spectral norm.</p>
 <p>The Frobenius norm is</p>
 <pre class="r"><code>temp = matrix(0,nrow = times, ncol = 7)
 for(i in 1:times){
@@ -1531,6 +1536,7 @@ EM
 </div>
 <div id="mash-log-likelihood-1" class="section level2">
 <h2>mash log likelihood</h2>
+<p>The <code>NA</code> means the estimated correlation matrix is not positive definite.</p>
 <pre class="r"><code>temp = matrix(0,nrow = times, ncol = 10)
 for(i in 1:times){
   temp[i, ] = loglik.cor(result[[i]]$m.model, mle.pd = mle.pd[i], em.pd = em.pd[i])
@@ -1830,7 +1836,6 @@ NA
 </tr>
 </tbody>
 </table>
-<p>The <code>NA</code> means the estimated correlation matrix is not positive definite.</p>
 </div>
 <div id="roc-1" class="section level2">
 <h2>ROC</h2>
