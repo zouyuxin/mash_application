@@ -68,9 +68,11 @@ $$
 \begin{align*}
 f(V^{-1})' &= \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[ \frac{1}{2}V - \frac{1}{2}\hat{b}_{i}\hat{b}_{i}^{T} + \mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} - \frac{1}{2} \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] = 0 \\
 \frac{1}{2}Vn &= \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[\frac{1}{2}\hat{b}_{i}\hat{b}_{i}^{T} - \mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \frac{1}{2} \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] \\
-\hat{V} &= \frac{1}{n} \sum_{i=1}^{n} \left[\hat{b}_{i}\hat{b}_{i}^{T} - 2\mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right]
+\hat{V} &= \frac{1}{n} \sum_{i=1}^{n} \left[\hat{b}_{i}\hat{b}_{i}^{T} - 2\mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] \\
+&= \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]
 \end{align*}
 $$
+
 
 $\rho$:
 $$
@@ -81,7 +83,7 @@ $$
 \begin{align*}
 f(\rho)' = \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{Z_{i}}(k)\left[ \frac{\rho}{1-\rho^2} -\frac{\rho}{(1-\rho^2)^2}\left( \hat{b}_{i1}^2 + \hat{b}_{i2}^2 -2\hat{b}_{i1} \mu_{i1} -2\hat{b}_{i2} \mu_{i2} + \mathbb{E}(b_{i1}^2|\hat{b}_{i}) + \mathbb{E}(b_{i2}^2|\hat{b}_{i}) \right) -\frac{\rho^2+1}{(1-\rho^2)^2}\left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) \right] &= 0 \\
 \rho(1-\rho^2)n - \rho \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{Z_{i}}(k) \left( \hat{b}_{i1}^2 + \hat{b}_{i2}^2 -2\hat{b}_{i1} \mu_{i1} -2\hat{b}_{i2} \mu_{i2} + \mathbb{E}(b_{i1}^2|\hat{b}_{i}) + \mathbb{E}(b_{i2}^2|\hat{b}_{i}) \right) - (\rho^2 + 1) \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{Z_{i}}(k)\left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) &= 0 \\
--n\rho^{3} - \rho^2 \sum_{i=1}^{n} \left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) - \rho(\sum_{i=1}^{n} \left( \hat{b}_{i1}^2 + \hat{b}_{i2}^2 -2\hat{b}_{i1} \mu_{i1} -2\hat{b}_{i2} \mu_{i2} + \mathbb{E}(b_{i1}^2|\hat{b}_{i}) + \mathbb{E}(b_{i2}^2|\hat{b}_{i}) \right) - n) - \sum_{i=1}^{n} \left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) &= 0
+-n\rho^{3} - \rho^2 \sum_{i=1}^{n} \left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) - \rho \sum_{i=1}^{n} \left( \hat{b}_{i1}^2 + \hat{b}_{i2}^2 -2\hat{b}_{i1} \mu_{i1} -2\hat{b}_{i2} \mu_{i2} + \mathbb{E}(b_{i1}^2|\hat{b}_{i}) + \mathbb{E}(b_{i2}^2|\hat{b}_{i}) -1\right) - \sum_{i=1}^{n} \left( -\hat{b}_{i1}\hat{b}_{i2} + \hat{b}_{i1}\mu_{i2} +\hat{b}_{i2}\mu_{i1} - \mathbb{E}(b_{i1}b_{i2}|\hat{b}_{i}) \right) &= 0
 \end{align*}
 $$
 
