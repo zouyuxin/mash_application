@@ -1,25 +1,20 @@
-name: mash_application
+name: "mash_application"
 output_dir: "../docs"
-include: [".nojekyll"]
-exclude: ["include"]
 navbar:
-  title: mash_application
+  title: "mash_application"
   left:
-    - text: "Home"
-      href: index.html
-    - text: "About"
-      href: about.html
-    - text: "License"
-      href: license.html
+  - text: Home
+    href: index.html
+  - text: About
+    href: about.html
+  - text: License
+    href: license.html
   right:
-    - icon: fa-github
-      href: https://github.com/jdblischak/workflowr
+  - icon: fa-github
+    href: https://github.com/zouyuxin/mash_application
 output:
-  html_document:
+  workflowr::wflow_html:
     toc: true
     toc_float: true
     theme: cosmo
     highlight: textmate
-    include:
-      before_body: include/header.html
-      after_body: include/footer.html
