@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yuxin Zou" />
+
+<meta name="date" content="2018-08-11" />
+
+<title>MASH Null</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mash_application</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zouyuxin/mash_application">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">MASH Null</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>2018-08-11</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-08-21</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/15175c76a35526275a7d367fd86a707ce13bc41b" target="_blank">15175c7</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/include/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    docs/.DS_Store
+    Ignored:    output/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/Classify.Rmd
+    Untracked:  analysis/EstimateCorMaxEM.Rmd
+    Untracked:  analysis/EstimateCorMaxEMGD.Rmd
+    Untracked:  analysis/EstimateCorPrior.Rmd
+    Untracked:  analysis/EstimateCorSol.Rmd
+    Untracked:  analysis/HierarchicalFlashSim.Rmd
+    Untracked:  analysis/Mash_GTEx.Rmd
+    Untracked:  analysis/MeanAsh.Rmd
+    Untracked:  analysis/OutlierDetection.Rmd
+    Untracked:  analysis/OutlierDetection2.Rmd
+    Untracked:  analysis/OutlierDetection3.Rmd
+    Untracked:  analysis/OutlierDetection4.Rmd
+    Untracked:  analysis/Test.Rmd
+    Untracked:  analysis/mash_missing_row.Rmd
+    Untracked:  code/MashClassify.R
+    Untracked:  code/MashCorResult.R
+    Untracked:  code/MashNULLCorResult.R
+    Untracked:  code/MashSource.R
+    Untracked:  code/Weight_plot.R
+    Untracked:  code/addemV.R
+    Untracked:  code/estimate_cor.R
+    Untracked:  code/generateDataV.R
+    Untracked:  code/johnprocess.R
+    Untracked:  code/sim_mean_sig.R
+    Untracked:  code/summary.R
+    Untracked:  data/Blischak_et_al_2015/
+    Untracked:  data/scale_data.rds
+    Untracked:  docs/figure/Classify.Rmd/
+    Untracked:  docs/figure/OutlierDetection.Rmd/
+    Untracked:  docs/figure/OutlierDetection2.Rmd/
+    Untracked:  docs/figure/OutlierDetection3.Rmd/
+    Untracked:  docs/figure/Test.Rmd/
+    Untracked:  docs/figure/mash_missing_whole_row_5.Rmd/
+    Untracked:  docs/include/
+    Untracked:  output/AddEMV/
+    Untracked:  output/CovED_UKBio_strong.rds
+    Untracked:  output/CovED_UKBio_strong_Z.rds
+    Untracked:  output/Flash_UKBio_strong.rds
+    Untracked:  output/MASH.10.em2.result.rds
+    Untracked:  output/MASH.10.mle.result.rds
+    Untracked:  output/MASHNULL.V.result.1.rds
+    Untracked:  output/MASHNULL.V.result.10.rds
+    Untracked:  output/MASHNULL.V.result.11.rds
+    Untracked:  output/MASHNULL.V.result.12.rds
+    Untracked:  output/MASHNULL.V.result.13.rds
+    Untracked:  output/MASHNULL.V.result.14.rds
+    Untracked:  output/MASHNULL.V.result.15.rds
+    Untracked:  output/MASHNULL.V.result.16.rds
+    Untracked:  output/MASHNULL.V.result.17.rds
+    Untracked:  output/MASHNULL.V.result.18.rds
+    Untracked:  output/MASHNULL.V.result.19.rds
+    Untracked:  output/MASHNULL.V.result.2.rds
+    Untracked:  output/MASHNULL.V.result.20.rds
+    Untracked:  output/MASHNULL.V.result.3.rds
+    Untracked:  output/MASHNULL.V.result.4.rds
+    Untracked:  output/MASHNULL.V.result.5.rds
+    Untracked:  output/MASHNULL.V.result.6.rds
+    Untracked:  output/MASHNULL.V.result.7.rds
+    Untracked:  output/MASHNULL.V.result.8.rds
+    Untracked:  output/MASHNULL.V.result.9.rds
+    Untracked:  output/MashCorSim--midway/
+    Untracked:  output/Mash_EE_Cov_0_plusR1.rds
+    Untracked:  output/UKBio_mash_model.rds
+
+Unstaged changes:
+    Modified:   analysis/Mash_UKBio.Rmd
+    Modified:   analysis/mash_missing_samplesize.Rmd
+    Modified:   output/Flash_T2_0.rds
+    Modified:   output/Flash_T2_0_mclust.rds
+    Modified:   output/Mash_model_0_plusR1.rds
+    Modified:   output/PresiAddVarCol.rds
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/15175c76a35526275a7d367fd86a707ce13bc41b/analysis/MashLowSignal.Rmd" target="_blank">15175c7</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-21
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/MashLowSignal.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<pre class="r"><code>library(mashr)</code></pre>
+<pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>source(&#39;../code/estimate_cor.R&#39;)
+source(&#39;../code/generateDataV.R&#39;)
+library(knitr)
+library(kableExtra)</code></pre>
+<div id="v-identity" class="section level2">
+<h2>V identity</h2>
+<p><span class="math display">\[
+V = I_{5}
+\]</span></p>
+<pre class="r"><code>set.seed(1)
+n = 3000; p = 5
+U0 = matrix(0, p,p)
+Utrue = list(U0 = U0)
+V = diag(p)
+data = generate_data(n=n, p=p, V = V, Utrue = Utrue)</code></pre>
+<p>mash model</p>
+<pre class="r"><code>samp = 1:(n/2)
+if(is.null(dim(data$Shat))){
+  data$Shat = matrix(data$Shat, n, p)
+}
+data.samp = lapply(data, function(l) l[samp,])
+
+m.data = mash_set_data(Bhat = data.samp$Bhat, Shat = data.samp$Shat)
+U.c = cov_canonical(m.data)
+# m.1by1 = mash_1by1(m.data)
+# strong = get_significant_results(m.1by1)
+
+Vhat = estimate_null_correlation(m.data)
+Vhat.em = estimateV(m.data, U.c, init_rho = c(-0.5,0,0.5),tol=1e-4, optmethod=&#39;em2&#39;)$V
+m.data.em = mash_set_data(Bhat=data.samp$Bhat, Shat = data.samp$Shat, V = Vhat.em)
+m.model.em = mash(m.data.em, U.c, verbose=FALSE)</code></pre>
+<pre class="r"><code>res = rbind(c(norm(Vhat.em-diag(5), &#39;F&#39;), get_loglik(m.model.em), length(get_significant_results(m.model.em))))
+colnames(res) = c(&#39;F.error&#39;, &#39;loglik&#39;, &#39;# significance&#39;)
+row.names(res) = &#39;EM&#39;
+res %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+F.error
+</th>
+<th style="text-align:right;">
+loglik
+</th>
+<th style="text-align:right;">
+# significance
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+EM
+</td>
+<td style="text-align:right;">
+0.1178653
+</td>
+<td style="text-align:right;">
+-10767.46
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="v-not-idendity" class="section level2">
+<h2>V not idendity</h2>
+<p>We simulate 20 null data sets with non identity V, and check the mash results.</p>
+<pre class="r"><code>set.seed(1)
+n = 2000; p = 5
+U0 = matrix(0, p,p)
+Utrue = list(U0 = U0)
+
+for(t in 1:20){
+  V = clusterGeneration::rcorrmatrix(p)
+  data = generate_data(n=n, p=p, V = V, Utrue = Utrue)
+  samp = 1:(n/2)
+  if(is.null(dim(data$Shat))){
+    data$Shat = matrix(data$Shat, n, p)
+  }
+  data.samp = lapply(data, function(l) l[samp,])
+
+  m.data = mash_set_data(Bhat = data.samp$Bhat, Shat = data.samp$Shat)
+  U.c = cov_canonical(m.data)
+
+  Vhat = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
+  Vhat.em = estimateV(m.data, U.c, init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod=&#39;em2&#39;)
+
+  R &lt;- tryCatch(chol(Vhat.em$V),error = function (e) FALSE)
+  if(!is.matrix(R)){
+    pd = FALSE
+    Vhat.em$V = as.matrix(Matrix::nearPD(Vhat.em$V, conv.norm.type = &#39;F&#39;, keepDiag = TRUE)$mat)
+  }else{
+    pd = TRUE
+  }
+
+  m.data.trunc = mash_set_data(data.samp$Bhat, data.samp$Shat, V = Vhat)
+  m.model.trunc = mash(m.data.trunc, U.c)
+  m.data.em = mash_set_data(Bhat=data.samp$Bhat, Shat = data.samp$Shat, V = Vhat.em$V)
+  m.model.em = mash(m.data.em, U.c)
+
+  saveRDS(list(pd = pd, V.true = V, V.em = Vhat.em, V.trunc = Vhat, data = data, sample = samp, model.trunc = m.model.trunc, model.em = m.model.em),
+          paste0(&#39;../output/MASHNULL.V.result.&#39;,t,&#39;.rds&#39;))
+}</code></pre>
+<pre class="r"><code>files = dir(&quot;../output/&quot;); files = files[grep(&quot;MASHNULL.V.result&quot;,files)]
+times = length(files)
+result = vector(mode=&quot;list&quot;,length = times)
+for(i in 1:times) {
+  result[[i]] = readRDS(paste(&quot;../output/&quot;, files[[i]], sep=&quot;&quot;))
+}</code></pre>
+<pre class="r"><code>par(mfrow=c(1,4))
+for(t in 1:20){
+  corrplot::corrplot.mixed(result[[t]]$V.true, upper=&#39;color&#39;,cl.lim=c(-1,1))
+  mtext(paste0(&#39;Data &#39;, t), at=2.5, line=-5)
+}</code></pre>
+<p><img src="figure/MashLowSignal.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/MashLowSignal.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/MashLowSignal.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/MashLowSignal.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/MashLowSignal.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>EM_res = c(); Trunc_res = c()
+for(t in 1:20){
+  err = norm(result[[t]]$V.em$V - result[[t]]$V.true, type=&#39;F&#39;)
+  loglik = get_loglik(result[[t]]$model.em)
+  sig = length(get_significant_results(result[[t]]$model.em))
+  EM_res = rbind(EM_res, c(err, loglik, sig))
+  
+  err = norm(result[[t]]$V.trunc - result[[t]]$V.true, type=&#39;F&#39;)
+  loglik = get_loglik(result[[t]]$model.trunc)
+  sig = length(get_significant_results(result[[t]]$model.trunc))
+  Trunc_res = rbind(Trunc_res, c(err, loglik, sig))
+}</code></pre>
+<p>mash results based on EM estimated V</p>
+<pre class="r"><code>colnames(EM_res) = c(&#39;F.error&#39;, &#39;loglik&#39;, &#39;# significance&#39;)
+EM_res %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+F.error
+</th>
+<th style="text-align:right;">
+loglik
+</th>
+<th style="text-align:right;">
+# significance
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+0.1420401
+</td>
+<td style="text-align:right;">
+-6233.044
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1139972
+</td>
+<td style="text-align:right;">
+-4937.284
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1508036
+</td>
+<td style="text-align:right;">
+-6045.184
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.0598159
+</td>
+<td style="text-align:right;">
+-5634.970
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.0803792
+</td>
+<td style="text-align:right;">
+-4498.151
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1383140
+</td>
+<td style="text-align:right;">
+-5844.997
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1223280
+</td>
+<td style="text-align:right;">
+-5527.147
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.0926035
+</td>
+<td style="text-align:right;">
+-4407.713
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1893671
+</td>
+<td style="text-align:right;">
+-6227.554
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1369380
+</td>
+<td style="text-align:right;">
+-4719.186
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.0697218
+</td>
+<td style="text-align:right;">
+-4974.055
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.0922341
+</td>
+<td style="text-align:right;">
+-5075.397
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.0588698
+</td>
+<td style="text-align:right;">
+-5705.655
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1365943
+</td>
+<td style="text-align:right;">
+-5494.810
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1478870
+</td>
+<td style="text-align:right;">
+-5734.789
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1017556
+</td>
+<td style="text-align:right;">
+-6631.884
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.0838991
+</td>
+<td style="text-align:right;">
+-5504.995
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.0368434
+</td>
+<td style="text-align:right;">
+-5362.641
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1262740
+</td>
+<td style="text-align:right;">
+-5736.854
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1346086
+</td>
+<td style="text-align:right;">
+-4258.128
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p>mash results based on original estimated V</p>
+<pre class="r"><code>colnames(Trunc_res) = c(&#39;F.error&#39;, &#39;loglik&#39;, &#39;# significance&#39;)
+Trunc_res %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+F.error
+</th>
+<th style="text-align:right;">
+loglik
+</th>
+<th style="text-align:right;">
+# significance
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+0.2812578
+</td>
+<td style="text-align:right;">
+-6263.074
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2554575
+</td>
+<td style="text-align:right;">
+-4976.046
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2110287
+</td>
+<td style="text-align:right;">
+-6082.465
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2557471
+</td>
+<td style="text-align:right;">
+-5680.419
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.3482540
+</td>
+<td style="text-align:right;">
+-4581.797
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2093880
+</td>
+<td style="text-align:right;">
+-5876.652
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.3888612
+</td>
+<td style="text-align:right;">
+-5557.576
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.4217467
+</td>
+<td style="text-align:right;">
+-4493.518
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.3356877
+</td>
+<td style="text-align:right;">
+-6272.532
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2516301
+</td>
+<td style="text-align:right;">
+-4786.389
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2615190
+</td>
+<td style="text-align:right;">
+-5022.811
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2619482
+</td>
+<td style="text-align:right;">
+-5134.581
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.3126799
+</td>
+<td style="text-align:right;">
+-5762.630
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.1615910
+</td>
+<td style="text-align:right;">
+-5523.273
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2107430
+</td>
+<td style="text-align:right;">
+-5768.520
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.3014296
+</td>
+<td style="text-align:right;">
+-6652.888
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2136931
+</td>
+<td style="text-align:right;">
+-5566.659
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2679966
+</td>
+<td style="text-align:right;">
+-5403.671
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2831679
+</td>
+<td style="text-align:right;">
+-5794.189
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+0.2645471
+</td>
+<td style="text-align:right;">
+-4312.278
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p>Investigate Data 7</p>
+<pre class="r"><code>data = result[[7]]$data
+V.true = result[[7]]$V.true
+V.em = result[[7]]$V.em
+model.em = result[[7]]$model.em
+barplot(get_estimated_pi(model.em), las=2, cex.names = 0.7)</code></pre>
+<p><img src="figure/MashLowSignal.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>samp = result[[7]]$sample
+D1 = lapply(data, function(m) m[samp,])
+D2 = lapply(data, function(m) m[-samp,])</code></pre>
+<p>Estimate V on D1</p>
+<pre class="r"><code>m.data1 = mash_set_data(Bhat = D1$Bhat, Shat = D1$Shat)
+U.c = cov_canonical(m.data1)
+Vhat.em = estimateV(m.data1, U.c, init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod=&#39;em2&#39;)</code></pre>
+<p>Estimate mixture proportions on D2</p>
+<pre class="r"><code>m.data2 = mash_set_data(Bhat = D2$Bhat, Shat = D2$Shat, V = Vhat.em$V)
+m.model.split = mash(m.data2, U.c, outputlevel = 1)</code></pre>
+<pre><code> - Computing 1000 x 141 likelihood matrix.
+ - Likelihood calculations took 0.01 seconds.
+ - Fitting model with 141 mixture components.
+ - Model fitting took 0.10 seconds.</code></pre>
+<p>Estimate posteior on D1</p>
+<pre class="r"><code>m.data1.em = mash_set_data(Bhat = D1$Bhat, Shat = D1$Shat, V = Vhat.em$V)
+m.model.split$result = mash_compute_posterior_matrices(m.model.split, m.data1.em)</code></pre>
+<pre class="r"><code>length(get_significant_results(m.model.split))</code></pre>
+<pre><code>[1] 2</code></pre>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-11     ashr_2.2-10     
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18      highr_0.7         pillar_1.3.0     
+ [4] compiler_3.5.1    git2r_0.23.0      plyr_1.8.4       
+ [7] workflowr_1.1.1   R.methodsS3_1.7.1 R.utils_2.6.0    
+[10] iterators_1.0.10  tools_3.5.1       corrplot_0.84    
+[13] digest_0.6.15     viridisLite_0.3.0 tibble_1.4.2     
+[16] evaluate_0.11     lattice_0.20-35   pkgconfig_2.0.2  
+[19] rlang_0.2.2       Matrix_1.2-14     foreach_1.4.4    
+[22] rstudioapi_0.7    yaml_2.2.0        parallel_3.5.1   
+[25] mvtnorm_1.0-8     xml2_1.2.0        httr_1.3.1       
+[28] stringr_1.3.1     REBayes_1.3       hms_0.4.2        
+[31] rprojroot_1.3-2   grid_3.5.1        R6_2.2.2         
+[34] rmarkdown_1.10    rmeta_3.0         readr_1.1.1      
+[37] magrittr_1.5      whisker_0.3-2     scales_1.0.0     
+[40] backports_1.1.2   codetools_0.2-15  htmltools_0.3.6  
+[43] MASS_7.3-50       rvest_0.3.2       assertthat_0.2.0 
+[46] colorspace_1.3-2  stringi_1.2.4     Rmosek_8.0.69    
+[49] munsell_0.5.0     doParallel_1.0.11 pscl_1.5.2       
+[52] truncnorm_1.0-8   SQUAREM_2017.10-1 crayon_1.3.4     
+[55] R.oo_1.22.0      </code></pre>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
