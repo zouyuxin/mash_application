@@ -1,0 +1,184 @@
+---
+title: "MASH Null"
+author: "Yuxin Zou"
+date: 2018-08-11
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+```{r}
+library(mashr)
+source('../code/estimate_cor.R')
+source('../code/generateDataV.R')
+library(knitr)
+library(kableExtra)
+```
+
+## V identity
+
+$$
+V = I_{5}
+$$
+
+```{r}
+set.seed(1)
+n = 3000; p = 5
+U0 = matrix(0, p,p)
+Utrue = list(U0 = U0)
+V = diag(p)
+data = generate_data(n=n, p=p, V = V, Utrue = Utrue)
+```
+
+mash model
+```{r}
+samp = 1:(n/2)
+if(is.null(dim(data$Shat))){
+  data$Shat = matrix(data$Shat, n, p)
+}
+data.samp = lapply(data, function(l) l[samp,])
+
+m.data = mash_set_data(Bhat = data.samp$Bhat, Shat = data.samp$Shat)
+U.c = cov_canonical(m.data)
+# m.1by1 = mash_1by1(m.data)
+# strong = get_significant_results(m.1by1)
+
+Vhat = estimate_null_correlation(m.data)
+Vhat.em = estimateV(m.data, U.c, init_rho = c(-0.5,0,0.5),tol=1e-4, optmethod='em2')$V
+m.data.em = mash_set_data(Bhat=data.samp$Bhat, Shat = data.samp$Shat, V = Vhat.em)
+m.model.em = mash(m.data.em, U.c, verbose=FALSE)
+```
+
+```{r}
+res = rbind(c(norm(Vhat.em-diag(5), 'F'), get_loglik(m.model.em), length(get_significant_results(m.model.em))))
+colnames(res) = c('F.error', 'loglik', '# significance')
+row.names(res) = 'EM'
+res %>% kable() %>% kable_styling()
+```
+
+## V not idendity
+
+We simulate 20 null data sets with non identity V, and check the mash results.
+
+```{r eval=FALSE}
+set.seed(1)
+n = 2000; p = 5
+U0 = matrix(0, p,p)
+Utrue = list(U0 = U0)
+
+for(t in 1:20){
+  V = clusterGeneration::rcorrmatrix(p)
+  data = generate_data(n=n, p=p, V = V, Utrue = Utrue)
+  samp = 1:(n/2)
+  if(is.null(dim(data$Shat))){
+    data$Shat = matrix(data$Shat, n, p)
+  }
+  data.samp = lapply(data, function(l) l[samp,])
+
+  m.data = mash_set_data(Bhat = data.samp$Bhat, Shat = data.samp$Shat)
+  U.c = cov_canonical(m.data)
+
+  Vhat = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
+  Vhat.em = estimateV(m.data, U.c, init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod='em2')
+
+  R <- tryCatch(chol(Vhat.em$V),error = function (e) FALSE)
+  if(!is.matrix(R)){
+    pd = FALSE
+    Vhat.em$V = as.matrix(Matrix::nearPD(Vhat.em$V, conv.norm.type = 'F', keepDiag = TRUE)$mat)
+  }else{
+    pd = TRUE
+  }
+
+  m.data.trunc = mash_set_data(data.samp$Bhat, data.samp$Shat, V = Vhat)
+  m.model.trunc = mash(m.data.trunc, U.c)
+  m.data.em = mash_set_data(Bhat=data.samp$Bhat, Shat = data.samp$Shat, V = Vhat.em$V)
+  m.model.em = mash(m.data.em, U.c)
+
+  saveRDS(list(pd = pd, V.true = V, V.em = Vhat.em, V.trunc = Vhat, data = data, sample = samp, model.trunc = m.model.trunc, model.em = m.model.em),
+          paste0('../output/MASHNULL.V.result.',t,'.rds'))
+}
+
+```
+
+```{r}
+files = dir("../output/"); files = files[grep("MASHNULL.V.result",files)]
+times = length(files)
+result = vector(mode="list",length = times)
+for(i in 1:times) {
+  result[[i]] = readRDS(paste("../output/", files[[i]], sep=""))
+}
+```
+
+```{r}
+par(mfrow=c(1,4))
+for(t in 1:20){
+  corrplot::corrplot.mixed(result[[t]]$V.true, upper='color',cl.lim=c(-1,1))
+  mtext(paste0('Data ', t), at=2.5, line=-5)
+}
+```
+
+```{r}
+EM_res = c(); Trunc_res = c()
+for(t in 1:20){
+  err = norm(result[[t]]$V.em$V - result[[t]]$V.true, type='F')
+  loglik = get_loglik(result[[t]]$model.em)
+  sig = length(get_significant_results(result[[t]]$model.em))
+  EM_res = rbind(EM_res, c(err, loglik, sig))
+  
+  err = norm(result[[t]]$V.trunc - result[[t]]$V.true, type='F')
+  loglik = get_loglik(result[[t]]$model.trunc)
+  sig = length(get_significant_results(result[[t]]$model.trunc))
+  Trunc_res = rbind(Trunc_res, c(err, loglik, sig))
+}
+```
+
+mash results based on EM estimated V
+```{r}
+colnames(EM_res) = c('F.error', 'loglik', '# significance')
+EM_res %>% kable() %>% kable_styling()
+```
+
+mash results based on original estimated V
+```{r}
+colnames(Trunc_res) = c('F.error', 'loglik', '# significance')
+Trunc_res %>% kable() %>% kable_styling()
+```
+
+Investigate Data 7
+```{r}
+data = result[[7]]$data
+V.true = result[[7]]$V.true
+V.em = result[[7]]$V.em
+model.em = result[[7]]$model.em
+barplot(get_estimated_pi(model.em), las=2, cex.names = 0.7)
+```
+
+
+```{r}
+samp = result[[7]]$sample
+D1 = lapply(data, function(m) m[samp,])
+D2 = lapply(data, function(m) m[-samp,])
+```
+
+Estimate V on D1
+```{r}
+m.data1 = mash_set_data(Bhat = D1$Bhat, Shat = D1$Shat)
+U.c = cov_canonical(m.data1)
+Vhat.em = estimateV(m.data1, U.c, init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod='em2')
+```
+
+Estimate mixture proportions on D2
+```{r}
+m.data2 = mash_set_data(Bhat = D2$Bhat, Shat = D2$Shat, V = Vhat.em$V)
+m.model.split = mash(m.data2, U.c, outputlevel = 1)
+```
+
+Estimate posteior on D1
+```{r}
+m.data1.em = mash_set_data(Bhat = D1$Bhat, Shat = D1$Shat, V = Vhat.em$V)
+m.model.split$result = mash_compute_posterior_matrices(m.model.split, m.data1.em)
+```
+
+```{r}
+length(get_significant_results(m.model.split))
+```
