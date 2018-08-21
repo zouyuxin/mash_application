@@ -179,6 +179,7 @@ m.data1.em = mash_set_data(Bhat = D1$Bhat, Shat = D1$Shat, V = Vhat.em$V)
 m.model.split$result = mash_compute_posterior_matrices(m.model.split, m.data1.em)
 ```
 
+The # significant samples
 ```{r}
 length(get_significant_results(m.model.split))
 ```
