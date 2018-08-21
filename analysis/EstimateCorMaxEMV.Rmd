@@ -3,21 +3,9 @@ title: "Estimate cor — MLE EM V"
 author: "Yuxin Zou"
 date: 2018-8-3
 output: 
-  html_document:
+  workflowr::wflow_html:
     code_folding: hide
 ---
-
-```{r read-chunk, include=FALSE, cache=FALSE}
-knitr::read_chunk("chunks.R")
-```
-
-<!-- Update knitr chunk options -->
-```{r knitr-opts-chunk, include=FALSE}
-```
-
-<!-- Insert the date the file was last updated -->
-```{r last-updated, echo=FALSE, results='asis'}
-```
 
 ```{r}
 library(mashr)
@@ -28,18 +16,20 @@ source('../code/generateDataV.R')
 source('../code/summary.R')
 ```
 
-# EM
+## EM
 
 We use EM algorithm to update V.
 
-## E step
+B is the $n\times p$ true value matrix. $\mathbf{z}$ is a length n vector.
+
+### E step
 
 $$
-P(\hat{B},B,Z|\rho, \pi) = \prod_{i=1}^{n} \prod_{k=0}^{K}\left[\pi_{k}N(\hat{b}_{i}; b_{i}, V)N(b_{i}; 0, U_{k})\right]^{\mathbb{I}(z_{i}=k)}
+P(\hat{B},B,\mathbf{z}|\rho, \pi) = \prod_{i=1}^{n} \prod_{k=0}^{K}\left[\pi_{k}N(\hat{b}_{i}; b_{i}, V)N(b_{i}; 0, U_{k})\right]^{\mathbb{I}(z_{i}=k)}
 $$
 
 $$
-\mathbb{E}_{Z,B|\hat{B}} \log P(\hat{B},B,Z|\rho, \pi) = \sum_{i=1}^{n} \sum_{k=0}^{K} P(z_{i}=k|\hat{b}_{i})\left[ \log \pi_{k} + \mathbb{E}_{B|\hat{B}}(\log N(\hat{b}_{i}; b_{i}, V)) + \mathbb{E}_{B|\hat{B}}(\log N(b_{i}; 0, U_{k})) \right]
+\mathbb{E}_{\mathbf{z},B|\hat{B}} \log P(\hat{B},B,\mathbf{z}|\rho, \pi) = \sum_{i=1}^{n} \sum_{k=0}^{K} P(z_{i}=k|\hat{b}_{i})\left[ \log \pi_{k} + \mathbb{E}_{B|\hat{B}}(\log N(\hat{b}_{i}; b_{i}, V)) + \mathbb{E}_{B|\hat{B}}(\log N(b_{i}; 0, U_{k})) \right]
 $$
 
 $$
@@ -51,10 +41,10 @@ $$
 $$
 
 $$
-\gamma_{Z_{i}}(k) = P(z_{i}=k|X_{i}) = \frac{\pi_{k}N(x_{i}; 0, V+U_{k})}{\sum_{k'=0}^{K}\pi_{k'}N(x_{i}; 0, V + U_{k'})}
+\gamma_{z_{i}}(k) = P(z_{i}=k|X_{i}) = \frac{\pi_{k}N(x_{i}; 0, V+U_{k})}{\sum_{k'=0}^{K}\pi_{k'}N(x_{i}; 0, V + U_{k'})}
 $$
 
-## M step
+### M step
 
 $V$:
 $$
@@ -67,7 +57,8 @@ $$
 \begin{align*}
 f(V^{-1})' &= \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[ \frac{1}{2}V - \frac{1}{2}\hat{b}_{i}\hat{b}_{i}^{T} + \mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} - \frac{1}{2} \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] = 0 \\
 \frac{1}{2}Vn &= \sum_{i=1}^{n} \sum_{k=0}^{K} \gamma_{Z_{i}}(k)\left[\frac{1}{2}\hat{b}_{i}\hat{b}_{i}^{T} - \mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \frac{1}{2} \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] \\
-\hat{V} &= \frac{1}{n} \sum_{i=1}^{n} \left[\hat{b}_{i}\hat{b}_{i}^{T} - 2\mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right]
+\hat{V} &= \frac{1}{n} \sum_{i=1}^{n} \left[\hat{b}_{i}\hat{b}_{i}^{T} - 2\mathbb{E}(b_{i}|\hat{b}_{i})\hat{b}_{i}^{T} + \mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i}) \right] \\
+&= \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]
 \end{align*}
 $$
 
@@ -83,7 +74,7 @@ while delta > tol
   Update delta
 ```
 
-# Data
+## Data
 
 $$
 \hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.5 \\
@@ -153,10 +144,3 @@ m.em.seq = ROC.table(data$B, m.em)
 lines(m.em.seq[,'FPR'], m.em.seq[,'TPR'], col='red', lwd = 1.5)
 legend('bottomright', c('True','EM_V'),col=c('black','red'),lty=c(1,1), lwd=c(1.5,1.5))}
 ```
-
-# Session information
-
-<!-- Insert the session information into the document -->
-```{r session-info}
-```
-
