@@ -3,21 +3,9 @@ title: "Estimate cor -- max"
 author: "Yuxin Zou"
 date: 2018-07-24
 output: 
-  html_document:
+  workflowr::wflow_html:
     code_folding: hide
 ---
-
-```{r read-chunk, include=FALSE, cache=FALSE}
-knitr::read_chunk("chunks.R")
-```
-
-<!-- Update knitr chunk options -->
-```{r knitr-opts-chunk, include=FALSE}
-```
-
-<!-- Insert the date the file was last updated -->
-```{r last-updated, echo=FALSE, results='asis'}
-```
 
 ```{r}
 library(mashr)
@@ -44,7 +32,7 @@ $$
 $$
 Let $\sigma_{k11} = \sqrt{1+u_{k11}}$, $\sigma_{k22} = \sqrt{1+u_{k22}}$, $\phi_{k}=\frac{\rho+u_{k12}}{\sigma_{k11}\sigma_{k22}}$
 
-# MLE
+## MLE
 
 The loglikelihood is (with penalty)
 $$
@@ -71,7 +59,7 @@ while delta > tol
   Update delta
 ```
 
-# Data
+## Data
 
 $$
 \hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.5 \\
@@ -137,10 +125,4 @@ m.mle.seq = ROC.table(data$B, m.mle)
 {plot(m.correct.seq[,'FPR'], m.correct.seq[,'TPR'],type='l',xlab = 'FPR', ylab='TPR', main='True Positive vs False Positive', cex=1.5, lwd = 1.5)
 lines(m.mle.seq[,'FPR'], m.mle.seq[,'TPR'], col='red', lwd = 1.5)
 legend('bottomright', c('True','MLE'),col=c('black','red'),lty=c(1,1), lwd=c(1.5,1.5))}
-```
-
-# Session information
-
-<!-- Insert the session information into the document -->
-```{r session-info}
 ```
