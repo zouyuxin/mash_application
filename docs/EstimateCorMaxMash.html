@@ -305,7 +305,7 @@ div.tocify {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/jdblischak/workflowr">
+  <a href="https://github.com/zouyuxin/mash_application">
     <span class="fa fa-github"></span>
      
   </a>
@@ -314,6 +314,7 @@ div.tocify {
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
 <!-- Add a small amount of space between sections. -->
 <style type="text/css">
 div.section {
@@ -340,9 +341,360 @@ div.section {
 </div>
 
 
-<!-- Update knitr chunk options -->
-<!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-08-16</p>
+<p><strong>Last updated:</strong> 2018-08-20</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/88274cc08ba72c4a1bb7dc4aaa3fe41982ea75e1" target="_blank">88274cc</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/include/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    docs/.DS_Store
+    Ignored:    output/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/Classify.Rmd
+    Untracked:  analysis/EstimateCorMaxEM.Rmd
+    Untracked:  analysis/EstimateCorMaxEMGD.Rmd
+    Untracked:  analysis/EstimateCorPrior.Rmd
+    Untracked:  analysis/EstimateCorSol.Rmd
+    Untracked:  analysis/HierarchicalFlashSim.Rmd
+    Untracked:  analysis/MashLowSignal.Rmd
+    Untracked:  analysis/Mash_GTEx.Rmd
+    Untracked:  analysis/MeanAsh.Rmd
+    Untracked:  analysis/OutlierDetection.Rmd
+    Untracked:  analysis/OutlierDetection2.Rmd
+    Untracked:  analysis/OutlierDetection3.Rmd
+    Untracked:  analysis/OutlierDetection4.Rmd
+    Untracked:  analysis/mash_missing_row.Rmd
+    Untracked:  code/MashClassify.R
+    Untracked:  code/MashCorResult.R
+    Untracked:  code/MashSource.R
+    Untracked:  code/Weight_plot.R
+    Untracked:  code/addemV.R
+    Untracked:  code/estimate_cor.R
+    Untracked:  code/generateDataV.R
+    Untracked:  code/johnprocess.R
+    Untracked:  code/sim_mean_sig.R
+    Untracked:  code/summary.R
+    Untracked:  data/Blischak_et_al_2015/
+    Untracked:  data/scale_data.rds
+    Untracked:  docs/figure/Classify.Rmd/
+    Untracked:  docs/figure/OutlierDetection.Rmd/
+    Untracked:  docs/figure/OutlierDetection2.Rmd/
+    Untracked:  docs/figure/OutlierDetection3.Rmd/
+    Untracked:  docs/figure/Test.Rmd/
+    Untracked:  docs/figure/mash_missing_whole_row_5.Rmd/
+    Untracked:  docs/include/
+    Untracked:  output/AddEMV/
+    Untracked:  output/CovED_UKBio_strong.rds
+    Untracked:  output/CovED_UKBio_strong_Z.rds
+    Untracked:  output/Flash_UKBio_strong.rds
+    Untracked:  output/MASH.10.em2.result.rds
+    Untracked:  output/MASH.10.mle.result.rds
+    Untracked:  output/MASH.result.1.rds
+    Untracked:  output/MASH.result.10.rds
+    Untracked:  output/MASH.result.2.rds
+    Untracked:  output/MASH.result.3.rds
+    Untracked:  output/MASH.result.4.rds
+    Untracked:  output/MASH.result.5.rds
+    Untracked:  output/MASH.result.6.rds
+    Untracked:  output/MASH.result.7.rds
+    Untracked:  output/MASH.result.8.rds
+    Untracked:  output/MASH.result.9.rds
+    Untracked:  output/Mash_EE_Cov_0_plusR1.rds
+    Untracked:  output/Trail 1/
+    Untracked:  output/Trail 2/
+    Untracked:  output/UKBio_mash_model.rds
+
+Unstaged changes:
+    Modified:   analysis/Mash_UKBio.Rmd
+    Modified:   analysis/mash_missing_samplesize.Rmd
+    Modified:   output/Flash_T2_0.rds
+    Modified:   output/Flash_T2_0_mclust.rds
+    Modified:   output/Mash_model_0_plusR1.rds
+    Modified:   output/PresiAddVarCol.rds
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/88274cc08ba72c4a1bb7dc4aaa3fe41982ea75e1/analysis/EstimateCorMaxMash.Rmd" target="_blank">88274cc</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-20
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMash.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/cb0eb4d3da9827c2b2d96b72ebb69193c765612f/docs/EstimateCorMaxMash.html" target="_blank">cb0eb4d</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-16
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/63576042583508ce049c116896aa23292f6753af/analysis/EstimateCorMaxMash.Rmd" target="_blank">6357604</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-16
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/EstimateCorIndex.Rmd”, “analysis/EstimateCorMaxMash.Rmd”))
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/62810624e8b7cc75109ca79be9ff51319899148a/docs/EstimateCorMaxMash.html" target="_blank">6281062</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/3e3e128938bbfd03d7061d5b1242376a4a4a5058/analysis/EstimateCorMaxMash.Rmd" target="_blank">3e3e128</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/EstimateCor.Rmd”, “analysis/EstimateCorMax.Rmd”,
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/055978dda819ae619f3b8d27f01d455b0e51564b/docs/EstimateCorMaxMash.html" target="_blank">055978d</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/40dc525a5b094ff9f59e8346fa9cea2684bf0df0/analysis/EstimateCorMaxMash.Rmd" target="_blank">40dc525</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMash.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/96ec142f31d16122abbbaf6cc70166ecbcaca478/docs/EstimateCorMaxMash.html" target="_blank">96ec142</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/56743af3e8d78a4806fcfd2e3deca6495e465edc/analysis/EstimateCorMaxMash.Rmd" target="_blank">56743af</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMash.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/802266a425e0d3d094e12390a082354c95c6676f/docs/EstimateCorMaxMash.html" target="_blank">802266a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/c7b36650b5208156799b634f848b90a79204edc6/analysis/EstimateCorMaxMash.Rmd" target="_blank">c7b3665</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMash.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/b9e760fe3e93a4797418d1e52f836f8813878a08/docs/EstimateCorMaxMash.html" target="_blank">b9e760f</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-03
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/1e6ff48137250c35035e17f68a628b3ed8a2052b/analysis/EstimateCorMaxMash.Rmd" target="_blank">1e6ff48</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-03
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/EstimateCorMaxMash.Rmd”))
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
@@ -354,8 +706,8 @@ library(kableExtra)</code></pre>
 <p>After we estimate each pairwise correlation, the final resulting <span class="math inline">\(p\times p\)</span> correlation matrix may not be positive definite. I estimate the nearest PD cor matrix with <code>nearPD</code> function.</p>
 <p>The estimated V from MLE(<code>optim</code> function) and <span class="math inline">\(EM_\rho\)</span> perform better than the truncated correlation (error, mash log likelihood, ROC).</p>
 <p>Comparing the estimated V from MLE and EM, <span class="math inline">\(EM_\rho\)</span> algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.</p>
-<div id="one-example-p-3" class="section level1">
-<h1>One example: p = 3</h1>
+<div id="one-example-p-3" class="section level2">
+<h2>One example: p = 3</h2>
 <p><span class="math display">\[
 \hat{\beta}|\beta \sim N_{3}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.7 &amp; 0.2 \\
                                           0.7 &amp; 1 &amp; 0.4 \\ 
@@ -385,7 +737,7 @@ strong = get_significant_results(m.1by1)
 U.pca = cov_pca(m.data, 3, subset = strong)
 U.ed = cov_ed(m.data, U.pca, subset = strong)
 U.c = cov_canonical(m.data)</code></pre>
-<p>The PCA correlation matrices are: <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>The PCA correlation matrices are: <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
 <ol style="list-style-type: decimal">
 <li>We run the algorithm in <a href="EstimateCorMax.html">estimate cor mle</a> with 3 different initial points for <span class="math inline">\(\rho\)</span>, (-0.5,0,0.5). The <span class="math inline">\(\rho\)</span> in each iteration is estimated using <code>optim</code> function. The estimated correlation is</li>
 </ol>
@@ -430,13 +782,13 @@ table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 mle
 </td>
 <td style="text-align:right;">
-323.868
+312.547
 </td>
 <td style="text-align:right;">
-222.129
+228.092
 </td>
 <td style="text-align:right;">
-74.992
+70.155
 </td>
 </tr>
 <tr>
@@ -444,13 +796,13 @@ mle
 em
 </td>
 <td style="text-align:right;">
-185.670
+179.781
 </td>
 <td style="text-align:right;">
-71.698
+65.843
 </td>
 <td style="text-align:right;">
-56.159
+54.555
 </td>
 </tr>
 </tbody>
@@ -485,8 +837,8 @@ V.mash</code></pre>
 [2,] 0.5313446 1.0000000 0.4490049
 [3,] 0.2445663 0.4490049 1.0000000</code></pre>
 <p>All the estimated correlation matrices above are positive definite.</p>
-<div id="error" class="section level2">
-<h2>Error</h2>
+<div id="error" class="section level3">
+<h3>Error</h3>
 <p>Check the estimation error:</p>
 <pre class="r"><code>FError = c(norm(Vhat.mle$V - Sigma, &#39;F&#39;),
            norm(Vhat.em$V - Sigma, &#39;F&#39;),
@@ -572,8 +924,8 @@ m.1by1
 </tbody>
 </table>
 </div>
-<div id="mash-log-likelihood" class="section level2">
-<h2>mash log likelihood</h2>
+<div id="mash-log-likelihood" class="section level3">
+<h3>mash log likelihood</h3>
 <p>In mash model, the model with correlation from mle has larger loglikelihood.</p>
 <pre class="r"><code>m.data.mle = mash_set_data(data$Bhat, data$Shat, V=Vhat.mle$V)
 m.model.mle = mash(m.data.mle, c(U.c,U.ed), verbose = FALSE)</code></pre>
@@ -704,20 +1056,20 @@ barplot(get_estimated_pi(m.model.emV), las=2, cex.names = 0.7, main=&#39;EMV&#39
 barplot(get_estimated_pi(m.model.trunc), las=2, cex.names = 0.7, main=&#39;Truncate&#39;, ylim=c(0,0.8))
 barplot(get_estimated_pi(m.model.1by1), las=2, cex.names = 0.7, main=&#39;m.1by1&#39;, ylim=c(0,0.8))
 barplot(get_estimated_pi(m.model.correct), las=2, cex.names = 0.7, main=&#39;True&#39;, ylim=c(0,0.8))</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="roc" class="section level2">
-<h2>ROC</h2>
+<div id="roc" class="section level3">
+<h3>ROC</h3>
 <pre class="r"><code>m.mle.seq = ROC.table(data$B, m.model.mle)
 m.em.seq = ROC.table(data$B, m.model.em)
 m.emV.seq = ROC.table(data$B, m.model.emV)
 m.trun.seq = ROC.table(data$B, m.model.trunc)
 m.1by1.seq = ROC.table(data$B, m.model.1by1)
 m.correct.seq = ROC.table(data$B, m.model.correct)</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="rrmse" class="section level2">
-<h2>RRMSE</h2>
+<div id="rrmse" class="section level3">
+<h3>RRMSE</h3>
 <pre class="r"><code>rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.model.mle, m.model.em, m.model.emV, m.model.trunc, m.model.1by1, m.model.correct)))
 colnames(rrmse) = c(&#39;MLE&#39;,&#39;EM&#39;,&#39;EMV&#39;, &#39;Truncate&#39;,&#39;m.1by1&#39;,&#39;True&#39;)
 row.names(rrmse) = &#39;RRMSE&#39;
@@ -774,11 +1126,11 @@ RRMSE
 </tbody>
 </table>
 <pre class="r"><code>barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c(&#39;MLE&#39;,&#39;EM&#39;, &#39;EMV&#39;,&#39;Truncate&#39;,&#39;m.1by1&#39;,&#39;True&#39;), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
-<div id="more-simulations-p-5" class="section level1">
-<h1>More simulations: p = 5</h1>
+<div id="more-simulations-p-5" class="section level2">
+<h2>More simulations: p = 5</h2>
 <p>I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.</p>
 <p><span class="math display">\[
 \hat{z}|z \sim N_{5}(z, V)
@@ -892,8 +1244,8 @@ for(i in 1:times){
                              m.model.em = m.model.em,
                              m.model.em.F = m.model.em.F, m.model.em.2 = m.model.em.2)
 }</code></pre>
-<div id="error-1" class="section level2">
-<h2>Error</h2>
+<div id="error-1" class="section level3">
+<h3>Error</h3>
 <p>The column with <code>.F</code>, <code>.2</code> are from the nearest positive definite matrix with respect to Frobenius norm and spectral norm.</p>
 <p>The Frobenius norm is</p>
 <pre class="r"><code>temp = matrix(0,nrow = times, ncol = 7)
@@ -1430,8 +1782,8 @@ NA
 </tbody>
 </table>
 </div>
-<div id="time" class="section level2">
-<h2>Time</h2>
+<div id="time" class="section level3">
+<h3>Time</h3>
 <p>The total running time for each matrix is</p>
 <pre class="r"><code>mle.time = em.time = numeric(times)
 for(i in 1:times){
@@ -1537,8 +1889,8 @@ EM
 </tbody>
 </table>
 </div>
-<div id="mash-log-likelihood-1" class="section level2">
-<h2>mash log likelihood</h2>
+<div id="mash-log-likelihood-1" class="section level3">
+<h3>mash log likelihood</h3>
 <p>The <code>NA</code> means the estimated correlation matrix is not positive definite.</p>
 <pre class="r"><code>temp = matrix(0,nrow = times, ncol = 10)
 for(i in 1:times){
@@ -1840,27 +2192,176 @@ NA
 </tbody>
 </table>
 </div>
-<div id="roc-1" class="section level2">
-<h2>ROC</h2>
+<div id="roc-1" class="section level3">
+<h3>ROC</h3>
 <pre class="r"><code>par(mfrow=c(1,2))
 for(i in 1:times){
   plotROC(result[[i]]$data$B, result[[i]]$m.model, mle.pd = mle.pd[i], em.pd = em.pd[i], title=paste0(&#39;Data&#39;, i, &#39; &#39;))
 }</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-5.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="rrmse-1" class="section level2">
-<h2>RRMSE</h2>
+<div id="rrmse-1" class="section level3">
+<h3>RRMSE</h3>
 <pre class="r"><code>par(mfrow=c(1,2))
 for(i in 1:times){
   rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result[[i]]$m.model))
   barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)
 }</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-32-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-1.png" target="_blank">802266a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-2.png" target="_blank">802266a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-3.png" target="_blank">802266a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-4.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-4.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-4.png" target="_blank">802266a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-5.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-5.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-5.png" target="_blank">802266a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
-<div id="session-information" class="section level1">
-<h1>Session information</h1>
-<!-- Insert the session information into the document -->
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.5.1 (2018-07-02)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
@@ -1880,32 +2381,35 @@ other attached packages:
 [1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-11     ashr_2.2-10     
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.18             highr_0.7               
- [3] compiler_3.5.1           pillar_1.3.0            
- [5] plyr_1.8.4               iterators_1.0.10        
- [7] tools_3.5.1              corrplot_0.84           
- [9] digest_0.6.15            viridisLite_0.3.0       
-[11] evaluate_0.11            tibble_1.4.2            
-[13] lattice_0.20-35          pkgconfig_2.0.1         
-[15] rlang_0.2.1              Matrix_1.2-14           
-[17] foreach_1.4.4            rstudioapi_0.7          
-[19] yaml_2.2.0               parallel_3.5.1          
-[21] mvtnorm_1.0-8            xml2_1.2.0              
-[23] httr_1.3.1               stringr_1.3.1           
-[25] REBayes_1.3              hms_0.4.2               
-[27] rprojroot_1.3-2          grid_3.5.1              
-[29] R6_2.2.2                 rmarkdown_1.10          
-[31] rmeta_3.0                readr_1.1.1             
-[33] magrittr_1.5             scales_0.5.0            
-[35] backports_1.1.2          codetools_0.2-15        
-[37] htmltools_0.3.6          MASS_7.3-50             
-[39] rvest_0.3.2              assertthat_0.2.0        
-[41] colorspace_1.3-2         stringi_1.2.4           
-[43] Rmosek_8.0.69            munsell_0.5.0           
-[45] pscl_1.5.2               doParallel_1.0.11       
-[47] truncnorm_1.0-8          SQUAREM_2017.10-1       
-[49] clusterGeneration_1.3.4  ExtremeDeconvolution_1.3
-[51] crayon_1.3.4            </code></pre>
+ [1] corrplot_0.84            lattice_0.20-35         
+ [3] Rmosek_8.0.69            colorspace_1.3-2        
+ [5] htmltools_0.3.6          viridisLite_0.3.0       
+ [7] yaml_2.2.0               rlang_0.2.1             
+ [9] R.oo_1.22.0              pillar_1.3.0            
+[11] R.utils_2.6.0            ExtremeDeconvolution_1.3
+[13] REBayes_1.3              foreach_1.4.4           
+[15] plyr_1.8.4               stringr_1.3.1           
+[17] munsell_0.5.0            workflowr_1.1.1         
+[19] rvest_0.3.2              R.methodsS3_1.7.1       
+[21] mvtnorm_1.0-8            codetools_0.2-15        
+[23] evaluate_0.11            pscl_1.5.2              
+[25] doParallel_1.0.11        parallel_3.5.1          
+[27] highr_0.7                Rcpp_0.12.18            
+[29] readr_1.1.1              backports_1.1.2         
+[31] scales_0.5.0             rmeta_3.0               
+[33] clusterGeneration_1.3.4  truncnorm_1.0-8         
+[35] hms_0.4.2                digest_0.6.15           
+[37] stringi_1.2.4            grid_3.5.1              
+[39] rprojroot_1.3-2          tools_3.5.1             
+[41] magrittr_1.5             tibble_1.4.2            
+[43] crayon_1.3.4             whisker_0.3-2           
+[45] pkgconfig_2.0.1          MASS_7.3-50             
+[47] Matrix_1.2-14            SQUAREM_2017.10-1       
+[49] xml2_1.2.0               assertthat_0.2.0        
+[51] rmarkdown_1.10           httr_1.3.1              
+[53] rstudioapi_0.7           iterators_1.0.10        
+[55] R6_2.2.2                 git2r_0.23.0            
+[57] compiler_3.5.1          </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
@@ -1922,28 +2426,11 @@ footer is added to webpages before the MathJax javascript. -->
 
 <hr>
 <p>
-    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
 </p>
 <hr>
-
-<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
-
-<!-- disqus
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
--->
 
 
 </div>
