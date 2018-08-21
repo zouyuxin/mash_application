@@ -3,21 +3,9 @@ title: "Estimate Null Correlation Problem"
 author: "Yuxin Zou"
 date: 2018-07-09
 output: 
-  html_document: 
+  workflowr::wflow_html:
     code_folding: hide
 ---
-
-```{r read-chunk, include=FALSE, cache=FALSE}
-knitr::read_chunk("chunks.R")
-```
-
-<!-- Update knitr chunk options -->
-```{r knitr-opts-chunk, include=FALSE}
-```
-
-<!-- Insert the date the file was last updated -->
-```{r last-updated, echo=FALSE, results='asis'}
-```
 
 ```{r library}
 library(mashr)
@@ -31,7 +19,7 @@ We illustrate the problem about estimating the correlation matrix in `mashr`.
 
 In my simple simulation, the current approach underestimates the null correlation. We want to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of $\sum_{l,k} \pi_{lk} N_{2}(0, V + w_{l}U_{k})$ for any pair of conditions.
 
-# Problem
+## Problem
 
 Simple simulation in $R^2$ to illustrate the problem:
 $$
@@ -182,9 +170,9 @@ rrmse %>% kable() %>% kable_styling()
 barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main='RRMSE')
 ```
 
-# Solution: MLE
+## Solution: MLE
 
-## K=1
+### K=1
 
 Suppose a simple extreme case
 $$
@@ -238,12 +226,7 @@ $l(\rho)'$ has one real solution
 polyroot(c(- sum(data$Bhat[,1]*data$Bhat[,2]),  - (n - sum(data$Bhat[,1]^2 + data$Bhat[,2]^2)), - sum(data$Bhat[,1]*data$Bhat[,2]), n))
 ```
 
-## In general
+### In general
 
 The general derivation is in [estimate correlation mle](EstimateCorMax.html)
 
-# Session information
-
-<!-- Insert the session information into the document -->
-```{r session-info}
-```
