@@ -305,7 +305,7 @@ div.tocify {
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/jdblischak/workflowr">
+  <a href="https://github.com/zouyuxin/mash_application">
     <span class="fa fa-github"></span>
      
   </a>
@@ -314,6 +314,7 @@ div.tocify {
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
 <!-- Add a small amount of space between sections. -->
 <style type="text/css">
 div.section {
@@ -340,9 +341,401 @@ div.section {
 </div>
 
 
-<!-- Update knitr chunk options -->
-<!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-08-15</p>
+<p><strong>Last updated:</strong> 2018-08-20</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/a80bf6fb0bbdfc6098d7ae53d69d7acff067d021" target="_blank">a80bf6f</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/figure/
+    Ignored:    analysis/include/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    docs/.DS_Store
+    Ignored:    output/.DS_Store
+
+Untracked files:
+    Untracked:  _workflowr.yml
+    Untracked:  analysis/Classify.Rmd
+    Untracked:  analysis/EstimateCorMaxEM.Rmd
+    Untracked:  analysis/EstimateCorMaxEMGD.Rmd
+    Untracked:  analysis/EstimateCorPrior.Rmd
+    Untracked:  analysis/EstimateCorSol.Rmd
+    Untracked:  analysis/HierarchicalFlashSim.Rmd
+    Untracked:  analysis/MashLowSignal.Rmd
+    Untracked:  analysis/Mash_GTEx.Rmd
+    Untracked:  analysis/MeanAsh.Rmd
+    Untracked:  analysis/OutlierDetection.Rmd
+    Untracked:  analysis/OutlierDetection2.Rmd
+    Untracked:  analysis/OutlierDetection3.Rmd
+    Untracked:  analysis/OutlierDetection4.Rmd
+    Untracked:  analysis/Test.Rmd
+    Untracked:  analysis/mash_missing_row.Rmd
+    Untracked:  code/MashClassify.R
+    Untracked:  code/MashCorResult.R
+    Untracked:  code/MashSource.R
+    Untracked:  code/Weight_plot.R
+    Untracked:  code/addemV.R
+    Untracked:  code/estimate_cor.R
+    Untracked:  code/generateDataV.R
+    Untracked:  code/johnprocess.R
+    Untracked:  code/sim_mean_sig.R
+    Untracked:  code/summary.R
+    Untracked:  data/Blischak_et_al_2015/
+    Untracked:  data/scale_data.rds
+    Untracked:  docs/figure/Classify.Rmd/
+    Untracked:  docs/figure/OutlierDetection.Rmd/
+    Untracked:  docs/figure/OutlierDetection2.Rmd/
+    Untracked:  docs/figure/OutlierDetection3.Rmd/
+    Untracked:  docs/figure/Test.Rmd/
+    Untracked:  docs/figure/mash_missing_whole_row_5.Rmd/
+    Untracked:  docs/include/
+    Untracked:  output/AddEMV/
+    Untracked:  output/CovED_UKBio_strong.rds
+    Untracked:  output/CovED_UKBio_strong_Z.rds
+    Untracked:  output/Flash_UKBio_strong.rds
+    Untracked:  output/MASH.10.em2.result.rds
+    Untracked:  output/MASH.10.mle.result.rds
+    Untracked:  output/MASH.result.1.rds
+    Untracked:  output/MASH.result.10.rds
+    Untracked:  output/MASH.result.2.rds
+    Untracked:  output/MASH.result.3.rds
+    Untracked:  output/MASH.result.4.rds
+    Untracked:  output/MASH.result.5.rds
+    Untracked:  output/MASH.result.6.rds
+    Untracked:  output/MASH.result.7.rds
+    Untracked:  output/MASH.result.8.rds
+    Untracked:  output/MASH.result.9.rds
+    Untracked:  output/Mash_EE_Cov_0_plusR1.rds
+    Untracked:  output/Trail 1/
+    Untracked:  output/Trail 2/
+    Untracked:  output/UKBio_mash_model.rds
+
+Unstaged changes:
+    Modified:   analysis/EstimateCorMaxEM2.Rmd
+    Modified:   analysis/EstimateCorMaxMash.Rmd
+    Modified:   analysis/Mash_UKBio.Rmd
+    Modified:   analysis/_site.yml
+    Modified:   analysis/chunks.R
+    Modified:   analysis/mash_missing_samplesize.Rmd
+    Modified:   output/Flash_T2_0.rds
+    Modified:   output/Flash_T2_0_mclust.rds
+    Modified:   output/Mash_model_0_plusR1.rds
+    Modified:   output/PresiAddVarCol.rds
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/a80bf6fb0bbdfc6098d7ae53d69d7acff067d021/analysis/EstimateCor.Rmd" target="_blank">a80bf6f</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-20
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCor.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/62810624e8b7cc75109ca79be9ff51319899148a/docs/EstimateCor.html" target="_blank">6281062</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/3e3e128938bbfd03d7061d5b1242376a4a4a5058/analysis/EstimateCor.Rmd" target="_blank">3e3e128</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/EstimateCor.Rmd”, “analysis/EstimateCorMax.Rmd”,
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/05731ebdc30e3fb82be1ab8ea314dde836e30011/docs/EstimateCor.html" target="_blank">05731eb</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/ccc1607b8588ebfe6a47ee27a54e3d493171514f/analysis/EstimateCor.Rmd" target="_blank">ccc1607</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/EstimateCorIndex.Rmd”, “analysis/EstimateCor.Rmd”))
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/568fbe632239ed4a2ec52f4dd5f001b71d615530/docs/EstimateCor.html" target="_blank">568fbe6</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/3ae3f08be525fa2f3c7a50d4d25cefde7cd7ca37/analysis/EstimateCor.Rmd" target="_blank">3ae3f08</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/EstimateCor.Rmd”,
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/10d4174c6f044161bf17e623f1b474618cae2114/docs/EstimateCor.html" target="_blank">10d4174</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/b8c1cd8ae3639a7159924ea03fd209649e7bb8c7/analysis/EstimateCor.Rmd" target="_blank">b8c1cd8</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCor.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/3bfa4f502083ab1d6ba500fc0572aaf7200d6c8d/docs/EstimateCor.html" target="_blank">3bfa4f5</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/49d53fb5534caea4e69f8065ad3429c2ec1552e1/analysis/EstimateCor.Rmd" target="_blank">49d53fb</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCor.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/6e4f0a1b7a5da19a1dd1ad4747bf8dd0f97de8a5/docs/EstimateCor.html" target="_blank">6e4f0a1</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-03
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/c330f07db7d367bdb817136d0bd817a3a505a17e/analysis/EstimateCor.Rmd" target="_blank">c330f07</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-03
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/EstimateCor.Rmd”))
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/298546692568623165a25b72aac7faf332377c70/docs/EstimateCor.html" target="_blank">2985466</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-07-26
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/e2c5ebd1931ea676f6db7f4526914788f44a4844/analysis/EstimateCor.Rmd" target="_blank">e2c5ebd</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-07-26
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCor.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>library(knitr)
@@ -351,8 +744,8 @@ source(&#39;../code/generateDataV.R&#39;)
 source(&#39;../code/summary.R&#39;)</code></pre>
 <p>We illustrate the problem about estimating the correlation matrix in <code>mashr</code>.</p>
 <p>In my simple simulation, the current approach underestimates the null correlation. We want to find better positive definite estimator. We could try to estimate the pairwise correlation, ie. mle of <span class="math inline">\(\sum_{l,k} \pi_{lk} N_{2}(0, V + w_{l}U_{k})\)</span> for any pair of conditions.</p>
-<div id="problem" class="section level1">
-<h1>Problem</h1>
+<div id="problem" class="section level2">
+<h2>Problem</h2>
 <p>Simple simulation in <span class="math inline">\(R^2\)</span> to illustrate the problem: <span class="math display">\[
 \hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.5 \\
                                           0.5 &amp; 1 \end{matrix}\right))
@@ -533,6 +926,58 @@ barplot(get_estimated_pi(m.V1by1), las=2, cex.names = 0.7, main=&#39;m.1by1&#39;
 barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7, main=&#39;True&#39;, ylim=c(0,0.8))
 barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7, main=&#39;OverEst&#39;, ylim=c(0,0.8))</code></pre>
 <p><img src="figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/10d4174c6f044161bf17e623f1b474618cae2114/docs/figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" target="_blank">10d4174</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/3bfa4f502083ab1d6ba500fc0572aaf7200d6c8d/docs/figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" target="_blank">3bfa4f5</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/298546692568623165a25b72aac7faf332377c70/docs/figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" target="_blank">2985466</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-07-26
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The ROC curve:</p>
 <pre class="r"><code>m.I.seq = ROC.table(data$B, m.I)
 m.V.seq = ROC.table(data$B, m.V)
@@ -540,6 +985,58 @@ m.Vo.seq = ROC.table(data$B, m.Vo)
 m.V1by1.seq = ROC.table(data$B, m.V1by1)
 m.correct.seq = ROC.table(data$B, m.correct)</code></pre>
 <p><img src="figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/10d4174c6f044161bf17e623f1b474618cae2114/docs/figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" target="_blank">10d4174</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/3bfa4f502083ab1d6ba500fc0572aaf7200d6c8d/docs/figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" target="_blank">3bfa4f5</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/298546692568623165a25b72aac7faf332377c70/docs/figure/EstimateCor.Rmd/unnamed-chunk-12-1.png" target="_blank">2985466</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-07-26
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>Comparing accuracy</p>
 <pre class="r"><code>rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.I = m.I, m.V = m.V, m.1by1 = m.V1by1, m.true = m.correct, m.over = m.Vo)))
 colnames(rrmse) = c(&#39;Identity&#39;,&#39;V.trun&#39;,&#39;V.1by1&#39;,&#39;V.true&#39;,&#39;V.over&#39;)
@@ -592,11 +1089,52 @@ RRMSE
 </table>
 <pre class="r"><code>barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
 <p><img src="figure/EstimateCor.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-14-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/568fbe632239ed4a2ec52f4dd5f001b71d615530/docs/figure/EstimateCor.Rmd/unnamed-chunk-14-1.png" target="_blank">568fbe6</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/3bfa4f502083ab1d6ba500fc0572aaf7200d6c8d/docs/figure/EstimateCor.Rmd/unnamed-chunk-14-1.png" target="_blank">3bfa4f5</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
-<div id="solution-mle" class="section level1">
-<h1>Solution: MLE</h1>
-<div id="k1" class="section level2">
-<h2>K=1</h2>
+<div id="solution-mle" class="section level2">
+<h2>Solution: MLE</h2>
+<div id="k1" class="section level3">
+<h3>K=1</h3>
 <p>Suppose a simple extreme case <span class="math display">\[
 \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right)| \left(\begin{matrix} x \\ y \end{matrix} \right) \sim N_{2}(\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right); \left(\begin{matrix} x \\ y \end{matrix} \right), \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix}\right))
 \]</span> <span class="math display">\[
@@ -618,18 +1156,47 @@ l(\rho)&#39;&#39; &amp;= \frac{n(\rho^2+1)}{(1-\rho^2)^2} - \frac{1}{2}\left( \f
 <p>Kendall and Stuart (1979) noted that at least one of the roots is real and lies in the interval [−1, 1]. However, it is possible that all three roots are real and in the admissible interval, in which case the likelihood can be evaluated at each root to determine the true maximum likelihood estimate.</p>
 <p>I simulate the data with <span class="math inline">\(\rho=0.6\)</span> and plot the loglikelihood function:</p>
 <p><img src="figure/EstimateCor.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-15-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/568fbe632239ed4a2ec52f4dd5f001b71d615530/docs/figure/EstimateCor.Rmd/unnamed-chunk-15-1.png" target="_blank">568fbe6</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-13
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p><span class="math inline">\(l(\rho)&#39;\)</span> has one real solution</p>
 <pre class="r"><code>polyroot(c(- sum(data$Bhat[,1]*data$Bhat[,2]),  - (n - sum(data$Bhat[,1]^2 + data$Bhat[,2]^2)), - sum(data$Bhat[,1]*data$Bhat[,2]), n))</code></pre>
 <pre><code>[1] 0.6193031+0.000000i 0.0058209+1.009339i 0.0058209-1.009339i</code></pre>
 </div>
-<div id="in-general" class="section level2">
-<h2>In general</h2>
+<div id="in-general" class="section level3">
+<h3>In general</h3>
 <p>The general derivation is in <a href="EstimateCorMax.html">estimate correlation mle</a></p>
 </div>
 </div>
-<div id="session-information" class="section level1">
-<h1>Session information</h1>
-<!-- Insert the session information into the document -->
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.5.1 (2018-07-02)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
@@ -649,22 +1216,24 @@ other attached packages:
 [1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-11     ashr_2.2-10     
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.18      highr_0.7         compiler_3.5.1   
- [4] pillar_1.3.0      plyr_1.8.4        iterators_1.0.10 
- [7] tools_3.5.1       digest_0.6.15     viridisLite_0.3.0
-[10] evaluate_0.11     tibble_1.4.2      lattice_0.20-35  
-[13] pkgconfig_2.0.1   rlang_0.2.1       Matrix_1.2-14    
-[16] foreach_1.4.4     rstudioapi_0.7    yaml_2.2.0       
-[19] parallel_3.5.1    mvtnorm_1.0-8     xml2_1.2.0       
-[22] httr_1.3.1        stringr_1.3.1     REBayes_1.3      
-[25] hms_0.4.2         rprojroot_1.3-2   grid_3.5.1       
-[28] R6_2.2.2          rmarkdown_1.10    rmeta_3.0        
-[31] readr_1.1.1       magrittr_1.5      scales_0.5.0     
-[34] backports_1.1.2   codetools_0.2-15  htmltools_0.3.6  
-[37] MASS_7.3-50       rvest_0.3.2       assertthat_0.2.0 
-[40] colorspace_1.3-2  stringi_1.2.4     Rmosek_8.0.69    
-[43] munsell_0.5.0     pscl_1.5.2        doParallel_1.0.11
-[46] truncnorm_1.0-8   SQUAREM_2017.10-1 crayon_1.3.4     </code></pre>
+ [1] Rcpp_0.12.18      highr_0.7         pillar_1.3.0     
+ [4] compiler_3.5.1    git2r_0.23.0      plyr_1.8.4       
+ [7] workflowr_1.1.1   R.methodsS3_1.7.1 R.utils_2.6.0    
+[10] iterators_1.0.10  tools_3.5.1       digest_0.6.15    
+[13] viridisLite_0.3.0 tibble_1.4.2      evaluate_0.11    
+[16] lattice_0.20-35   pkgconfig_2.0.1   rlang_0.2.1      
+[19] Matrix_1.2-14     foreach_1.4.4     rstudioapi_0.7   
+[22] yaml_2.2.0        parallel_3.5.1    mvtnorm_1.0-8    
+[25] xml2_1.2.0        httr_1.3.1        stringr_1.3.1    
+[28] REBayes_1.3       hms_0.4.2         rprojroot_1.3-2  
+[31] grid_3.5.1        R6_2.2.2          rmarkdown_1.10   
+[34] rmeta_3.0         readr_1.1.1       magrittr_1.5     
+[37] whisker_0.3-2     scales_0.5.0      backports_1.1.2  
+[40] codetools_0.2-15  htmltools_0.3.6   MASS_7.3-50      
+[43] rvest_0.3.2       assertthat_0.2.0  colorspace_1.3-2 
+[46] stringi_1.2.4     Rmosek_8.0.69     munsell_0.5.0    
+[49] doParallel_1.0.11 pscl_1.5.2        truncnorm_1.0-8  
+[52] SQUAREM_2017.10-1 crayon_1.3.4      R.oo_1.22.0      </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
@@ -681,28 +1250,11 @@ footer is added to webpages before the MathJax javascript. -->
 
 <hr>
 <p>
-    This <a href="http://rmarkdown.rstudio.com">R Markdown</a> site was created with <a href="https://github.com/jdblischak/workflowr">workflowr</a>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
 </p>
 <hr>
-
-<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
-
-<!-- disqus
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'rmarkdown'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
--->
 
 
 </div>
