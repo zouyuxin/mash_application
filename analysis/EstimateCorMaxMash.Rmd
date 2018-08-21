@@ -3,23 +3,11 @@ title: "Estimate cor—max MASH"
 author: "Yuxin Zou"
 date: 2018-07-25
 output: 
-  html_document:
+  workflowr::wflow_html:
     code_folding: hide
 ---
 
-```{r read-chunk, include=FALSE, cache=FALSE}
-knitr::read_chunk("chunks.R")
-```
-
-<!-- Update knitr chunk options -->
-```{r knitr-opts-chunk, include=FALSE}
-```
-
-<!-- Insert the date the file was last updated -->
-```{r last-updated, echo=FALSE, results='asis'}
-```
-
-```{r}
+```{r library}
 library(mashr)
 source('../code/generateDataV.R')
 source('../code/estimate_cor.R')
@@ -36,7 +24,7 @@ The estimated V from MLE(`optim` function) and $EM_\rho$ perform better than the
 
 Comparing the estimated V from MLE and EM, $EM_\rho$ algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.
 
-# One example: p = 3
+## One example: p = 3
 $$
 \hat{\beta}|\beta \sim N_{3}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.7 & 0.2 \\
                                           0.7 & 1 & 0.4 \\ 
@@ -139,7 +127,7 @@ V.mash
 
 All the estimated correlation matrices above are positive definite.
 
-## Error
+### Error
 
 Check the estimation error:
 ```{r}
@@ -157,7 +145,7 @@ table = data.frame(FrobeniusError = FError, SpectralError = OpError, row.names =
 table %>% kable() %>% kable_styling()
 ```
 
-## mash log likelihood
+### mash log likelihood
 In mash model, the model with correlation from mle has larger loglikelihood.
 
 ```{r}
@@ -216,7 +204,7 @@ barplot(get_estimated_pi(m.model.1by1), las=2, cex.names = 0.7, main='m.1by1', y
 barplot(get_estimated_pi(m.model.correct), las=2, cex.names = 0.7, main='True', ylim=c(0,0.8))
 ```
 
-## ROC
+### ROC
 
 ```{r}
 m.mle.seq = ROC.table(data$B, m.model.mle)
@@ -237,7 +225,7 @@ lines(m.1by1.seq[,'FPR'], m.1by1.seq[,'TPR'], col='cyan', lwd = 1.5)
 legend('bottomright', c('True','MLE','EM','EMV','Trunc', 'm.1by1'),col=c('black','red','green','purple', 'blue', 'cyan'),lty=c(1,1,1,1,1,1), lwd=c(1.5,1.5,1.5,1.5,1.5, 1.5))}
 ```
 
-## RRMSE
+### RRMSE
 
 ```{r}
 rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.model.mle, m.model.em, m.model.emV, m.model.trunc, m.model.1by1, m.model.correct)))
@@ -250,7 +238,7 @@ rrmse %>% kable() %>% kable_styling()
 barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c('MLE','EM', 'EMV','Truncate','m.1by1','True'), las=2, cex.names = 0.7, main='RRMSE')
 ```
 
-# More simulations: p = 5
+## More simulations: p = 5
 
 I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.
 
@@ -378,7 +366,7 @@ for(i in 1:times){
 }
 ```
 
-## Error
+### Error
 
 The column with `.F`, `.2` are from the nearest positive definite matrix with respect to Frobenius norm and spectral norm.
 
@@ -404,7 +392,7 @@ temp[temp==0] = NA
 temp %>% kable() %>% kable_styling()
 ```
 
-## Time
+### Time
 
 The total running time for each matrix is
 ```{r}
@@ -419,7 +407,7 @@ row.names(temp) = 1:10
 temp %>% kable() %>% kable_styling()
 ```
 
-## mash log likelihood
+### mash log likelihood
 
 The `NA` means the estimated correlation matrix is not positive definite.
 
@@ -433,7 +421,7 @@ temp[temp == 0] = NA
 temp[,-c(6,9)] %>% kable() %>% kable_styling()
 ```
 
-## ROC
+### ROC
 
 ```{r}
 par(mfrow=c(1,2))
@@ -442,7 +430,7 @@ for(i in 1:times){
 }
 ```
 
-## RRMSE
+### RRMSE
 
 ```{r}
 par(mfrow=c(1,2))
@@ -450,11 +438,4 @@ for(i in 1:times){
   rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result[[i]]$m.model))
   barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main='RRMSE')
 }
-```
-
-
-# Session information
-
-<!-- Insert the session information into the document -->
-```{r session-info}
 ```
