@@ -221,7 +221,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-08-21</p>
+<p><strong>Last updated:</strong> 2018-08-30</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -230,7 +230,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/beef816b67835ce5f120d79c413efafa13d4c428" target="_blank">beef816</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/547a9879c6a288539b48face36e20bd9431a2c43" target="_blank">547a987</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -240,6 +240,7 @@ Ignored files:
     Ignored:    analysis/.DS_Store
     Ignored:    analysis/.Rhistory
     Ignored:    analysis/include/.DS_Store
+    Ignored:    code/.DS_Store
     Ignored:    data/.DS_Store
     Ignored:    docs/.DS_Store
     Ignored:    output/.DS_Store
@@ -248,9 +249,13 @@ Untracked files:
     Untracked:  analysis/Classify.Rmd
     Untracked:  analysis/EstimateCorMaxEM.Rmd
     Untracked:  analysis/EstimateCorMaxEMGD.Rmd
+    Untracked:  analysis/EstimateCorOptimEM.Rmd
     Untracked:  analysis/EstimateCorPrior.Rmd
     Untracked:  analysis/EstimateCorSol.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
+    Untracked:  analysis/MashLowSignalGTEx.Rmd
+    Untracked:  analysis/MashLowSignalGTExPerm.Rmd
+    Untracked:  analysis/MashLowSignalIndex.Rmd
     Untracked:  analysis/Mash_GTEx.Rmd
     Untracked:  analysis/MeanAsh.Rmd
     Untracked:  analysis/OutlierDetection.Rmd
@@ -259,6 +264,7 @@ Untracked files:
     Untracked:  analysis/OutlierDetection4.Rmd
     Untracked:  analysis/Test.Rmd
     Untracked:  analysis/mash_missing_row.Rmd
+    Untracked:  code/GTExNullModel.R
     Untracked:  code/MashClassify.R
     Untracked:  code/MashCorResult.R
     Untracked:  code/MashNULLCorResult.R
@@ -273,6 +279,8 @@ Untracked files:
     Untracked:  data/Blischak_et_al_2015/
     Untracked:  data/scale_data.rds
     Untracked:  docs/figure/Classify.Rmd/
+    Untracked:  docs/figure/MashLowSignalGTEx.Rmd/
+    Untracked:  docs/figure/MashLowSignalGTExPerm.Rmd/
     Untracked:  docs/figure/OutlierDetection.Rmd/
     Untracked:  docs/figure/OutlierDetection2.Rmd/
     Untracked:  docs/figure/OutlierDetection3.Rmd/
@@ -283,6 +291,27 @@ Untracked files:
     Untracked:  output/CovED_UKBio_strong.rds
     Untracked:  output/CovED_UKBio_strong_Z.rds
     Untracked:  output/Flash_UKBio_strong.rds
+    Untracked:  output/GTExNULLres/
+    Untracked:  output/GTEx_2.5_nullData.rds
+    Untracked:  output/GTEx_2.5_nullModel.rds
+    Untracked:  output/GTEx_2.5_nullPermData.rds
+    Untracked:  output/GTEx_2.5_nullPermModel.rds
+    Untracked:  output/GTEx_3.5_nullData.rds
+    Untracked:  output/GTEx_3.5_nullModel.rds
+    Untracked:  output/GTEx_3.5_nullPermData.rds
+    Untracked:  output/GTEx_3.5_nullPermModel.rds
+    Untracked:  output/GTEx_3_nullData.rds
+    Untracked:  output/GTEx_3_nullModel.rds
+    Untracked:  output/GTEx_3_nullPermData.rds
+    Untracked:  output/GTEx_3_nullPermModel.rds
+    Untracked:  output/GTEx_4.5_nullData.rds
+    Untracked:  output/GTEx_4.5_nullModel.rds
+    Untracked:  output/GTEx_4.5_nullPermData.rds
+    Untracked:  output/GTEx_4.5_nullPermModel.rds
+    Untracked:  output/GTEx_4_nullData.rds
+    Untracked:  output/GTEx_4_nullModel.rds
+    Untracked:  output/GTEx_4_nullPermData.rds
+    Untracked:  output/GTEx_4_nullPermModel.rds
     Untracked:  output/MASH.10.em2.result.rds
     Untracked:  output/MASH.10.mle.result.rds
     Untracked:  output/MASHNULL.V.result.1.rds
@@ -310,6 +339,7 @@ Untracked files:
     Untracked:  output/UKBio_mash_model.rds
 
 Unstaged changes:
+    Modified:   analysis/MashLowSignalGTEx3.5.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
     Modified:   output/Flash_T2_0.rds
@@ -344,6 +374,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/547a9879c6a288539b48face36e20bd9431a2c43/analysis/index.Rmd" target="_blank">547a987</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-30
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/index.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/9aa0bc0ffb64de3702f5775d8af5c80c4e0121c8/docs/index.html" target="_blank">9aa0bc0</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-21
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -914,7 +978,7 @@ Start workflowr project.
 <li><p><a href="HierarchicalFlash.html">Hierarchical Flash model simulation</a></p></li>
 <li><p><a href="UKBio.html">UKBioBank</a></p></li>
 <li><p><a href="EstimateCorIndex.html">Estimate cor in <code>mashr</code></a></p></li>
-<li><p><a href="MashLowSignal.html">Mash Low Signal</a></p></li>
+<li><p><a href="MashLowSignalIndex.html">Mash Low Signal</a></p></li>
 </ul>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
