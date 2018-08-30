@@ -1,0 +1,143 @@
+---
+title: "MASH Null -- Real Data (GTEx random set) Permute sharing"
+author: "Yuxin Zou"
+date: 2018-08-23
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+```{r}
+library(mashr)
+library(knitr)
+library(kableExtra)
+```
+
+```{r}
+get_estimated_pi = function(m, dimension = c("cov", "grid", "all"), thres = NULL){
+  dimension = match.arg(dimension)
+  if (dimension == "all") {
+      get_estimated_pi_no_collapse(m)
+  }
+  else {
+      g = get_fitted_g(m)
+      pihat = g$pi
+      pihat_names = NULL
+      pi_null = NULL
+      if (g$usepointmass) {
+        pihat_names = c("null", pihat_names)
+        pi_null = pihat[1]
+        pihat = pihat[-1]
+      }
+      pihat = matrix(pihat, nrow = length(g$Ulist))
+      if(!is.null(thres)){
+        pi_null = sum(pihat[, g$grid <= thres]) + pi_null
+        pihat = pihat[, g$grid > thres]
+      }
+      if (dimension == "cov"){
+        pihat = rowSums(pihat)
+        pihat_names = c(pihat_names, names(g$Ulist))
+      }
+      else if (dimension == "grid") {
+        pihat = colSums(pihat)
+        pihat_names = c(pihat_names, 1:length(g$grid))
+      }
+      pihat = c(pi_null, pihat)
+      names(pihat) = pihat_names
+      return(pihat)
+  }
+}
+```
+
+There are two random sets in GTEx summary data set. 
+
+We permute the samples in each condition randomly. We select the samples with max $|Z_{jr}|<threshold$ from each one as the null set. We estimate data driven covariance matrices from data 1, estimate noise correlation from data 2, fit mash model on data 2 and calculate posterior on data 1
+
+## Threshold = 2.5
+
+```{r}
+data = readRDS('../output/GTEx_2.5_nullPermData.rds')
+model = readRDS('../output/GTEx_2.5_nullPermModel.rds')
+```
+
+Sample size:
+```{r}
+samplesize = matrix(c(nrow(data$m.data1.p.null$Bhat), nrow(data$m.data2.p.null$Bhat)))
+row.names(samplesize) = c('data 1', 'data 2')
+samplesize %>% kable() %>% kable_styling()
+```
+
+```{r}
+barplot(get_estimated_pi(model, thres=0.01), las=2, cex.names = 0.7)
+```
+
+There are `r length(get_significant_results(model))` significant samples in data 1.
+
+
+## Threshold = 3
+
+```{r}
+data = readRDS('../output/GTEx_3_nullPermData.rds')
+model = readRDS('../output/GTEx_3_nullPermModel.rds')
+```
+
+Sample size:
+```{r}
+samplesize = matrix(c(nrow(data$m.data1.p.null$Bhat), nrow(data$m.data2.p.null$Bhat)))
+row.names(samplesize) = c('data 1', 'data 2')
+samplesize %>% kable() %>% kable_styling()
+```
+
+```{r}
+barplot(get_estimated_pi(model), las=2, cex.names = 0.7)
+```
+
+There are `r length(get_significant_results(model))` significant samples in data 1.
+
+## Threshold = 3.5
+
+```{r}
+data = readRDS('../output/GTEx_3.5_nullPermData.rds')
+model = readRDS('../output/GTEx_3.5_nullPermModel.rds')
+```
+
+Sample size:
+```{r}
+samplesize = matrix(c(nrow(data$m.data1.p.null$Bhat), nrow(data$m.data2.p.null$Bhat)))
+row.names(samplesize) = c('data 1', 'data 2')
+samplesize %>% kable() %>% kable_styling()
+```
+
+There are `r length(get_significant_results(model))` significant samples in data 1.
+
+## Threshold = 4
+
+```{r}
+data = readRDS('../output/GTEx_4_nullPermData.rds')
+model = readRDS('../output/GTEx_4_nullPermModel.rds')
+```
+
+Sample size:
+```{r}
+samplesize = matrix(c(nrow(data$m.data1.p.null$Bhat), nrow(data$m.data2.p.null$Bhat)))
+row.names(samplesize) = c('data 1', 'data 2')
+samplesize %>% kable() %>% kable_styling()
+```
+
+There are `r length(get_significant_results(model))` significant samples in data 1.
+
+## Threshold = 4.5
+
+```{r}
+data = readRDS('../output/GTEx_4.5_nullPermData.rds')
+model = readRDS('../output/GTEx_4.5_nullPermModel.rds')
+```
+
+Sample size:
+```{r}
+samplesize = matrix(c(nrow(data$m.data1.p.null$Bhat), nrow(data$m.data2.p.null$Bhat)))
+row.names(samplesize) = c('data 1', 'data 2')
+samplesize %>% kable() %>% kable_styling()
+```
+
+There are `r length(get_significant_results(model))` significant samples in data 1.
