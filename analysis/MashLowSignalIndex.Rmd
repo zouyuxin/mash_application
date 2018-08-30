@@ -1,0 +1,17 @@
+---
+title: "Mash Low Signal overfitting isuue"
+date: 2018-08-30
+output: 
+  workflowr::wflow_html:
+    toc: false
+---
+
+* Simulated data: [mash low signal simulations](MashLowSignal.html)
+
+* Real data:
+
+    [GTEx data](MashLowSignalGTEx3.5.html)
+    
+    [More results using different threshold](MashLowSignalGTEx.html)
+    
+    [More results using different threshold with permutations to break the sharing](MashLowSignalGTExPerm.html)
