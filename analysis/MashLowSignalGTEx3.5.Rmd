@@ -49,7 +49,7 @@ get_estimated_pi = function(m, dimension = c("cov", "grid", "all"), thres = NULL
 }
 ```
 
-There are two random sets in the [GTEx summary data set](https://github.com/stephenslab/gtexresults/blob/master/data/MatrixEQTLSumStats.Portable.Z.rds?raw=TRUE). We select the samples with $\max_{r} |Z_{jr}| < 3.5$ from each data set as the null set. We estimate data driven covariance matrices from data 1, estimate noise correlation from data 2, fit mash model on data 2 and calculate posterior on data 1.
+There are two random sets in the [GTEx summary data set](https://github.com/stephenslab/gtexresults/blob/master/data/MatrixEQTLSumStats.Portable.Z.rds?raw=TRUE). Using qvalues 0.05 as the threshold, the corresponding non-significant |z| value is around 3.1. Since lfsr and lfdr are both more conservative than q values, we select the samples with $\max_{r} |Z_{jr}| < 3.5$ from each data set as the null set. We estimate data driven covariance matrices from data 1, estimate noise correlation from data 2, fit mash model on data 2 and calculate posterior on data 1.
 
 ```{r}
 data = readRDS('../output/GTEx_3.5_nullData.rds')
