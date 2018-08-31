@@ -341,7 +341,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-08-30</p>
+<p><strong>Last updated:</strong> 2018-08-31</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -365,7 +365,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/2b58dcac68168bcb25f862bdec74f0cc351fff6a" target="_blank">2b58dca</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/ef3e8e3743b94c08abe07d7094e57886d54ce0db" target="_blank">ef3e8e3</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -388,9 +388,6 @@ Untracked files:
     Untracked:  analysis/EstimateCorPrior.Rmd
     Untracked:  analysis/EstimateCorSol.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
-    Untracked:  analysis/MashLowSignalGTEx.Rmd
-    Untracked:  analysis/MashLowSignalGTExPerm.Rmd
-    Untracked:  analysis/MashLowSignalIndex.Rmd
     Untracked:  analysis/Mash_GTEx.Rmd
     Untracked:  analysis/MeanAsh.Rmd
     Untracked:  analysis/OutlierDetection.Rmd
@@ -414,8 +411,6 @@ Untracked files:
     Untracked:  data/Blischak_et_al_2015/
     Untracked:  data/scale_data.rds
     Untracked:  docs/figure/Classify.Rmd/
-    Untracked:  docs/figure/MashLowSignalGTEx.Rmd/
-    Untracked:  docs/figure/MashLowSignalGTExPerm.Rmd/
     Untracked:  docs/figure/OutlierDetection.Rmd/
     Untracked:  docs/figure/OutlierDetection2.Rmd/
     Untracked:  docs/figure/OutlierDetection3.Rmd/
@@ -474,6 +469,7 @@ Untracked files:
     Untracked:  output/UKBio_mash_model.rds
 
 Unstaged changes:
+    Deleted:    analysis/MashLowSignalGTEx3.5P.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
     Modified:   output/Flash_T2_0.rds
@@ -508,6 +504,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/ef3e8e3743b94c08abe07d7094e57886d54ce0db/analysis/MashLowSignalGTEx3.5.Rmd" target="_blank">ef3e8e3</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-31
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/MashLowSignalGTEx3.5.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/62d0375740804365a4f47ec7548074147abc9868/docs/MashLowSignalGTEx3.5.html" target="_blank">62d0375</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-30
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -602,6 +632,37 @@ wflow_publish(“analysis/MashLowSignalGTEx3.5.Rmd”)
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>library(knitr)
 library(kableExtra)</code></pre>
+<p>There are two random sets in the <a href="https://github.com/stephenslab/gtexresults/blob/master/data/MatrixEQTLSumStats.Portable.Z.rds?raw=TRUE">GTEx summary data set</a>. We don’t know the null in the real data. If we have the individual level data, we can do a permutation to generate null. With the summary statistics, we select the null set using threshold on z scores.</p>
+<p>Using qvalues 0.05 as the threshold, the corresponding non-significant |z| value is around 3.1. Since lfsr and lfdr are both more conservative than q values, we select the samples with <span class="math inline">\(\max_{r} |Z_{jr}| &lt; 3.5\)</span> from each data set as the null set. We estimate data driven covariance matrices from data 1, estimate noise correlation from data 2, fit mash model on data 2 and calculate posterior on data 1.</p>
+<pre class="r"><code>data = readRDS(&#39;../output/GTEx_3.5_nullData.rds&#39;)
+model = readRDS(&#39;../output/GTEx_3.5_nullModel.rds&#39;)</code></pre>
+<p>Sample size:</p>
+<pre class="r"><code>samplesize = matrix(c(nrow(data$m.data1.null$Bhat), nrow(data$m.data2.null$Bhat)))
+row.names(samplesize) = c(&#39;data 1&#39;, &#39;data 2&#39;)
+samplesize %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;">
+data 1
+</td>
+<td style="text-align:right;">
+18189
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+data 2
+</td>
+<td style="text-align:right;">
+25718
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>barplot(get_estimated_pi(model), las=2, cex.names = 0.7)</code></pre>
+<p><img src="figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The estimated weights <span class="math inline">\(\hat{\pi}\)</span> on null part is not large. The weight on the other covariance structures may concentrate on the small grid (small <span class="math inline">\(\omega_{l}\)</span>). So they are very close to null, but we cannot view it in the plot. I modified the <code>get_estimated_pi</code> function to have a threshold for grid. The weights on the grid less than the threshold are merged into the null part.</p>
 <pre class="r"><code>get_estimated_pi = function(m, dimension = c(&quot;cov&quot;, &quot;grid&quot;, &quot;all&quot;), thres = NULL){
   dimension = match.arg(dimension)
   if (dimension == &quot;all&quot;) {
@@ -635,66 +696,6 @@ library(kableExtra)</code></pre>
       return(pihat)
   }
 }</code></pre>
-<p>There are two random sets in the <a href="https://github.com/stephenslab/gtexresults/blob/master/data/MatrixEQTLSumStats.Portable.Z.rds?raw=TRUE">GTEx summary data set</a>. Using qvalues 0.05 as the threshold, the corresponding non-significant |z| value is around 3.1. Since lfsr and lfdr are both more conservative than q values, we select the samples with <span class="math inline">\(\max_{r} |Z_{jr}| &lt; 3.5\)</span> from each data set as the null set. We estimate data driven covariance matrices from data 1, estimate noise correlation from data 2, fit mash model on data 2 and calculate posterior on data 1.</p>
-<pre class="r"><code>data = readRDS(&#39;../output/GTEx_3.5_nullData.rds&#39;)
-model = readRDS(&#39;../output/GTEx_3.5_nullModel.rds&#39;)</code></pre>
-<p>Sample size:</p>
-<pre class="r"><code>samplesize = matrix(c(nrow(data$m.data1.null$Bhat), nrow(data$m.data2.null$Bhat)))
-row.names(samplesize) = c(&#39;data 1&#39;, &#39;data 2&#39;)
-samplesize %&gt;% kable() %&gt;% kable_styling()</code></pre>
-<table class="table" style="margin-left: auto; margin-right: auto;">
-<tbody>
-<tr>
-<td style="text-align:left;">
-data 1
-</td>
-<td style="text-align:right;">
-18189
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-data 2
-</td>
-<td style="text-align:right;">
-25718
-</td>
-</tr>
-</tbody>
-</table>
-<pre class="r"><code>barplot(get_estimated_pi(model), las=2, cex.names = 0.7)</code></pre>
-<p><img src="figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
-<thead>
-<tr>
-<th style="text-align:left;">
-Version
-</th>
-<th style="text-align:left;">
-Author
-</th>
-<th style="text-align:left;">
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/e9f5a3480a5a6f13c7a1f3c63b451c6d33b3fd4a/docs/figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-5-1.png" target="_blank">e9f5a34</a>
-</td>
-<td style="text-align:left;">
-zouyuxin
-</td>
-<td style="text-align:left;">
-2018-08-30
-</td>
-</tr>
-</tbody>
-</table>
-<p></details></p>
-<p>The estimated weights <span class="math inline">\(\hat{\pi}\)</span> on null part is not large. The weight on the other covariance structures may concentrate on the small grid (small <span class="math inline">\(\omega_{l}\)</span>). So they are very close to null, but we cannot view it in the plot. I modified the <code>get_estimated_pi</code> function to have a threshold for grid. The weights for the grid less than the threshold are merged into null part.</p>
 <pre class="r"><code>barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
@@ -763,6 +764,7 @@ zouyuxin
 <p>There are 483 significant samples in data 1.</p>
 <div id="permute-samples-in-each-condition-to-break-the-sharing" class="section level2">
 <h2>Permute samples in each condition to break the sharing</h2>
+<p><code>mash</code> increases power, because it considers the sharing among conditions. We permute samples in each condition to break the sharing.</p>
 <pre class="r"><code>data = readRDS(&#39;../output/GTEx_3.5_nullPermData.rds&#39;)
 model = readRDS(&#39;../output/GTEx_3.5_nullPermModel.rds&#39;)</code></pre>
 <p>Sample size:</p>
@@ -789,7 +791,7 @@ data 2
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>barplot(get_estimated_pi(model), las=2, cex.names = 0.7)</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(model), las=2, cex.names = 0.7, main = &#39;Estiamted pi&#39;)</code></pre>
 <p><img src="figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
@@ -821,7 +823,7 @@ zouyuxin
 </tbody>
 </table>
 <p></details></p>
-<pre class="r"><code>barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7)</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7, main=&#39;Estimated pi with threshold (0.01) in scale&#39;)</code></pre>
 <p><img src="figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-11-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
