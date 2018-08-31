@@ -365,7 +365,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/ef3e8e3743b94c08abe07d7094e57886d54ce0db" target="_blank">ef3e8e3</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/f17adecfa5339b12f5823d3b1c12d9497f1f21fb" target="_blank">f17adec</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -509,6 +509,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/f17adecfa5339b12f5823d3b1c12d9497f1f21fb/analysis/MashLowSignalGTEx3.5.Rmd" target="_blank">f17adec</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-31
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/MashLowSignalGTEx3.5.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/e1bff266890d2b8d306d4a64cb6220683c31ce40/docs/MashLowSignalGTEx3.5.html" target="_blank">e1bff26</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-31
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/ef3e8e3743b94c08abe07d7094e57886d54ce0db/analysis/MashLowSignalGTEx3.5.Rmd" target="_blank">ef3e8e3</a>
 </td>
 <td style="text-align:left;">
@@ -633,7 +667,7 @@ wflow_publish(“analysis/MashLowSignalGTEx3.5.Rmd”)
 <pre class="r"><code>library(knitr)
 library(kableExtra)</code></pre>
 <p>There are two random sets in the <a href="https://github.com/stephenslab/gtexresults/blob/master/data/MatrixEQTLSumStats.Portable.Z.rds?raw=TRUE">GTEx summary data set</a>. We don’t know the null in the real data. If we have the individual level data, we can do a permutation to generate null. With the summary statistics, we select the null set using threshold on z scores.</p>
-<p>Using qvalues 0.05 as the threshold, the corresponding non-significant |z| value is around 3.1. Since lfsr and lfdr are both more conservative than q values, we select the samples with <span class="math inline">\(\max_{r} |Z_{jr}| &lt; 3.5\)</span> from each data set as the null set. We estimate data driven covariance matrices from data 1, estimate noise correlation from data 2, fit mash model on data 2 and calculate posterior on data 1.</p>
+<p>Using qvalues 0.05 as the threshold, the corresponding non-significant |z| values are less than 3.5. We select the samples with <span class="math inline">\(\max_{r} |Z_{jr}| &lt; 3.5\)</span> from each data set as the null set. We estimate data driven covariance matrices from data 1, estimate noise correlation from data 2, fit mash model on data 2 and calculate posterior on data 1.</p>
 <pre class="r"><code>data = readRDS(&#39;../output/GTEx_3.5_nullData.rds&#39;)
 model = readRDS(&#39;../output/GTEx_3.5_nullModel.rds&#39;)</code></pre>
 <p>Sample size:</p>
@@ -660,8 +694,39 @@ data 2
 </tr>
 </tbody>
 </table>
+<p>The estimated weights from data 2 is</p>
 <pre class="r"><code>barplot(get_estimated_pi(model), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/e1bff266890d2b8d306d4a64cb6220683c31ce40/docs/figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-4-1.png" target="_blank">e1bff26</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-31
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The estimated weights <span class="math inline">\(\hat{\pi}\)</span> on null part is not large. The weight on the other covariance structures may concentrate on the small grid (small <span class="math inline">\(\omega_{l}\)</span>). So they are very close to null, but we cannot view it in the plot. I modified the <code>get_estimated_pi</code> function to have a threshold for grid. The weights on the grid less than the threshold are merged into the null part.</p>
 <pre class="r"><code>get_estimated_pi = function(m, dimension = c(&quot;cov&quot;, &quot;grid&quot;, &quot;all&quot;), thres = NULL){
   dimension = match.arg(dimension)
@@ -696,7 +761,7 @@ data 2
       return(pihat)
   }
 }</code></pre>
-<pre class="r"><code>barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7)</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7, main=&#39;Estimated pi with threshold (0.01) in grid&#39;)</code></pre>
 <p><img src="figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
@@ -791,6 +856,7 @@ data 2
 </tr>
 </tbody>
 </table>
+<p>The estimated weights from data 2 is</p>
 <pre class="r"><code>barplot(get_estimated_pi(model), las=2, cex.names = 0.7, main = &#39;Estiamted pi&#39;)</code></pre>
 <p><img src="figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
@@ -811,6 +877,17 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/e1bff266890d2b8d306d4a64cb6220683c31ce40/docs/figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-10-1.png" target="_blank">e1bff26</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-31
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/e9f5a3480a5a6f13c7a1f3c63b451c6d33b3fd4a/docs/figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-10-1.png" target="_blank">e9f5a34</a>
 </td>
 <td style="text-align:left;">
@@ -823,7 +900,7 @@ zouyuxin
 </tbody>
 </table>
 <p></details></p>
-<pre class="r"><code>barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7, main=&#39;Estimated pi with threshold (0.01) in scale&#39;)</code></pre>
+<pre class="r"><code>barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7, main=&#39;Estimated pi with threshold (0.01) in grid&#39;)</code></pre>
 <p><img src="figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-11-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
@@ -841,6 +918,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/e1bff266890d2b8d306d4a64cb6220683c31ce40/docs/figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-11-1.png" target="_blank">e1bff26</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-31
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/e9f5a3480a5a6f13c7a1f3c63b451c6d33b3fd4a/docs/figure/MashLowSignalGTEx3.5.Rmd/unnamed-chunk-11-1.png" target="_blank">e9f5a34</a>
