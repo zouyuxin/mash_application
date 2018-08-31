@@ -13,6 +13,28 @@ library(knitr)
 library(kableExtra)
 ```
 
+There are two random sets in the [GTEx summary data set](https://github.com/stephenslab/gtexresults/blob/master/data/MatrixEQTLSumStats.Portable.Z.rds?raw=TRUE). We don't know the null in the real data. If we have the individual level data, we can do a permutation to generate null. With the summary statistics, we select the null set using threshold on z scores.
+
+Using qvalues 0.05 as the threshold, the corresponding non-significant |z| value is around 3.1. Since lfsr and lfdr are both more conservative than q values, we select the samples with $\max_{r} |Z_{jr}| < 3.5$ from each data set as the null set. We estimate data driven covariance matrices from data 1, estimate noise correlation from data 2, fit mash model on data 2 and calculate posterior on data 1.
+
+```{r}
+data = readRDS('../output/GTEx_3.5_nullData.rds')
+model = readRDS('../output/GTEx_3.5_nullModel.rds')
+```
+
+Sample size:
+```{r}
+samplesize = matrix(c(nrow(data$m.data1.null$Bhat), nrow(data$m.data2.null$Bhat)))
+row.names(samplesize) = c('data 1', 'data 2')
+samplesize %>% kable() %>% kable_styling()
+```
+
+```{r}
+barplot(get_estimated_pi(model), las=2, cex.names = 0.7)
+```
+
+The estimated weights $\hat{\pi}$ on null part is not large. The weight on the other covariance structures may concentrate on the small grid (small $\omega_{l}$). So they are very close to null, but we cannot view it in the plot. I modified the `get_estimated_pi` function to have a threshold for grid. The weights on the grid less than the threshold are merged into the null part.
+
 ```{r}
 get_estimated_pi = function(m, dimension = c("cov", "grid", "all"), thres = NULL){
   dimension = match.arg(dimension)
@@ -49,26 +71,6 @@ get_estimated_pi = function(m, dimension = c("cov", "grid", "all"), thres = NULL
 }
 ```
 
-There are two random sets in the [GTEx summary data set](https://github.com/stephenslab/gtexresults/blob/master/data/MatrixEQTLSumStats.Portable.Z.rds?raw=TRUE). Using qvalues 0.05 as the threshold, the corresponding non-significant |z| value is around 3.1. Since lfsr and lfdr are both more conservative than q values, we select the samples with $\max_{r} |Z_{jr}| < 3.5$ from each data set as the null set. We estimate data driven covariance matrices from data 1, estimate noise correlation from data 2, fit mash model on data 2 and calculate posterior on data 1.
-
-```{r}
-data = readRDS('../output/GTEx_3.5_nullData.rds')
-model = readRDS('../output/GTEx_3.5_nullModel.rds')
-```
-
-Sample size:
-```{r}
-samplesize = matrix(c(nrow(data$m.data1.null$Bhat), nrow(data$m.data2.null$Bhat)))
-row.names(samplesize) = c('data 1', 'data 2')
-samplesize %>% kable() %>% kable_styling()
-```
-
-```{r}
-barplot(get_estimated_pi(model), las=2, cex.names = 0.7)
-```
-
-The estimated weights $\hat{\pi}$ on null part is not large. The weight on the other covariance structures may concentrate on the small grid (small $\omega_{l}$). So they are very close to null, but we cannot view it in the plot. I modified the `get_estimated_pi` function to have a threshold for grid. The weights for the grid less than the threshold are merged into null part.
-
 ```{r}
 barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7)
 ```
@@ -81,6 +83,8 @@ corrplot::corrplot(cov2cor(model$fitted_g$Ulist[['ED_tPCA']]))
 There are `r length(get_significant_results(model))` significant samples in data 1.
 
 ## Permute samples in each condition to break the sharing
+
+`mash` increases power, because it considers the sharing among conditions. We permute samples in each condition to break the sharing.
 
 ```{r}
 data = readRDS('../output/GTEx_3.5_nullPermData.rds')
@@ -95,11 +99,11 @@ samplesize %>% kable() %>% kable_styling()
 ```
 
 ```{r}
-barplot(get_estimated_pi(model), las=2, cex.names = 0.7)
+barplot(get_estimated_pi(model), las=2, cex.names = 0.7, main = 'Estiamted pi')
 ```
 
 ```{r}
-barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7)
+barplot(get_estimated_pi(model, thres = 0.01), las=2, cex.names = 0.7, main='Estimated pi with threshold (0.01) in scale')
 ```
 There are `r length(get_significant_results(model))` significant samples in data 1.
 
