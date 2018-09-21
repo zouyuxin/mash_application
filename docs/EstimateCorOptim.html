@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yuxin Zou" />
+
+<meta name="date" content="2018-07-24" />
+
+<title>Estimate cor -- optim</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mash_application</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zouyuxin/mash_application">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Estimate cor – optim</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>2018-07-24</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-09-20</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/f5b433546443d27f2b3b82c1d2e9fb87ff52b656" target="_blank">f5b4335</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/include/.DS_Store
+    Ignored:    code/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    docs/.DS_Store
+    Ignored:    output/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/Classify.Rmd
+    Untracked:  analysis/EstimateCorEM.Rmd
+    Untracked:  analysis/EstimateCorEM2.Rmd
+    Untracked:  analysis/EstimateCorEM3.Rmd
+    Untracked:  analysis/EstimateCorMaxEMGD.Rmd
+    Untracked:  analysis/EstimateCorMaxGD.Rmd
+    Untracked:  analysis/EstimateCorOptimEM.Rmd
+    Untracked:  analysis/EstimateCorPrior.Rmd
+    Untracked:  analysis/EstimateCorSol.Rmd
+    Untracked:  analysis/HierarchicalFlashSim.Rmd
+    Untracked:  analysis/MashLowSignalGTEx4.Rmd
+    Untracked:  analysis/Mash_GTEx.Rmd
+    Untracked:  analysis/MeanAsh.Rmd
+    Untracked:  analysis/OutlierDetection.Rmd
+    Untracked:  analysis/OutlierDetection2.Rmd
+    Untracked:  analysis/OutlierDetection3.Rmd
+    Untracked:  analysis/OutlierDetection4.Rmd
+    Untracked:  analysis/Test.Rmd
+    Untracked:  analysis/mash_missing_row.Rmd
+    Untracked:  code/GTExNullModel.R
+    Untracked:  code/MashClassify.R
+    Untracked:  code/MashCorResult.R
+    Untracked:  code/MashNULLCorResult.R
+    Untracked:  code/MashSource.R
+    Untracked:  code/Weight_plot.R
+    Untracked:  code/addemV.R
+    Untracked:  code/estimate_cor.R
+    Untracked:  code/generateDataV.R
+    Untracked:  code/johnprocess.R
+    Untracked:  code/sim_mean_sig.R
+    Untracked:  code/summary.R
+    Untracked:  data/Blischak_et_al_2015/
+    Untracked:  data/scale_data.rds
+    Untracked:  docs/figure/Classify.Rmd/
+    Untracked:  docs/figure/OutlierDetection.Rmd/
+    Untracked:  docs/figure/OutlierDetection2.Rmd/
+    Untracked:  docs/figure/OutlierDetection3.Rmd/
+    Untracked:  docs/figure/Test.Rmd/
+    Untracked:  docs/figure/mash_missing_whole_row_5.Rmd/
+    Untracked:  docs/include/
+    Untracked:  output/AddEMV/
+    Untracked:  output/CovED_UKBio_strong.rds
+    Untracked:  output/CovED_UKBio_strong_Z.rds
+    Untracked:  output/Flash_UKBio_strong.rds
+    Untracked:  output/GTExNULLres/
+    Untracked:  output/GTEx_2.5_nullData.rds
+    Untracked:  output/GTEx_2.5_nullModel.rds
+    Untracked:  output/GTEx_2.5_nullPermData.rds
+    Untracked:  output/GTEx_2.5_nullPermModel.rds
+    Untracked:  output/GTEx_3.5_nullData.rds
+    Untracked:  output/GTEx_3.5_nullModel.rds
+    Untracked:  output/GTEx_3.5_nullPermData.rds
+    Untracked:  output/GTEx_3.5_nullPermModel.rds
+    Untracked:  output/GTEx_3_nullData.rds
+    Untracked:  output/GTEx_3_nullModel.rds
+    Untracked:  output/GTEx_3_nullPermData.rds
+    Untracked:  output/GTEx_3_nullPermModel.rds
+    Untracked:  output/GTEx_4.5_nullData.rds
+    Untracked:  output/GTEx_4.5_nullModel.rds
+    Untracked:  output/GTEx_4.5_nullPermData.rds
+    Untracked:  output/GTEx_4.5_nullPermModel.rds
+    Untracked:  output/GTEx_4_nullData.rds
+    Untracked:  output/GTEx_4_nullModel.rds
+    Untracked:  output/GTEx_4_nullPermData.rds
+    Untracked:  output/GTEx_4_nullPermModel.rds
+    Untracked:  output/MASH.10.em2.result.rds
+    Untracked:  output/MASH.10.mle.result.rds
+    Untracked:  output/MASHNULL.V.result.1.rds
+    Untracked:  output/MASHNULL.V.result.10.rds
+    Untracked:  output/MASHNULL.V.result.11.rds
+    Untracked:  output/MASHNULL.V.result.12.rds
+    Untracked:  output/MASHNULL.V.result.13.rds
+    Untracked:  output/MASHNULL.V.result.14.rds
+    Untracked:  output/MASHNULL.V.result.15.rds
+    Untracked:  output/MASHNULL.V.result.16.rds
+    Untracked:  output/MASHNULL.V.result.17.rds
+    Untracked:  output/MASHNULL.V.result.18.rds
+    Untracked:  output/MASHNULL.V.result.19.rds
+    Untracked:  output/MASHNULL.V.result.2.rds
+    Untracked:  output/MASHNULL.V.result.20.rds
+    Untracked:  output/MASHNULL.V.result.3.rds
+    Untracked:  output/MASHNULL.V.result.4.rds
+    Untracked:  output/MASHNULL.V.result.5.rds
+    Untracked:  output/MASHNULL.V.result.6.rds
+    Untracked:  output/MASHNULL.V.result.7.rds
+    Untracked:  output/MASHNULL.V.result.8.rds
+    Untracked:  output/MASHNULL.V.result.9.rds
+    Untracked:  output/MashCorSim--midway/
+    Untracked:  output/Mash_EE_Cov_0_plusR1.rds
+    Untracked:  output/UKBio_mash_model.rds
+
+Unstaged changes:
+    Deleted:    analysis/EstimateCorMax.Rmd
+    Modified:   analysis/EstimateCorMaxEM2.Rmd
+    Deleted:    analysis/MashLowSignalGTEx3.5P.Rmd
+    Modified:   analysis/Mash_UKBio.Rmd
+    Modified:   analysis/mash_missing_samplesize.Rmd
+    Modified:   output/Flash_T2_0.rds
+    Modified:   output/Flash_T2_0_mclust.rds
+    Modified:   output/Mash_model_0_plusR1.rds
+    Modified:   output/PresiAddVarCol.rds
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/f5b433546443d27f2b3b82c1d2e9fb87ff52b656/analysis/EstimateCorOptim.Rmd" target="_blank">f5b4335</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-09-20
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorOptim.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<pre class="r"><code>library(mashr)</code></pre>
+<pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
+source(&#39;../code/summary.R&#39;)
+library(kableExtra)
+library(knitr)</code></pre>
+<p>We want to estimate <span class="math inline">\(\rho\)</span> <span class="math display">\[
+\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) | \left(\begin{matrix} x \\ y \end{matrix} \right) \sim N(\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) ; \left(\begin{matrix} x \\ y \end{matrix} \right), \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right))
+\]</span> <span class="math display">\[
+\left(\begin{matrix} x \\ y \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} x \\ y \end{matrix} \right); 0, U_{k} )
+\]</span> <span class="math inline">\(\Rightarrow\)</span> <span class="math display">\[
+\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right); 0, \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + U_{k} )
+\]</span> <span class="math display">\[
+\Sigma_{k} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + U_{k} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + \left( \begin{matrix} u_{k11} &amp; u_{k12} \\ u_{k21} &amp; u_{k22} \end{matrix} \right) = \left( \begin{matrix} 1+u_{k11} &amp; \rho+u_{k12} \\ \rho+u_{k21} &amp; 1+u_{k22} \end{matrix} \right)
+\]</span> Let <span class="math inline">\(\sigma_{k11} = \sqrt{1+u_{k11}}\)</span>, <span class="math inline">\(\sigma_{k22} = \sqrt{1+u_{k22}}\)</span>, <span class="math inline">\(\phi_{k}=\frac{\rho+u_{k12}}{\sigma_{k11}\sigma_{k22}}\)</span></p>
+<div id="mle" class="section level2">
+<h2>MLE</h2>
+<p>The loglikelihood is (with penalty) <span class="math display">\[
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}N(x_{i}; 0, \Sigma_{k}) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+\]</span></p>
+<p>The penalty on <span class="math inline">\(\pi\)</span> encourages over-estimation of <span class="math inline">\(\pi_{0}\)</span>, <span class="math inline">\(\lambda_{k}\geq 1\)</span>.</p>
+<p><span class="math display">\[
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}\frac{1}{2\pi\sigma_{k11}\sigma_{k22}\sqrt{1-\phi_{k}^2}} \exp\left( -\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]  \right) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+\]</span></p>
+<p><strong>Note:</strong> This probelm is convex with respect to <span class="math inline">\(\pi\)</span>. In terms of <span class="math inline">\(\rho\)</span>, the covenxity depends on the data.</p>
+<p>Algorithm:</p>
+<pre class="text"><code>Input: X, init_rho, Ulist
+Given rho, estimate pi by max loglikelihood (convex problem)
+Compute loglikelihood
+delta = 1
+while delta &gt; tol
+  Given pi, estimate rho by max loglikelihood (optim function)
+  Given rho, estimate pi by max loglikelihood (convex problem)
+  Compute loglikelihood
+  Update delta</code></pre>
+<pre class="r"><code>#&#39; @param rho the off diagonal element of V, 2 by 2 correlation matrix
+#&#39; @param Ulist a list of covariance matrices, U_{k}
+get_sigma &lt;- function(rho, Ulist){
+  V &lt;- matrix(c(1,rho,rho,1), 2,2)
+  lapply(Ulist, function(U) U + V)
+}
+
+penalty &lt;- function(prior, pi_s){
+  subset &lt;- (prior != 1.0)
+  sum((prior-1)[subset]*log(pi_s[subset]))
+}
+
+#&#39; @title compute log likelihood
+#&#39; @param L log likelihoods,
+#&#39; where the (i,k)th entry is the log probability of observation i
+#&#39; given it came from component k of g
+#&#39; @param p the vector of mixture proportions
+#&#39; @param prior the weight for the penalty
+compute.log.lik &lt;- function(lL, p, prior){
+  p = normalize(pmax(0,p))
+  temp = log(exp(lL$loglik_matrix) %*% p)+lL$lfactors
+  return(sum(temp) + penalty(prior, p))
+  # return(sum(temp))
+}
+
+normalize &lt;- function(x){
+  x/sum(x)
+}</code></pre>
+<pre class="r"><code>#&#39; @title Optimize rho with several initial values
+#&#39; @param X data, Z scores
+#&#39; @param Ulist a list of covariance matrices
+#&#39; @param init_rho initial value for rho. The user could provide several initial values as a vector.
+#&#39; @param tol tolerance for optimizaiton stop
+#&#39; @param prior indicates what penalty to use on the likelihood, if any
+#&#39; @return list of result
+#&#39; \item{result}{result from the rho which gives the highest log likelihood}
+#&#39; \item{status}{whether the result is global max or local max}
+#&#39; \item{loglik}{the loglikelihood value}
+#&#39; \item{rho}{the estimated rho}
+#&#39; \item{time}{the running time for each initial rho}
+#&#39;
+optimize_pi_rho_times &lt;- function(X, Ulist, init_rho=0, tol=1e-5, prior=c(&quot;nullbiased&quot;, &quot;uniform&quot;)){
+  times = length(init_rho)
+  result = list()
+  loglik = c()
+  rho = c()
+  time.t = c()
+  for(i in 1:times){
+    out.time = system.time(result[[i]] &lt;- optimize_pi_rho(X, Ulist,
+                                                          init_rho=init_rho[i],
+                                                          tol=tol,
+                                                          prior=prior))
+    time.t = c(time.t, out.time[&#39;elapsed&#39;])
+    loglik = c(loglik, tail(result[[i]]$loglik, n=1))
+    rho = c(rho, result[[i]]$rho)
+  }
+  if(abs(max(loglik) - min(loglik)) &lt; 1e-4){
+    status = &#39;global&#39;
+  }else{
+    status = &#39;local&#39;
+  }
+  ind = which.max(loglik)
+  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t))
+}
+
+#&#39; @title optimize rho
+#&#39; @param X data, Z scores
+#&#39; @param Ulist a list of covariance matrices
+#&#39; @param init_rho an initial value for rho
+#&#39; @param tol tolerance for optimizaiton stop
+#&#39; @param prior indicates what penalty to use on the likelihood, if any
+#&#39; @return list of result
+#&#39; \item{pi}{estimated pi}
+#&#39; \item{rho}{estimated rho}
+#&#39; \item{loglik}{the loglikelihood value at each iteration}
+#&#39; \item{niter}{the number of iteration}
+#&#39;
+optimize_pi_rho &lt;- function(X, Ulist, init_rho=0, tol=1e-5, prior=c(&quot;nullbiased&quot;, &quot;uniform&quot;)){
+  prior &lt;- match.arg(prior)
+  if(length(Ulist) &lt;= 1){
+    stop(&#39;Please provide more U! With only one U, the correlation could be estimated directly using mle.&#39;)
+  }
+  prior &lt;- mashr:::set_prior(length(Ulist), prior)
+  
+  Sigma &lt;- get_sigma(init_rho, Ulist)
+  lL &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+  lfactors    &lt;- apply(lL,1,max)
+  matrix_llik &lt;- lL - lfactors
+  lL = list(loglik_matrix = matrix_llik,
+              lfactors   = lfactors)
+  pi_s &lt;- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod=&#39;mixIP&#39;)
+  
+  log_liks &lt;- c()
+  ll       &lt;- compute.log.lik(lL, pi_s, prior)
+  log_liks &lt;- c(log_liks, ll)
+  delta.ll &lt;- 1
+  niter &lt;- 0
+  rho_s &lt;- init_rho
+  while( delta.ll &gt; tol){
+    # max_rho
+    rho_s &lt;- optim(rho_s, optimize_rho, lower = -1, upper = 1, X = X, Ulist=Ulist, pi_s = pi_s, prior = prior, method = &#39;Brent&#39;)$par
+    
+    Sigma &lt;- get_sigma(rho_s, Ulist)
+    lL &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+    lfactors &lt;- apply(lL,1,max)
+    matrix_llik &lt;- lL - lfactors
+    lL = list(loglik_matrix = matrix_llik,
+              lfactors   = lfactors)
+    
+    # max pi
+    pi_s &lt;- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod=&#39;mixIP&#39;)
+    
+    # compute loglike
+    ll &lt;- compute.log.lik(lL, pi_s, prior)
+    log_liks &lt;- c(log_liks, ll)
+    # Update delta
+    delta.ll &lt;- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
+    niter &lt;- niter + 1
+  }
+  return(list(pi = pi_s, rho=rho_s, loglik = log_liks, niter = niter))
+}
+
+optimize_rho &lt;- function(rho, X, Ulist, pi_s, prior){
+  Sigma &lt;- get_sigma(rho, Ulist)
+  lL &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+  lfactors &lt;- apply(lL,1,max)
+  matrix_llik &lt;- lL - lfactors
+  lL = list(loglik_matrix = matrix_llik,
+              lfactors   = lfactors)
+  
+  return(-compute.log.lik(lL, pi_s, prior))
+}</code></pre>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p><span class="math display">\[
+\hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.5 \\
+                                          0.5 &amp; 1 \end{matrix}\right))
+\]</span></p>
+<p><span class="math display">\[
+\beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 &amp; 0 \\
+                                          0 &amp; 0 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 0 &amp; 0 \\
+                                          0 &amp; 1 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 &amp; 1 \\
+                                          1 &amp; 1 \end{matrix}\right))
+\]</span></p>
+<p>n = 4000</p>
+<pre class="r"><code>set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)</code></pre>
+<pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+grid = mashr:::autoselect_grid(m.data, sqrt(2))
+Ulist = mashr:::normalize_Ulist(U.c)
+xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
+
+result.optim &lt;- optimize_pi_rho(data$Bhat, xUlist, init_rho = 0)
+# result &lt;- optimize_pi_rho_times(data$Bhat, xUlist, init_rho = c(-0.7,0,0.7))
+plot(result.optim$loglik)</code></pre>
+<p><img src="figure/EstimateCorOptim.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /> The estimated <span class="math inline">\(\rho\)</span> is 0.5062776.</p>
+<pre class="r"><code>m.data.optim = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.optim$rho,result.optim$rho,1),2,2))
+U.c = cov_canonical(m.data.optim)
+m.optim = mash(m.data.optim, U.c, verbose= FALSE)
+null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
+<p>The log likelihood is -1.23025410^{4}. There are 26 significant samples, 0 false positives. The RRMSE is 0.582086.</p>
+<p>The estimated <code>pi</code> is</p>
+<pre class="r"><code>barplot(get_estimated_pi(m.optim), las=2, cex.names = 0.7, main=&#39;Optim&#39;, ylim=c(0,0.8))</code></pre>
+<p><img src="figure/EstimateCorOptim.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The ROC curve:</p>
+<pre class="r"><code>m.data.correct = mash_set_data(data$Bhat, data$Shat, V=Sigma)
+m.correct = mash(m.data.correct, U.c, verbose = FALSE)
+m.correct.seq = ROC.table(data$B, m.correct)
+m.optim.seq = ROC.table(data$B, m.optim)</code></pre>
+<p><img src="figure/EstimateCorOptim.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] knitr_1.20       kableExtra_0.9.0 mashr_0.2-12     ashr_2.2-13     
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18      pillar_1.3.0      compiler_3.5.1   
+ [4] git2r_0.23.0      plyr_1.8.4        workflowr_1.1.1  
+ [7] R.methodsS3_1.7.1 R.utils_2.6.0     iterators_1.0.10 
+[10] tools_3.5.1       digest_0.6.15     viridisLite_0.3.0
+[13] tibble_1.4.2      evaluate_0.11     lattice_0.20-35  
+[16] pkgconfig_2.0.2   rlang_0.2.2       Matrix_1.2-14    
+[19] foreach_1.4.4     rstudioapi_0.7    yaml_2.2.0       
+[22] parallel_3.5.1    mvtnorm_1.0-8     xml2_1.2.0       
+[25] httr_1.3.1        stringr_1.3.1     REBayes_1.3      
+[28] hms_0.4.2         rprojroot_1.3-2   grid_3.5.1       
+[31] R6_2.2.2          rmarkdown_1.10    rmeta_3.0        
+[34] readr_1.1.1       magrittr_1.5      whisker_0.3-2    
+[37] scales_1.0.0      backports_1.1.2   codetools_0.2-15 
+[40] htmltools_0.3.6   MASS_7.3-50       rvest_0.3.2      
+[43] assertthat_0.2.0  colorspace_1.3-2  stringi_1.2.4    
+[46] Rmosek_8.0.69     munsell_0.5.0     doParallel_1.0.11
+[49] pscl_1.5.2        truncnorm_1.0-8   SQUAREM_2017.10-1
+[52] crayon_1.3.4      R.oo_1.22.0      </code></pre>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
