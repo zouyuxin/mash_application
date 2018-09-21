@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yuxin Zou" />
+
+
+<title>Estimate cor — EM 1</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mash_application</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zouyuxin/mash_application">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Estimate cor — EM 1</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>2018-8-2</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-09-20</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/2c5aa17473dccbd983cc927afda24844f27c8add" target="_blank">2c5aa17</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/include/.DS_Store
+    Ignored:    code/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    docs/.DS_Store
+    Ignored:    output/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/Classify.Rmd
+    Untracked:  analysis/EstimateCorEM2.Rmd
+    Untracked:  analysis/EstimateCorEM3.Rmd
+    Untracked:  analysis/EstimateCorMaxEMGD.Rmd
+    Untracked:  analysis/EstimateCorMaxGD.Rmd
+    Untracked:  analysis/EstimateCorOptimEM.Rmd
+    Untracked:  analysis/EstimateCorPrior.Rmd
+    Untracked:  analysis/EstimateCorSol.Rmd
+    Untracked:  analysis/HierarchicalFlashSim.Rmd
+    Untracked:  analysis/MashLowSignalGTEx4.Rmd
+    Untracked:  analysis/Mash_GTEx.Rmd
+    Untracked:  analysis/MeanAsh.Rmd
+    Untracked:  analysis/OutlierDetection.Rmd
+    Untracked:  analysis/OutlierDetection2.Rmd
+    Untracked:  analysis/OutlierDetection3.Rmd
+    Untracked:  analysis/OutlierDetection4.Rmd
+    Untracked:  analysis/Test.Rmd
+    Untracked:  analysis/mash_missing_row.Rmd
+    Untracked:  code/GTExNullModel.R
+    Untracked:  code/MashClassify.R
+    Untracked:  code/MashCorResult.R
+    Untracked:  code/MashNULLCorResult.R
+    Untracked:  code/MashSource.R
+    Untracked:  code/Weight_plot.R
+    Untracked:  code/addemV.R
+    Untracked:  code/estimate_cor.R
+    Untracked:  code/generateDataV.R
+    Untracked:  code/johnprocess.R
+    Untracked:  code/sim_mean_sig.R
+    Untracked:  code/summary.R
+    Untracked:  data/Blischak_et_al_2015/
+    Untracked:  data/scale_data.rds
+    Untracked:  docs/figure/Classify.Rmd/
+    Untracked:  docs/figure/OutlierDetection.Rmd/
+    Untracked:  docs/figure/OutlierDetection2.Rmd/
+    Untracked:  docs/figure/OutlierDetection3.Rmd/
+    Untracked:  docs/figure/Test.Rmd/
+    Untracked:  docs/figure/mash_missing_whole_row_5.Rmd/
+    Untracked:  docs/include/
+    Untracked:  output/AddEMV/
+    Untracked:  output/CovED_UKBio_strong.rds
+    Untracked:  output/CovED_UKBio_strong_Z.rds
+    Untracked:  output/Flash_UKBio_strong.rds
+    Untracked:  output/GTExNULLres/
+    Untracked:  output/GTEx_2.5_nullData.rds
+    Untracked:  output/GTEx_2.5_nullModel.rds
+    Untracked:  output/GTEx_2.5_nullPermData.rds
+    Untracked:  output/GTEx_2.5_nullPermModel.rds
+    Untracked:  output/GTEx_3.5_nullData.rds
+    Untracked:  output/GTEx_3.5_nullModel.rds
+    Untracked:  output/GTEx_3.5_nullPermData.rds
+    Untracked:  output/GTEx_3.5_nullPermModel.rds
+    Untracked:  output/GTEx_3_nullData.rds
+    Untracked:  output/GTEx_3_nullModel.rds
+    Untracked:  output/GTEx_3_nullPermData.rds
+    Untracked:  output/GTEx_3_nullPermModel.rds
+    Untracked:  output/GTEx_4.5_nullData.rds
+    Untracked:  output/GTEx_4.5_nullModel.rds
+    Untracked:  output/GTEx_4.5_nullPermData.rds
+    Untracked:  output/GTEx_4.5_nullPermModel.rds
+    Untracked:  output/GTEx_4_nullData.rds
+    Untracked:  output/GTEx_4_nullModel.rds
+    Untracked:  output/GTEx_4_nullPermData.rds
+    Untracked:  output/GTEx_4_nullPermModel.rds
+    Untracked:  output/MASH.10.em2.result.rds
+    Untracked:  output/MASH.10.mle.result.rds
+    Untracked:  output/MASHNULL.V.result.1.rds
+    Untracked:  output/MASHNULL.V.result.10.rds
+    Untracked:  output/MASHNULL.V.result.11.rds
+    Untracked:  output/MASHNULL.V.result.12.rds
+    Untracked:  output/MASHNULL.V.result.13.rds
+    Untracked:  output/MASHNULL.V.result.14.rds
+    Untracked:  output/MASHNULL.V.result.15.rds
+    Untracked:  output/MASHNULL.V.result.16.rds
+    Untracked:  output/MASHNULL.V.result.17.rds
+    Untracked:  output/MASHNULL.V.result.18.rds
+    Untracked:  output/MASHNULL.V.result.19.rds
+    Untracked:  output/MASHNULL.V.result.2.rds
+    Untracked:  output/MASHNULL.V.result.20.rds
+    Untracked:  output/MASHNULL.V.result.3.rds
+    Untracked:  output/MASHNULL.V.result.4.rds
+    Untracked:  output/MASHNULL.V.result.5.rds
+    Untracked:  output/MASHNULL.V.result.6.rds
+    Untracked:  output/MASHNULL.V.result.7.rds
+    Untracked:  output/MASHNULL.V.result.8.rds
+    Untracked:  output/MASHNULL.V.result.9.rds
+    Untracked:  output/MashCorSim--midway/
+    Untracked:  output/Mash_EE_Cov_0_plusR1.rds
+    Untracked:  output/UKBio_mash_model.rds
+
+Unstaged changes:
+    Deleted:    analysis/EstimateCorMax.Rmd
+    Modified:   analysis/EstimateCorMaxEM2.Rmd
+    Deleted:    analysis/MashLowSignalGTEx3.5P.Rmd
+    Modified:   analysis/Mash_UKBio.Rmd
+    Modified:   analysis/mash_missing_samplesize.Rmd
+    Modified:   output/Flash_T2_0.rds
+    Modified:   output/Flash_T2_0_mclust.rds
+    Modified:   output/Mash_model_0_plusR1.rds
+    Modified:   output/PresiAddVarCol.rds
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/2c5aa17473dccbd983cc927afda24844f27c8add/analysis/EstimateCorEM.Rmd" target="_blank">2c5aa17</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-09-20
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorEM.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<!-- Update knitr chunk options -->
+<!-- Insert the date the file was last updated -->
+<p><strong>Last updated:</strong> 2018-09-20</p>
+<pre class="r"><code>library(mashr)</code></pre>
+<pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
+source(&#39;../code/summary.R&#39;)</code></pre>
+<div id="em" class="section level1">
+<h1>EM</h1>
+<div id="e-step" class="section level2">
+<h2>E step</h2>
+<p><span class="math display">\[
+P(X,\mathbf{z}|\rho, \pi) = \prod_{i=1}^{n} \prod_{k=0}^{K}\left[\pi_{k}N(x_{i}; 0, \Sigma_{k})\right]^{\mathbb{I}(z_{i}=k)} \prod_{k=0}^{K}\pi_{k}^{\lambda_{k}-1}
+\]</span></p>
+<p><span class="math display">\[
+\mathbb{E}_{\mathbf{z}|X} \log P(X,\mathbf{z}|\rho, \pi) = \sum_{i=1}^{n} \sum_{k=0}^{K} P(z_{i}=k|X)\left[ \log \pi_{k} + \log N(x_{i}; 0, \Sigma_{k})\right] + \sum_{k=0}^{K} (\lambda_{k}-1)\log \pi_{k}
+\]</span></p>
+<p><span class="math display">\[
+\gamma_{z_{i}}(k) = P(z_{i}=k|X_{i}) = \frac{\pi_{k}N(x_{i}; 0, \Sigma_{k})}{\sum_{k&#39;=0}^{K}\pi_{k&#39;}N(x_{i}; 0, \Sigma_{k&#39;})}
+\]</span></p>
+</div>
+<div id="m-step" class="section level2">
+<h2>M step</h2>
+<p><span class="math inline">\(\pi\)</span>: <span class="math display">\[
+\sum_{i=1}^{n} \gamma_{z_{i}}(k) \frac{1}{\pi_{k}} + \frac{\lambda_{k}-1}{\pi_{k}} - \lambda = 0 \quad \rightarrow \pi_{k} = \frac{1}{\lambda} \left(\sum_{i=1}^{n} \gamma_{z_{i}}(k) + \lambda_{k}-1\right) \quad \lambda = n + \sum_{k=1}^{K}\lambda_{k} - K 
+\]</span></p>
+<p><span class="math display">\[
+\hat{\pi}_{k} = \frac{\sum_{i=1}^{n} \gamma_{z_{i}}(k) + \lambda_{k} - 1 }{n + \sum_{k=1}^{K}\lambda_{k} - K } 
+\]</span></p>
+<p><span class="math inline">\(\rho\)</span>: <span class="math display">\[
+\begin{align*}
+f(\rho) &amp;= \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{z_{i}}(k)\left[ -\frac{1}{2}\log (1-\phi_{k}^2)-\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right] \right]\\
+f(\rho)&#39; &amp;= \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{z_{i}}(k)\left[ \frac{\phi_{k}}{1-\phi_{k}^2}-\frac{\phi_{k}}{(1-\phi_{k}^2)^2}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2}\right] - \frac{\phi_{k}+1}{(1-\phi_{k}^2)^2}\frac{x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]\frac{1}{\sigma_{k11}\sigma_{k22}} = 0
+\end{align*}
+\]</span> <span class="math inline">\(\phi_k = \frac{\rho + u_{k12}}{\sigma_{k11}\sigma_{k22}}\)</span>, <span class="math inline">\(\phi_{k}\)</span> is a function of <span class="math inline">\(\rho\)</span>.</p>
+<p>Algorithm:</p>
+<pre class="r"><code>Input: X, Ulist, init_rho, init_pi
+Compute loglikelihood
+delta = 1
+while delta &gt; tol
+  E step: update z
+  M step: update pi, update rho
+  Compute loglikelihood
+  Update delta</code></pre>
+<pre class="r"><code>get_sigma &lt;- function(rho, Ulist){
+  V &lt;- matrix(c(1,rho,rho,1), 2,2)
+  lapply(Ulist, function(U) U + V)
+}
+
+penalty &lt;- function(prior, pi_s){
+  subset &lt;- (prior != 1.0)
+  sum((prior-1)[subset]*log(pi_s[subset]))
+}
+
+compute.log.lik &lt;- function(lL, p, prior){
+  p = normalize(pmax(0,p))
+  temp = log(exp(lL$loglik_matrix) %*% p)+lL$lfactors
+  return(sum(temp) + penalty(prior, p))
+  # return(sum(temp))
+}
+
+normalize &lt;- function(x){
+  x/sum(x)
+}</code></pre>
+<pre class="r"><code>mixture.EM.times &lt;- function(X, Ulist, init_rho=0, init_pi=NULL, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;), control = list()){
+  times = length(init_rho)
+  result = list()
+  loglik = c()
+  rho = c()
+  time.t = c()
+  converge.status = c()
+  for(i in 1:times){
+    out.time = system.time(result[[i]] &lt;- mixture.EM(X, Ulist,
+                                                     init_pi=init_pi,
+                                                     init_rho=init_rho[i],
+                                                     prior=prior, 
+                                                     control = control))
+    time.t = c(time.t, out.time[&#39;elapsed&#39;])
+    loglik = c(loglik, -result[[i]]$B)
+    rho = c(rho, result[[i]]$rhohat)
+    converge.status = c(converge.status, result[[i]]$converged)
+  }
+  if(abs(max(loglik) - min(loglik)) &lt; 1e-4){
+    status = &#39;global&#39;
+  }else{
+    status = &#39;local&#39;
+  }
+  ind = which.max(loglik)
+  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t, converge.status = converge.status))
+}
+
+mixture.EM &lt;- function(X, Ulist, init_rho=0, init_pi = NULL, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;), control = list()) {
+  prior = match.arg(prior)
+  prior &lt;- mashr:::set_prior(length(Ulist), prior)
+  k = length(Ulist)
+  if (is.null(init_pi)){
+    init_pi &lt;- rep(1/k,k)
+  }
+  control = ashr:::set_control_squarem(control,nrow(X))
+  res = SQUAREM::squarem(par=c(init_pi, init_rho),fixptfn=fixpoint, objfn=negpenloglik,X=X, Ulist=Ulist, prior=prior, control=control)
+  
+  return(list(pihat = normalize(pmax(0,head(res$par, -1))), rho = tail(res$par, 1), loglik=-res$value.objfn, niter = res$iter, converged=res$convergence, control=control))
+}
+
+fixpoint = function(para, X, Ulist, prior){
+  rho = tail(para,1)
+  pi_s = head(para, -1)
+  pi_s = normalize(pmax(0,pi_s)) #avoid occasional problems with negative pis due to rounding
+  
+  # compute L
+  Sigma &lt;- get_sigma(rho, Ulist)
+  L &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
+  
+  # E
+  m  = t(pi_s * t(L)) # matrix_lik is n by k; so this is also n by k
+  m.rowsum = rowSums(m)
+  classprob = m/m.rowsum #an n by k matrix
+  
+  # M
+  pinew = normalize(colSums(classprob) + prior - 1)
+  
+  rhonew = optimize(EMloglikelihood, interval = c(-1,1), maximum = TRUE, X = X, Ulist = Ulist, z = classprob)$maximum
+  
+  return(c(pinew,rhonew))
+}
+
+EMloglikelihood = function(rho, X, Ulist, z){
+  Sigma = get_sigma(rho, Ulist)
+  L = t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+  sum(L * z)
+}
+
+negpenloglik = function(para, X, Ulist, prior){
+  Sigma &lt;- get_sigma(tail(para,1), Ulist)
+  lL &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+  lfactors &lt;- apply(lL,1,max)
+  matrix_llik &lt;- lL - lfactors
+  lL = list(loglik_matrix = matrix_llik,
+              lfactors   = lfactors)
+  ll &lt;- compute.log.lik(lL, head(para, -1), prior)
+  
+  return(-ll)
+}</code></pre>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p><span class="math display">\[
+\hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.5 \\
+                                          0.5 &amp; 1 \end{matrix}\right))
+\]</span></p>
+<p><span class="math display">\[
+\beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 &amp; 0 \\
+                                          0 &amp; 0 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 0 &amp; 0 \\
+                                          0 &amp; 1 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 &amp; 1 \\
+                                          1 &amp; 1 \end{matrix}\right))
+\]</span></p>
+<p>n = 4000</p>
+<pre class="r"><code>set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)</code></pre>
+<pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+grid = mashr:::autoselect_grid(m.data, sqrt(2))
+Ulist = mashr:::normalize_Ulist(U.c)
+xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
+
+result.em &lt;- mixture.EM(m.data$Bhat, xUlist)</code></pre>
+<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5066755.</p>
+<pre class="r"><code>m.data.em = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.em$rho,result.em$rho,1),2,2))
+U.c = cov_canonical(m.data.em)
+m.em = mash(m.data.em, U.c, verbose= FALSE)
+null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
+<p>The log likelihood is -1.23025410^{4}. There are 26 significant samples, 0 false positives. The RRMSE is 0.582108.</p>
+</div>
+<div id="another-em-version" class="section level2">
+<h2>Another EM version</h2>
+<p>Algorithm:</p>
+<pre class="r"><code>Input: X, Ulist, init_rho
+Given rho, estimate pi by max loglikelihood (convex problem)
+Compute loglikelihood
+delta = 1
+while delta &gt; tol
+  E step: compute z
+  M step: update rho
+  Given rho, estimate pi by max loglikelihood (convex problem)
+  Compute loglikelihood
+  Update delta</code></pre>
+<pre class="r"><code>mixture.M.times &lt;- function(X, Ulist, init_rho=0, init_pi=NULL, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;), control = list()){
+  times = length(init_rho)
+  result = list()
+  loglik = c()
+  rho = c()
+  time.t = c()
+  converge.status = c()
+  for(i in 1:times){
+    out.time = system.time(result[[i]] &lt;- mixture.M(X, Ulist,
+                                                     init_pi=init_pi,
+                                                     init_rho=init_rho[i],
+                                                     prior=prior, 
+                                                     control = control))
+    time.t = c(time.t, out.time[&#39;elapsed&#39;])
+    loglik = c(loglik, -result[[i]]$B)
+    rho = c(rho, result[[i]]$rhohat)
+    converge.status = c(converge.status, result[[i]]$converged)
+  }
+  if(abs(max(loglik) - min(loglik)) &lt; 1e-4){
+    status = &#39;global&#39;
+  }else{
+    status = &#39;local&#39;
+  }
+  ind = which.max(loglik)
+  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t, converge.status = converge.status))
+}
+
+mixture.M &lt;- function(X, Ulist, init_rho=0, init_pi = NULL, tol=1e-5, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;)) {
+  prior &lt;- match.arg(prior)
+
+  m.model = fit_mash(X, Ulist, rho = init_rho, prior=prior)
+  pi_s = get_estimated_pi(m.model, dimension = &#39;all&#39;)
+  # get complete Ulist
+  xUlist = mashr:::expand_cov(Ulist, m.model$fitted_g$grid, m.model$fitted_g$usepointmass)
+  prior.v &lt;- mashr:::set_prior(length(pi_s), prior)
+  
+  # compute loglikelihood
+  log_liks &lt;- c()
+  log_liks &lt;- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
+  delta.ll &lt;- 1
+  niter &lt;- 0
+  rho = init_rho
+  
+  while(delta.ll &gt; tol){
+    # compute L
+    Sigma &lt;- get_sigma(rho, xUlist)
+    L &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
+  
+    m  = t(pi_s * t(L)) # matrix_lik is n by k; so this is also n by k
+    m.rowsum = rowSums(m)
+    classprob = m/m.rowsum #an n by k matrix
+  
+    # max_rho
+    rho &lt;- optimize(EMloglikelihood, interval = c(-1,1), maximum = TRUE, X = X, Ulist = xUlist, z = classprob)$maximum
+    
+    m.model = fit_mash(X, Ulist, rho, prior=prior)
+    
+    pi_s = get_estimated_pi(m.model, dimension = &#39;all&#39;)
+    log_liks &lt;- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
+    # Update delta
+    delta.ll &lt;- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
+    niter &lt;- niter + 1
+  }
+
+  return(list(pihat = normalize(pi_s), rho = rho, loglik=log_liks))
+}
+
+EMloglikelihood = function(rho, X, Ulist, z){
+  Sigma = get_sigma(rho, Ulist)
+  L = t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+  sum(L * z)
+}
+
+fit_mash &lt;- function(X, Ulist, rho, prior=c(&#39;nullbiased&#39;, &#39;uniform&#39;)){
+  m.data = mashr::mash_set_data(Bhat=X, Shat=1, V = matrix(c(1, rho, rho, 1), 2, 2))
+  m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE)
+  return(m.model)
+}</code></pre>
+<pre class="r"><code>set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)</code></pre>
+<pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+# grid = mashr:::autoselect_grid(m.data, sqrt(2))
+# Ulist = mashr:::normalize_Ulist(U.c)
+# xUlist = mashr:::expand_cov(Ulist,grid,usepointmass=TRUE)
+
+result.m &lt;- mixture.M(m.data$Bhat, Ulist)</code></pre>
+<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5062801.</p>
+<pre class="r"><code>m.data.m = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.m$rho,result.m$rho,1),2,2))
+U.c.m = cov_canonical(m.data.m)
+m.m = mash(m.data.m, U.c, verbose= FALSE)
+null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
+<p>The log likelihood is -1.23025410^{4}. There are 26 significant samples, 0 false positives. The RRMSE is 0.5820861.</p>
+</div>
+</div>
+<div id="session-information" class="section level1">
+<h1>Session information</h1>
+<!-- Insert the session information into the document -->
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] mashr_0.2-12 ashr_2.2-13 
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18      knitr_1.20        whisker_0.3-2    
+ [4] magrittr_1.5      workflowr_1.1.1   REBayes_1.3      
+ [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.11
+[10] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
+[13] plyr_1.8.4        stringr_1.3.1     tools_3.5.1      
+[16] parallel_3.5.1    grid_3.5.1        R.oo_1.22.0      
+[19] rmeta_3.0         git2r_0.23.0      htmltools_0.3.6  
+[22] iterators_1.0.10  assertthat_0.2.0  yaml_2.2.0       
+[25] rprojroot_1.3-2   digest_0.6.15     Matrix_1.2-14    
+[28] codetools_0.2-15  R.utils_2.6.0     evaluate_0.11    
+[31] rmarkdown_1.10    stringi_1.2.4     compiler_3.5.1   
+[34] Rmosek_8.0.69     backports_1.1.2   R.methodsS3_1.7.1
+[37] mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
+<div id="session-information-1" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] mashr_0.2-12 ashr_2.2-13 
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18      knitr_1.20        whisker_0.3-2    
+ [4] magrittr_1.5      workflowr_1.1.1   REBayes_1.3      
+ [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.11
+[10] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
+[13] plyr_1.8.4        stringr_1.3.1     tools_3.5.1      
+[16] parallel_3.5.1    grid_3.5.1        R.oo_1.22.0      
+[19] rmeta_3.0         git2r_0.23.0      htmltools_0.3.6  
+[22] iterators_1.0.10  assertthat_0.2.0  yaml_2.2.0       
+[25] rprojroot_1.3-2   digest_0.6.15     Matrix_1.2-14    
+[28] codetools_0.2-15  R.utils_2.6.0     evaluate_0.11    
+[31] rmarkdown_1.10    stringi_1.2.4     compiler_3.5.1   
+[34] Rmosek_8.0.69     backports_1.1.2   R.methodsS3_1.7.1
+[37] mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
