@@ -1,0 +1,267 @@
+---
+title: "Estimate cor -- optim"
+author: "Yuxin Zou"
+date: 2018-07-24
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+```{r}
+library(mashr)
+source('../code/generateDataV.R')
+source('../code/summary.R')
+library(kableExtra)
+library(knitr)
+```
+
+We want to estimate $\rho$
+$$
+\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) | \left(\begin{matrix} x \\ y \end{matrix} \right) \sim N(\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) ; \left(\begin{matrix} x \\ y \end{matrix} \right), \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right))
+$$
+$$
+\left(\begin{matrix} x \\ y \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} x \\ y \end{matrix} \right); 0, U_{k} )
+$$
+$\Rightarrow$
+$$
+\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right); 0, \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right) + U_{k} )
+$$
+$$
+\Sigma_{k} = \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right) + U_{k} = \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right) + \left( \begin{matrix} u_{k11} & u_{k12} \\ u_{k21} & u_{k22} \end{matrix} \right) = \left( \begin{matrix} 1+u_{k11} & \rho+u_{k12} \\ \rho+u_{k21} & 1+u_{k22} \end{matrix} \right)
+$$
+Let $\sigma_{k11} = \sqrt{1+u_{k11}}$, $\sigma_{k22} = \sqrt{1+u_{k22}}$, $\phi_{k}=\frac{\rho+u_{k12}}{\sigma_{k11}\sigma_{k22}}$
+
+## MLE
+
+The loglikelihood is (with penalty)
+$$
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}N(x_{i}; 0, \Sigma_{k}) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+$$
+
+The penalty on $\pi$ encourages over-estimation of $\pi_{0}$, $\lambda_{k}\geq 1$.
+
+$$
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}\frac{1}{2\pi\sigma_{k11}\sigma_{k22}\sqrt{1-\phi_{k}^2}} \exp\left( -\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]  \right) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+$$
+
+**Note:** This probelm is convex with respect to $\pi$. In terms of $\rho$, the covenxity depends on the data.
+
+Algorithm:
+```{r, eval=FALSE, tidy=FALSE, highlight=FALSE}
+Input: X, init_rho, Ulist
+Given rho, estimate pi by max loglikelihood (convex problem)
+Compute loglikelihood
+delta = 1
+while delta > tol
+  Given pi, estimate rho by max loglikelihood (optim function)
+  Given rho, estimate pi by max loglikelihood (convex problem)
+  Compute loglikelihood
+  Update delta
+```
+
+```{r}
+#' @param rho the off diagonal element of V, 2 by 2 correlation matrix
+#' @param Ulist a list of covariance matrices, U_{k}
+get_sigma <- function(rho, Ulist){
+  V <- matrix(c(1,rho,rho,1), 2,2)
+  lapply(Ulist, function(U) U + V)
+}
+
+penalty <- function(prior, pi_s){
+  subset <- (prior != 1.0)
+  sum((prior-1)[subset]*log(pi_s[subset]))
+}
+
+#' @title compute log likelihood
+#' @param L log likelihoods,
+#' where the (i,k)th entry is the log probability of observation i
+#' given it came from component k of g
+#' @param p the vector of mixture proportions
+#' @param prior the weight for the penalty
+compute.log.lik <- function(lL, p, prior){
+  p = normalize(pmax(0,p))
+  temp = log(exp(lL$loglik_matrix) %*% p)+lL$lfactors
+  return(sum(temp) + penalty(prior, p))
+  # return(sum(temp))
+}
+
+normalize <- function(x){
+  x/sum(x)
+}
+```
+
+```{r}
+#' @title Optimize rho with several initial values
+#' @param X data, Z scores
+#' @param Ulist a list of covariance matrices
+#' @param init_rho initial value for rho. The user could provide several initial values as a vector.
+#' @param tol tolerance for optimizaiton stop
+#' @param prior indicates what penalty to use on the likelihood, if any
+#' @return list of result
+#' \item{result}{result from the rho which gives the highest log likelihood}
+#' \item{status}{whether the result is global max or local max}
+#' \item{loglik}{the loglikelihood value}
+#' \item{rho}{the estimated rho}
+#' \item{time}{the running time for each initial rho}
+#'
+optimize_pi_rho_times <- function(X, Ulist, init_rho=0, tol=1e-5, prior=c("nullbiased", "uniform")){
+  times = length(init_rho)
+  result = list()
+  loglik = c()
+  rho = c()
+  time.t = c()
+  for(i in 1:times){
+    out.time = system.time(result[[i]] <- optimize_pi_rho(X, Ulist,
+                                                          init_rho=init_rho[i],
+                                                          tol=tol,
+                                                          prior=prior))
+    time.t = c(time.t, out.time['elapsed'])
+    loglik = c(loglik, tail(result[[i]]$loglik, n=1))
+    rho = c(rho, result[[i]]$rho)
+  }
+  if(abs(max(loglik) - min(loglik)) < 1e-4){
+    status = 'global'
+  }else{
+    status = 'local'
+  }
+  ind = which.max(loglik)
+  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t))
+}
+
+#' @title optimize rho
+#' @param X data, Z scores
+#' @param Ulist a list of covariance matrices
+#' @param init_rho an initial value for rho
+#' @param tol tolerance for optimizaiton stop
+#' @param prior indicates what penalty to use on the likelihood, if any
+#' @return list of result
+#' \item{pi}{estimated pi}
+#' \item{rho}{estimated rho}
+#' \item{loglik}{the loglikelihood value at each iteration}
+#' \item{niter}{the number of iteration}
+#'
+optimize_pi_rho <- function(X, Ulist, init_rho=0, tol=1e-5, prior=c("nullbiased", "uniform")){
+  prior <- match.arg(prior)
+  if(length(Ulist) <= 1){
+    stop('Please provide more U! With only one U, the correlation could be estimated directly using mle.')
+  }
+  prior <- mashr:::set_prior(length(Ulist), prior)
+  
+  Sigma <- get_sigma(init_rho, Ulist)
+  lL <- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+  lfactors    <- apply(lL,1,max)
+  matrix_llik <- lL - lfactors
+  lL = list(loglik_matrix = matrix_llik,
+              lfactors   = lfactors)
+  pi_s <- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod='mixIP')
+  
+  log_liks <- c()
+  ll       <- compute.log.lik(lL, pi_s, prior)
+  log_liks <- c(log_liks, ll)
+  delta.ll <- 1
+  niter <- 0
+  rho_s <- init_rho
+  while( delta.ll > tol){
+    # max_rho
+    rho_s <- optim(rho_s, optimize_rho, lower = -1, upper = 1, X = X, Ulist=Ulist, pi_s = pi_s, prior = prior, method = 'Brent')$par
+    
+    Sigma <- get_sigma(rho_s, Ulist)
+    lL <- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+    lfactors <- apply(lL,1,max)
+    matrix_llik <- lL - lfactors
+    lL = list(loglik_matrix = matrix_llik,
+              lfactors   = lfactors)
+    
+    # max pi
+    pi_s <- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod='mixIP')
+    
+    # compute loglike
+    ll <- compute.log.lik(lL, pi_s, prior)
+    log_liks <- c(log_liks, ll)
+    # Update delta
+    delta.ll <- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
+    niter <- niter + 1
+  }
+  return(list(pi = pi_s, rho=rho_s, loglik = log_liks, niter = niter))
+}
+
+optimize_rho <- function(rho, X, Ulist, pi_s, prior){
+  Sigma <- get_sigma(rho, Ulist)
+  lL <- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+  lfactors <- apply(lL,1,max)
+  matrix_llik <- lL - lfactors
+  lL = list(loglik_matrix = matrix_llik,
+              lfactors   = lfactors)
+  
+  return(-compute.log.lik(lL, pi_s, prior))
+}
+```
+
+## Data
+
+$$
+\hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.5 \\
+                                          0.5 & 1 \end{matrix}\right))
+$$
+
+$$
+\beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 & 0 \\
+                                          0 & 0 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 0 & 0 \\
+                                          0 & 1 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 & 1 \\
+                                          1 & 1 \end{matrix}\right))
+$$
+
+n = 4000
+
+```{r}
+set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)
+```
+
+```{r}
+m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+grid = mashr:::autoselect_grid(m.data, sqrt(2))
+Ulist = mashr:::normalize_Ulist(U.c)
+xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
+
+result.optim <- optimize_pi_rho(data$Bhat, xUlist, init_rho = 0)
+# result <- optimize_pi_rho_times(data$Bhat, xUlist, init_rho = c(-0.7,0,0.7))
+plot(result.optim$loglik)
+```
+The estimated $\rho$ is `r result.optim$rho`.
+
+```{r}
+m.data.optim = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.optim$rho,result.optim$rho,1),2,2))
+U.c = cov_canonical(m.data.optim)
+m.optim = mash(m.data.optim, U.c, verbose= FALSE)
+null.ind = which(apply(data$B,1,sum) == 0)
+```
+
+The log likelihood is `r round(get_loglik(m.optim),2)`. There are `r length(get_significant_results(m.optim))` significant samples, `r sum(get_significant_results(m.optim) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.optim))`.
+
+The estimated `pi` is
+```{r}
+barplot(get_estimated_pi(m.optim), las=2, cex.names = 0.7, main='Optim', ylim=c(0,0.8))
+```
+
+The ROC curve:
+```{r}
+m.data.correct = mash_set_data(data$Bhat, data$Shat, V=Sigma)
+m.correct = mash(m.data.correct, U.c, verbose = FALSE)
+m.correct.seq = ROC.table(data$B, m.correct)
+m.optim.seq = ROC.table(data$B, m.optim)
+```
+
+```{r echo=FALSE, fig.align = "center"}
+{plot(m.correct.seq[,'FPR'], m.correct.seq[,'TPR'],type='l',xlab = 'FPR', ylab='TPR', main='True Positive vs False Positive', cex=1.5, lwd = 1.5)
+lines(m.optim.seq[,'FPR'], m.optim.seq[,'TPR'], col='red', lwd = 1.5)
+legend('bottomright', c('True','Optim'),col=c('black','red'),lty=c(1,1), lwd=c(1.5,1.5))}
+```
