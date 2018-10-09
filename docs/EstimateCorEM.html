@@ -346,7 +346,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/cd7ebf9f2e353299f1e85a154e4f6d0220b8427b" target="_blank">cd7ebf9</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/7c9f97074fe66695e835c2b44fe0d573a49a592d" target="_blank">7c9f970</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -452,6 +452,7 @@ Untracked files:
     Untracked:  output/MashCorSim--midway/
     Untracked:  output/Mash_EE_Cov_0_plusR1.rds
     Untracked:  output/UKBio_mash_model.rds
+    Untracked:  output/result.em.rds
 
 Unstaged changes:
     Modified:   analysis/EstimateCorIndex.Rmd
@@ -493,6 +494,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/7c9f97074fe66695e835c2b44fe0d573a49a592d/analysis/EstimateCorEM.Rmd" target="_blank">7c9f970</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorEM.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/6c38c31afd675bc7e94e865d5ebfacc0d4bd4842/docs/EstimateCorEM.html" target="_blank">6c38c31</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -729,7 +764,9 @@ grid = mashr:::autoselect_grid(m.data, sqrt(2))
 Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 
-result.em &lt;- mixture.EM.times(m.data$Bhat, xUlist)</code></pre>
+result.em &lt;- mixture.EM.times(m.data$Bhat, xUlist)
+saveRDS(result.em, &#39;../output/result.em.rds&#39;)</code></pre>
+<pre class="r"><code>result.em = readRDS(&#39;../output/result.em.rds&#39;)</code></pre>
 <p>The estimated <span class="math inline">\(\rho\)</span> is 0.5066755. The running time is <code>result.em$time</code> seconds.</p>
 <pre class="r"><code>m.data.em = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.em$rho,result.em$rho,1),2,2))
 U.c = cov_canonical(m.data.em)
