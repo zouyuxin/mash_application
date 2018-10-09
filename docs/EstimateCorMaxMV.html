@@ -346,7 +346,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/032212cf6451619940c615fa959695546bf115f5" target="_blank">032212c</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/cd82d7ef90cc06703cdf5f6b54fac396988e813d" target="_blank">cd82d7e</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -455,6 +455,7 @@ Untracked files:
 Unstaged changes:
     Deleted:    analysis/EstimateCorMax.Rmd
     Modified:   analysis/EstimateCorMaxEM2.Rmd
+    Deleted:    analysis/EstimateCorMaxEMV.Rmd
     Modified:   analysis/EstimateCorMaxMash.Rmd
     Deleted:    analysis/MashLowSignalGTEx3.5P.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
@@ -491,6 +492,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/cd82d7ef90cc06703cdf5f6b54fac396988e813d/analysis/EstimateCorMaxMV.Rmd" target="_blank">cd82d7e</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMV.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/e3b067e574f19f9a30d6e4a216b5755c7104eb64/docs/EstimateCorMaxMV.html" target="_blank">e3b067e</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -684,7 +719,12 @@ data = generate_data(n, p, Sigma, Utrue)</code></pre>
 U.c = cov_canonical(m.data)
 
 result.mV &lt;- mixture.MV.times(m.data$Bhat, U.c)</code></pre>
-<p>The estimated <span class="math inline">\(V\)</span> is 1, 0.5087773, 0.5087773, 1. The running time is 25.508 seconds.</p>
+<p>The estimated <span class="math inline">\(V\)</span> is</p>
+<pre class="r"><code>result.mV$result$V</code></pre>
+<pre><code>          [,1]      [,2]
+[1,] 1.0000000 0.5087773
+[2,] 0.5087773 1.0000000</code></pre>
+<p>The running time is 25.541 seconds.</p>
 <pre class="r"><code>m.data.mV = mash_set_data(data$Bhat, data$Shat, V = result.mV$result$V)
 U.c.mV = cov_canonical(m.data.mV)
 m.mV = mash(m.data.mV, U.c, verbose= FALSE)
