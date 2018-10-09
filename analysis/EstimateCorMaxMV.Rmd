@@ -3,21 +3,9 @@ title: "Estimate cor — M V decompose"
 author: "Yuxin Zou"
 date: 2018-10-5
 output: 
-  html_document:
+  workflowr::wflow_html:
     code_folding: hide
 ---
-
-```{r read-chunk, include=FALSE, cache=FALSE}
-knitr::read_chunk("chunks.R")
-```
-
-<!-- Update knitr chunk options -->
-```{r knitr-opts-chunk, include=FALSE}
-```
-
-<!-- Insert the date the file was last updated -->
-```{r last-updated, echo=FALSE, results='asis'}
-```
 
 ```{r}
 library(mashr)
@@ -29,7 +17,7 @@ We use EM algorithm to update $\rho$.
 
 B is the $n\times R$ true value matrix. $\mathbf{z}$ is a length n vector.
 
-# E step
+## E step
 
 $$
 P(\hat{B},B|\rho, \pi) = \prod_{i=1}^{n} \left[N(\hat{b}_{i}; b_{i}, V)\sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})\right]
