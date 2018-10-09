@@ -93,9 +93,8 @@ normalize <- function(x){
 ```{r}
 #' @title Optimize rho with several initial values
 #' @param X data, Z scores
-#' @param Ulist a list of covariance matrices
+#' @param Ulist a list of covariance matrices (expand)
 #' @param init_rho initial value for rho. The user could provide several initial values as a vector.
-#' @param tol tolerance for optimizaiton stop
 #' @param prior indicates what penalty to use on the likelihood, if any
 #' @return list of result
 #' \item{result}{result from the rho which gives the highest log likelihood}
@@ -104,7 +103,7 @@ normalize <- function(x){
 #' \item{rho}{the estimated rho}
 #' \item{time}{the running time for each initial rho}
 #'
-optimize_pi_rho_times <- function(X, Ulist, init_rho=0, tol=1e-5, prior=c("nullbiased", "uniform")){
+optimize_pi_rho_times <- function(X, Ulist, init_rho=0, prior=c("nullbiased", "uniform"), tol=1e-5){
   times = length(init_rho)
   result = list()
   loglik = c()
@@ -113,8 +112,8 @@ optimize_pi_rho_times <- function(X, Ulist, init_rho=0, tol=1e-5, prior=c("nullb
   for(i in 1:times){
     out.time = system.time(result[[i]] <- optimize_pi_rho(X, Ulist,
                                                           init_rho=init_rho[i],
-                                                          tol=tol,
-                                                          prior=prior))
+                                                          prior=prior,
+                                                          tol=tol))
     time.t = c(time.t, out.time['elapsed'])
     loglik = c(loglik, tail(result[[i]]$loglik, n=1))
     rho = c(rho, result[[i]]$rho)
@@ -125,7 +124,7 @@ optimize_pi_rho_times <- function(X, Ulist, init_rho=0, tol=1e-5, prior=c("nullb
     status = 'local'
   }
   ind = which.max(loglik)
-  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t))
+  return(list(result = result[[ind]], status = status, loglik = loglik, time = time.t, rho=rho))
 }
 
 #' @title optimize rho
@@ -146,15 +145,15 @@ optimize_pi_rho <- function(X, Ulist, init_rho=0, tol=1e-5, prior=c("nullbiased"
     stop('Please provide more U! With only one U, the correlation could be estimated directly using mle.')
   }
   prior <- mashr:::set_prior(length(Ulist), prior)
-  
+
   Sigma <- get_sigma(init_rho, Ulist)
   lL <- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
   lfactors    <- apply(lL,1,max)
   matrix_llik <- lL - lfactors
   lL = list(loglik_matrix = matrix_llik,
-              lfactors   = lfactors)
+            lfactors   = lfactors)
   pi_s <- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod='mixIP')
-  
+
   log_liks <- c()
   ll       <- compute.log.lik(lL, pi_s, prior)
   log_liks <- c(log_liks, ll)
@@ -164,17 +163,17 @@ optimize_pi_rho <- function(X, Ulist, init_rho=0, tol=1e-5, prior=c("nullbiased"
   while( delta.ll > tol){
     # max_rho
     rho_s <- optim(rho_s, optimize_rho, lower = -1, upper = 1, X = X, Ulist=Ulist, pi_s = pi_s, prior = prior, method = 'Brent')$par
-    
+
     Sigma <- get_sigma(rho_s, Ulist)
     lL <- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
     lfactors <- apply(lL,1,max)
     matrix_llik <- lL - lfactors
     lL = list(loglik_matrix = matrix_llik,
               lfactors   = lfactors)
-    
+
     # max pi
     pi_s <- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod='mixIP')
-    
+
     # compute loglike
     ll <- compute.log.lik(lL, pi_s, prior)
     log_liks <- c(log_liks, ll)
@@ -191,8 +190,8 @@ optimize_rho <- function(rho, X, Ulist, pi_s, prior){
   lfactors <- apply(lL,1,max)
   matrix_llik <- lL - lfactors
   lL = list(loglik_matrix = matrix_llik,
-              lfactors   = lfactors)
-  
+            lfactors   = lfactors)
+
   return(-compute.log.lik(lL, pi_s, prior))
 }
 ```
@@ -233,7 +232,6 @@ Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 
 result.optim <- optimize_pi_rho(data$Bhat, xUlist, init_rho = 0)
-# result <- optimize_pi_rho_times(data$Bhat, xUlist, init_rho = c(-0.7,0,0.7))
 plot(result.optim$loglik)
 ```
 The estimated $\rho$ is `r result.optim$rho`.
@@ -246,11 +244,6 @@ null.ind = which(apply(data$B,1,sum) == 0)
 ```
 
 The log likelihood is `r round(get_loglik(m.optim),2)`. There are `r length(get_significant_results(m.optim))` significant samples, `r sum(get_significant_results(m.optim) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.optim))`.
-
-The estimated `pi` is
-```{r}
-barplot(get_estimated_pi(m.optim), las=2, cex.names = 0.7, main='Optim', ylim=c(0,0.8))
-```
 
 The ROC curve:
 ```{r}
