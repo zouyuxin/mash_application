@@ -70,7 +70,10 @@ U.c = cov_canonical(m.data)
 m.I = mash(m.data, U.c, verbose= FALSE)
 ```
 
-2. The current approach: truncated empirical correlation $V.trun$
+2. The current approach: truncated empirical correlation, $V.trun$
+
+The correlation of samples with maximum |z| scores less than 2.
+
 ```{r}
 Vhat = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
 Vhat
@@ -130,7 +133,7 @@ colnames(temp) = c('Identity','truncate', 'm.1by1', 'true', 'overestimate')
 row.names(temp) = c('log likelihood', '# significance', '# False positive')
 temp %>% kable() %>% kable_styling()
 ```
-
+<!--
 The estimated `pi` is
 ```{r fig.align = "center"}
 par(mfrow=c(2,3))
@@ -140,6 +143,7 @@ barplot(get_estimated_pi(m.V1by1), las=2, cex.names = 0.7, main='m.1by1', ylim=c
 barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7, main='True', ylim=c(0,0.8))
 barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7, main='OverEst', ylim=c(0,0.8))
 ```
+-->
 
 The ROC curve:
 ```{r}
@@ -228,5 +232,5 @@ polyroot(c(- sum(data$Bhat[,1]*data$Bhat[,2]),  - (n - sum(data$Bhat[,1]^2 + dat
 
 ### In general
 
-The general derivation is in [estimate correlation mle](EstimateCorMax.html)
+The general derivation is in [estimate correlation mle](EstimateCorOptim.html)
 
