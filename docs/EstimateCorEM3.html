@@ -346,7 +346,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/81cd901113df351385d5cfd2b74826865df07bbd" target="_blank">81cd901</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/fe2ff513dc01930892757ec632674d730ba67c03" target="_blank">fe2ff51</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -469,6 +469,67 @@ Unstaged changes:
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
 </li>
 </ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/fe2ff513dc01930892757ec632674d730ba67c03/analysis/EstimateCorEM3.Rmd" target="_blank">fe2ff51</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorEM3.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/8abb22048aaa3dfd92a616363c8f334917282285/docs/EstimateCorEM3.html" target="_blank">8abb220</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
 <hr />
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
@@ -520,7 +581,7 @@ f(\rho)&#39; = \sum_{i=1}^{n} \frac{\rho}{1-\rho^2} -\frac{\rho}{(1-\rho^2)^2}\l
 </div>
 <div id="solution" class="section level1">
 <h1>Solution</h1>
-<p>Given rho, we estimate pi by max loglikelihood (convex problem)</p>
+<p>Given <span class="math inline">\(\rho\)</span>, we estimate <span class="math inline">\(\boldsymbol{\pi}\)</span> by max loglikelihood (convex problem)</p>
 <p>Algorithm:</p>
 <pre class="r"><code>Input: X, Ulist, init_rho
 Given rho, estimate pi by max loglikelihood (convex problem)
@@ -656,7 +717,7 @@ data = generate_data(n, p, Sigma, Utrue)</code></pre>
 U.c = cov_canonical(m.data)
 
 result.mrho &lt;- mixture.M.rho.times(m.data$Bhat, U.c)</code></pre>
-<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5060756. The running time is seconds.</p>
+<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5060756. The running time is 59.022 seconds.</p>
 <pre class="r"><code>m.data.mrho = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.mrho$rho,result.mrho$rho,1),2,2))
 U.c.mrho = cov_canonical(m.data.mrho)
 m.mrho = mash(m.data.mrho, U.c, verbose= FALSE)
