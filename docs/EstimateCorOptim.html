@@ -364,7 +364,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/83adaa6f81c4602971f08800bab117bbc4ca5345" target="_blank">83adaa6</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/2be7d99f584222acaf21819c7d4cf0ca01c3c83b" target="_blank">2be7d99</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -517,6 +517,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/2be7d99f584222acaf21819c7d4cf0ca01c3c83b/analysis/EstimateCorOptim.Rmd" target="_blank">2be7d99</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-08
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorOptim.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/fcfbe32b8bbb81a794c63e0c694a67eecef8ef89/docs/EstimateCorOptim.html" target="_blank">fcfbe32</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-08
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/83adaa6f81c4602971f08800bab117bbc4ca5345/analysis/EstimateCorOptim.Rmd" target="_blank">83adaa6</a>
 </td>
 <td style="text-align:left;">
@@ -577,20 +611,20 @@ library(knitr)</code></pre>
 <p>We want to estimate <span class="math inline">\(\rho\)</span> <span class="math display">\[
 \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) | \left(\begin{matrix} x \\ y \end{matrix} \right) \sim N(\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) ; \left(\begin{matrix} x \\ y \end{matrix} \right), \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right))
 \]</span> <span class="math display">\[
-\left(\begin{matrix} x \\ y \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} x \\ y \end{matrix} \right); 0, U_{k} )
+\left(\begin{matrix} x \\ y \end{matrix} \right) \sim \sum_{p=0}^{P} \pi_{p} N( \left(\begin{matrix} x \\ y \end{matrix} \right); 0, \Sigma_{p} )
 \]</span> <span class="math inline">\(\Rightarrow\)</span> <span class="math display">\[
-\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right); 0, \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + U_{k} )
+\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) \sim \sum_{p=0}^{P} \pi_{p} N( \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right); 0, \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + \Sigma_{p} )
 \]</span> <span class="math display">\[
-\Sigma_{k} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + U_{k} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + \left( \begin{matrix} u_{k11} &amp; u_{k12} \\ u_{k21} &amp; u_{k22} \end{matrix} \right) = \left( \begin{matrix} 1+u_{k11} &amp; \rho+u_{k12} \\ \rho+u_{k21} &amp; 1+u_{k22} \end{matrix} \right)
-\]</span> Let <span class="math inline">\(\sigma_{k11} = \sqrt{1+u_{k11}}\)</span>, <span class="math inline">\(\sigma_{k22} = \sqrt{1+u_{k22}}\)</span>, <span class="math inline">\(\phi_{k}=\frac{\rho+u_{k12}}{\sigma_{k11}\sigma_{k22}}\)</span></p>
+\Omega_{p} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + \Sigma_{p} = \left( \begin{matrix} 1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right) + \left( \begin{matrix} \sigma_{p11} &amp; \sigma_{p12} \\ \sigma_{p21} &amp; \sigma_{p22} \end{matrix} \right) = \left( \begin{matrix} 1+\sigma_{p11} &amp; \rho+\sigma_{p12} \\ \rho+\sigma_{p21} &amp; 1+\sigma_{p22} \end{matrix} \right)
+\]</span> Let <span class="math inline">\(\omega_{p11} = \sqrt{1+\sigma_{p11}}\)</span>, <span class="math inline">\(\omega_{p22} = \sqrt{1+\sigma_{p22}}\)</span>, <span class="math inline">\(\phi_{p}=\frac{\rho+\sigma_{p12}}{\omega_{k11}\omega_{p22}}\)</span></p>
 <div id="mle" class="section level2">
 <h2>MLE</h2>
 <p>The loglikelihood is (with penalty) <span class="math display">\[
-l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}N(x_{i}; 0, \Sigma_{k}) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{p=0}^{P} \pi_{p}N(x_{i}; 0, \Omega_{p}) + \sum_{p=0}^{P} (\lambda_{p}-1) \log \pi_{p}
 \]</span></p>
-<p>The penalty on <span class="math inline">\(\pi\)</span> encourages over-estimation of <span class="math inline">\(\pi_{0}\)</span>, <span class="math inline">\(\lambda_{k}\geq 1\)</span>.</p>
+<p>The penalty on <span class="math inline">\(\pi\)</span> encourages over-estimation of <span class="math inline">\(\pi_{0}\)</span>, <span class="math inline">\(\lambda_{p}\geq 1\)</span>.</p>
 <p><span class="math display">\[
-l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}\frac{1}{2\pi\sigma_{k11}\sigma_{k22}\sqrt{1-\phi_{k}^2}} \exp\left( -\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]  \right) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{p=0}^{P} \pi_{p}\frac{1}{2\pi\omega_{p11}\omega_{p22}\sqrt{1-\phi_{p}^2}} \exp\left( -\frac{1}{2(1-\phi_{p}^2)}\left[ \frac{x_{i}^2}{\omega_{p11}^2} + \frac{y_{i}^2}{\omega_{p22}^2} - \frac{2\phi_{p}x_{i}y_{i}}{\omega_{p11}\omega_{p22}}\right]  \right) + \sum_{p=0}^{P} (\lambda_{p}-1) \log \pi_{p}
 \]</span></p>
 <p><strong>Note:</strong> This probelm is convex with respect to <span class="math inline">\(\pi\)</span>. In terms of <span class="math inline">\(\rho\)</span>, the covenxity depends on the data.</p>
 <p>Algorithm:</p>
@@ -763,8 +797,8 @@ grid = mashr:::autoselect_grid(m.data, sqrt(2))
 Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 
-result.optim &lt;- optimize_pi_rho(data$Bhat, xUlist, init_rho = 0)
-plot(result.optim$loglik)</code></pre>
+result.optim &lt;- optimize_pi_rho_times(data$Bhat, xUlist, init_rho = 0)
+plot(result.optim$result$loglik)</code></pre>
 <p><img src="figure/EstimateCorOptim.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
@@ -796,7 +830,7 @@ zouyuxin
 </tbody>
 </table>
 <p></details></p>
-<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5062776.</p>
+<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5062776. The running time is 59.083 seconds.</p>
 <pre class="r"><code>m.data.optim = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.optim$rho,result.optim$rho,1),2,2))
 U.c = cov_canonical(m.data.optim)
 m.optim = mash(m.data.optim, U.c, verbose= FALSE)
@@ -808,6 +842,36 @@ m.correct = mash(m.data.correct, U.c, verbose = FALSE)
 m.correct.seq = ROC.table(data$B, m.correct)
 m.optim.seq = ROC.table(data$B, m.optim)</code></pre>
 <p><img src="figure/EstimateCorOptim.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/fcfbe32b8bbb81a794c63e0c694a67eecef8ef89/docs/figure/EstimateCorOptim.Rmd/unnamed-chunk-9-1.png" target="_blank">fcfbe32</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-08
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
