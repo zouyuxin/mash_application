@@ -3,21 +3,9 @@ title: "Estimate cor — EM 2"
 author: "Yuxin Zou"
 date: 2018-8-2
 output: 
-  html_document:
+  workflowr::wflow_html:
     code_folding: hide
 ---
-
-```{r read-chunk, include=FALSE, cache=FALSE}
-knitr::read_chunk("chunks.R")
-```
-
-<!-- Update knitr chunk options -->
-```{r knitr-opts-chunk, include=FALSE}
-```
-
-<!-- Insert the date the file was last updated -->
-```{r last-updated, echo=FALSE, results='asis'}
-```
 
 ```{r}
 library(mashr)
@@ -27,7 +15,7 @@ We use EM algorithm to update $\rho$.
 
 B is the $n\times R$ true value matrix. $\mathbf{z}$ is a length n vector.
 
-# E step
+## E step
 
 $$
 P(\hat{B},B,\mathbf{z}|\rho, \pi) = \prod_{i=1}^{n} \prod_{p=0}^{P}\left[\pi_{p}N(\hat{b}_{i}; b_{i}, V)N(b_{i}; 0, \Sigma_{p})\right]^{\mathbb{I}(z_{i}=p)}
@@ -41,10 +29,3 @@ $$
 $$
 
 It is hard to compute the expectation.
-
-# Session information
-
-<!-- Insert the session information into the document -->
-```{r session-info}
-```
-

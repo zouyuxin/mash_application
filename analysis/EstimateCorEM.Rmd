@@ -3,21 +3,9 @@ title: "Estimate cor — EM 1"
 author: "Yuxin Zou"
 date: 2018-8-2
 output: 
-  html_document:
+  workflowr::wflow_html:
     code_folding: hide
 ---
-
-```{r read-chunk, include=FALSE, cache=FALSE}
-knitr::read_chunk("chunks.R")
-```
-
-<!-- Update knitr chunk options -->
-```{r knitr-opts-chunk, include=FALSE}
-```
-
-<!-- Insert the date the file was last updated -->
-```{r last-updated, echo=FALSE, results='asis'}
-```
 
 ```{r}
 library(mashr)
@@ -25,9 +13,9 @@ source('../code/generateDataV.R')
 source('../code/summary.R')
 ```
 
-# EM
+## EM
 
-## E step
+### E step
 
 $$
 P(X,\mathbf{z}|\rho, \pi) = \prod_{i=1}^{n} \prod_{p=0}^{P}\left[\pi_{p}N(x_{i}; 0, \Omega_{p})\right]^{\mathbb{I}(z_{i}=p)} \prod_{p=0}^{P}\pi_{p}^{\lambda_{p}-1}
@@ -41,7 +29,7 @@ $$
 \gamma_{z_{i}}(p) = P(z_{i}=p|X_{i}) = \frac{\pi_{p}N(x_{i}; 0, \Omega_{p})}{\sum_{p'=0}^{P}\pi_{p'}N(x_{i}; 0, \Omega_{p'})}
 $$
 
-## M step
+### M step
 
 $\pi$: 
 $$
@@ -185,7 +173,7 @@ negpenloglik = function(par, X, Ulist, prior){
 }
 ```
 
-# Data
+## Data
 
 $$
 \hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.5 \\
@@ -237,10 +225,4 @@ null.ind = which(apply(data$B,1,sum) == 0)
 ```
 
 The log likelihood is `r formatC(get_loglik(m.em), digits=7)`. There are `r length(get_significant_results(m.em))` significant samples, `r sum(get_significant_results(m.em) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.em))`.
-
-# Session information
-
-<!-- Insert the session information into the document -->
-```{r session-info}
-```
 
