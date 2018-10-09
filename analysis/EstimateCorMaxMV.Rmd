@@ -220,7 +220,11 @@ U.c = cov_canonical(m.data)
 result.mV <- mixture.MV.times(m.data$Bhat, U.c)
 ```
 
-The estimated $V$ is `r result.mV$result$V`. The running time is `r result.mV$time` seconds.
+The estimated $V$ is 
+```{r}
+result.mV$result$V
+```
+The running time is `r result.mV$time` seconds.
 
 ```{r}
 m.data.mV = mash_set_data(data$Bhat, data$Shat, V = result.mV$result$V)
