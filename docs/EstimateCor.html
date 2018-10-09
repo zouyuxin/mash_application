@@ -341,7 +341,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-09-20</p>
+<p><strong>Last updated:</strong> 2018-10-08</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -365,7 +365,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/40b1d81fc6cfe3925d4e2b7b60f0e8ee846a0a02" target="_blank">40b1d81</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/c12be7697b6c89fdc963b01a0585fc722dfc53a1" target="_blank">c12be76</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -382,12 +382,11 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/Classify.Rmd
-    Untracked:  analysis/EstimateCorEM.Rmd
     Untracked:  analysis/EstimateCorEM2.Rmd
     Untracked:  analysis/EstimateCorEM3.Rmd
     Untracked:  analysis/EstimateCorMaxEMGD.Rmd
     Untracked:  analysis/EstimateCorMaxGD.Rmd
-    Untracked:  analysis/EstimateCorOptim.Rmd
+    Untracked:  analysis/EstimateCorMaxMV.Rmd
     Untracked:  analysis/EstimateCorOptimEM.Rmd
     Untracked:  analysis/EstimateCorPrior.Rmd
     Untracked:  analysis/EstimateCorSol.Rmd
@@ -399,9 +398,9 @@ Untracked files:
     Untracked:  analysis/OutlierDetection2.Rmd
     Untracked:  analysis/OutlierDetection3.Rmd
     Untracked:  analysis/OutlierDetection4.Rmd
-    Untracked:  analysis/Test.Rmd
     Untracked:  analysis/mash_missing_row.Rmd
     Untracked:  code/GTExNullModel.R
+    Untracked:  code/MASH.result.1.rds
     Untracked:  code/MashClassify.R
     Untracked:  code/MashCorResult.R
     Untracked:  code/MashNULLCorResult.R
@@ -474,8 +473,12 @@ Untracked files:
     Untracked:  output/UKBio_mash_model.rds
 
 Unstaged changes:
+    Modified:   analysis/EstimateCorEM.Rmd
+    Modified:   analysis/EstimateCorIndex.Rmd
     Deleted:    analysis/EstimateCorMax.Rmd
     Modified:   analysis/EstimateCorMaxEM2.Rmd
+    Modified:   analysis/EstimateCorMaxMash.Rmd
+    Modified:   analysis/EstimateCorOptim.Rmd
     Deleted:    analysis/MashLowSignalGTEx3.5P.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
@@ -511,6 +514,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/c12be7697b6c89fdc963b01a0585fc722dfc53a1/analysis/EstimateCor.Rmd" target="_blank">c12be76</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-08
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCor.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/a9d24277fd5bbaf46ae25a12927b47d7cdfef786/docs/EstimateCor.html" target="_blank">a9d2427</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-09-20
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 html
@@ -835,8 +872,9 @@ V.I = I_{2}
 U.c = cov_canonical(m.data)
 m.I = mash(m.data, U.c, verbose= FALSE)</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li>The current approach: truncated empirical correlation <span class="math inline">\(V.trun\)</span></li>
+<li>The current approach: truncated empirical correlation, <span class="math inline">\(V.trun\)</span></li>
 </ol>
+<p>The correlation of samples with maximum |z| scores less than 2.</p>
 <pre class="r"><code>Vhat = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
 Vhat</code></pre>
 <pre><code>          [,1]      [,2]
@@ -970,66 +1008,51 @@ log likelihood
 </tr>
 </tbody>
 </table>
-<p>The estimated <code>pi</code> is</p>
-<pre class="r"><code>par(mfrow=c(2,3))
-barplot(get_estimated_pi(m.I), las=2, cex.names = 0.7, main=&#39;Identity&#39;, ylim=c(0,0.8))
-barplot(get_estimated_pi(m.V), las=2, cex.names = 0.7, main=&#39;Truncate&#39;, ylim=c(0,0.8))
-barplot(get_estimated_pi(m.V1by1), las=2, cex.names = 0.7, main=&#39;m.1by1&#39;, ylim=c(0,0.8))
-barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7, main=&#39;True&#39;, ylim=c(0,0.8))
-barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7, main=&#39;OverEst&#39;, ylim=c(0,0.8))</code></pre>
-<p><img src="figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
-<table style="border-collapse:separate; border-spacing:5px;">
-<thead>
-<tr>
-<th style="text-align:left;">
-Version
-</th>
-<th style="text-align:left;">
-Author
-</th>
-<th style="text-align:left;">
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/10d4174c6f044161bf17e623f1b474618cae2114/docs/figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" target="_blank">10d4174</a>
-</td>
-<td style="text-align:left;">
-zouyuxin
-</td>
-<td style="text-align:left;">
-2018-08-13
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/3bfa4f502083ab1d6ba500fc0572aaf7200d6c8d/docs/figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" target="_blank">3bfa4f5</a>
-</td>
-<td style="text-align:left;">
-zouyuxin
-</td>
-<td style="text-align:left;">
-2018-08-13
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/298546692568623165a25b72aac7faf332377c70/docs/figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" target="_blank">2985466</a>
-</td>
-<td style="text-align:left;">
-zouyuxin
-</td>
-<td style="text-align:left;">
-2018-07-26
-</td>
-</tr>
-</tbody>
-</table>
-<p></details></p>
+<!--
+The estimated `pi` is
+
+```r
+par(mfrow=c(2,3))
+barplot(get_estimated_pi(m.I), las=2, cex.names = 0.7, main='Identity', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.V), las=2, cex.names = 0.7, main='Truncate', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.V1by1), las=2, cex.names = 0.7, main='m.1by1', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.correct), las=2, cex.names = 0.7, main='True', ylim=c(0,0.8))
+barplot(get_estimated_pi(m.Vo), las=2, cex.names = 0.7, main='OverEst', ylim=c(0,0.8))
+```
+
+<img src="figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" />
+
+  <details>
+  <summary><em>Expand here to see past versions of unnamed-chunk-10-1.png:</em></summary>
+  <table style = "border-collapse:separate; border-spacing:5px;">
+  <thead>
+  <tr>
+  <th style="text-align:left;"> Version </th>
+  <th style="text-align:left;"> Author </th>
+  <th style="text-align:left;"> Date </th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+  <td style="text-align:left;"> <a href="https://github.com/zouyuxin/mash_application/blob/10d4174c6f044161bf17e623f1b474618cae2114/docs/figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" target="_blank">10d4174</a> </td>
+  <td style="text-align:left;"> zouyuxin </td>
+  <td style="text-align:left;"> 2018-08-13 </td>
+  </tr>
+  <tr>
+  <td style="text-align:left;"> <a href="https://github.com/zouyuxin/mash_application/blob/3bfa4f502083ab1d6ba500fc0572aaf7200d6c8d/docs/figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" target="_blank">3bfa4f5</a> </td>
+  <td style="text-align:left;"> zouyuxin </td>
+  <td style="text-align:left;"> 2018-08-13 </td>
+  </tr>
+  <tr>
+  <td style="text-align:left;"> <a href="https://github.com/zouyuxin/mash_application/blob/298546692568623165a25b72aac7faf332377c70/docs/figure/EstimateCor.Rmd/unnamed-chunk-10-1.png" target="_blank">2985466</a> </td>
+  <td style="text-align:left;"> zouyuxin </td>
+  <td style="text-align:left;"> 2018-07-26 </td>
+  </tr>
+  </tbody>
+  </table>
+  </details>
+  
+-->
 <p>The ROC curve:</p>
 <pre class="r"><code>m.I.seq = ROC.table(data$B, m.I)
 m.V.seq = ROC.table(data$B, m.V)
@@ -1244,7 +1267,7 @@ zouyuxin
 </div>
 <div id="in-general" class="section level3">
 <h3>In general</h3>
-<p>The general derivation is in <a href="EstimateCorMax.html">estimate correlation mle</a></p>
+<p>The general derivation is in <a href="EstimateCorOptim.html">estimate correlation mle</a></p>
 </div>
 </div>
 <div id="session-information" class="section level2">
@@ -1265,10 +1288,10 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-12     ashr_2.2-13     
+[1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-15     ashr_2.2-14     
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.18      highr_0.7         pillar_1.3.0     
+ [1] Rcpp_0.12.19      highr_0.7         pillar_1.3.0     
  [4] compiler_3.5.1    git2r_0.23.0      plyr_1.8.4       
  [7] workflowr_1.1.1   R.methodsS3_1.7.1 R.utils_2.6.0    
 [10] iterators_1.0.10  tools_3.5.1       digest_0.6.15    
@@ -1282,10 +1305,11 @@ loaded via a namespace (and not attached):
 [34] rmeta_3.0         readr_1.1.1       magrittr_1.5     
 [37] whisker_0.3-2     scales_1.0.0      backports_1.1.2  
 [40] codetools_0.2-15  htmltools_0.3.6   MASS_7.3-50      
-[43] rvest_0.3.2       assertthat_0.2.0  colorspace_1.3-2 
-[46] stringi_1.2.4     Rmosek_8.0.69     munsell_0.5.0    
-[49] doParallel_1.0.11 pscl_1.5.2        truncnorm_1.0-8  
-[52] SQUAREM_2017.10-1 crayon_1.3.4      R.oo_1.22.0      </code></pre>
+[43] rvest_0.3.2       abind_1.4-5       assertthat_0.2.0 
+[46] colorspace_1.3-2  stringi_1.2.4     Rmosek_8.0.69    
+[49] munsell_0.5.0     doParallel_1.0.14 pscl_1.5.2       
+[52] truncnorm_1.0-8   SQUAREM_2017.10-1 crayon_1.3.4     
+[55] R.oo_1.22.0      </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
