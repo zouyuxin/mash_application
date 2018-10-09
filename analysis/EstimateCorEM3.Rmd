@@ -80,7 +80,7 @@ It is hard to estimate $\boldsymbol{\pi}$ from the second term.
 
 # Solution
 
-Given rho, we estimate pi by max loglikelihood (convex problem)
+Given $\rho$, we estimate $\boldsymbol{\pi}$ by max loglikelihood (convex problem)
 
 Algorithm: 
 ```{r, eval=FALSE, tindy = FALSE}
@@ -232,7 +232,7 @@ U.c = cov_canonical(m.data)
 result.mrho <- mixture.M.rho.times(m.data$Bhat, U.c)
 ```
 
-The estimated $\rho$ is `r result.mrho$rho`. The running time is `r result.mrho$times` seconds.
+The estimated $\rho$ is `r result.mrho$rho`. The running time is `r result.mrho$time` seconds.
 
 ```{r}
 m.data.mrho = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.mrho$rho,result.mrho$rho,1),2,2))
