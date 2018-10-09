@@ -14,15 +14,19 @@ source('../code/estimate_cor.R')
 source('../code/summary.R')
 library(knitr)
 library(kableExtra)
+library(ggplot2)
+library(reshape2)
 ```
 
-Apply the max methods for correlation matrix on mash data. 
+Apply the max likelihood methods for correlation matrix on mash data. 
 
-After we estimate each pairwise correlation, the final resulting $p\times p$ correlation matrix may not be positive definite. I estimate the nearest PD cor matrix with `nearPD` function.
+After we estimate each pairwise correlation, the final resulting $p\times p$ correlation matrix may not be positive definite. I estimate the nearest PD cor matrix with `nearPD` function. **In the simulations, there is no non pd resulting matrix.**
 
-The estimated V from MLE(`optim` function) and $EM_\rho$ perform better than the truncated correlation (error, mash log likelihood, ROC).
+The estimated V from optim(`optim` function), $M_{\rho}$ and $MV$ perform better than the truncated correlation (error, mash log likelihood, ROC).
 
-Comparing the estimated V from MLE and EM, $EM_\rho$ algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.
+Comparing the estimated V from optim, $M_{\rho}$ and $MV$, $MV$ algorithm computes much faster than $M_{\rho}$, faster than optim. The estimated V from optim and $M_{\rho}$ are very similar. They have smaller error to the true V than $MV$, most of the time. The estimated V from $MV$ has larger log likelihood in the final mash model. In terms of ROC and RRMSE, the estimated V from optim, $M_{\rho}$ and $MV$ performs similarly.
+
+Based on the simulation results, I prefer the $MV$ method.
 
 ## One example: p = 3
 $$
@@ -81,33 +85,33 @@ plotCor(U.ed$ED_PCA_3, 'PCA3')
 plotCor(U.ed$ED_tPCA, 'tPCA')
 ```
 
-1. We run the algorithm in [estimate cor mle](EstimateCorMax.html) with 3 different initial points for $\rho$, (-0.5,0,0.5). The $\rho$ in each iteration is estimated using `optim` function. The estimated correlation is
+1. We run the algorithm in [estimate cor optim](EstimateCorOptim.html) with 3 different initial points for $\rho$, (-0.5,0,0.5). The $\rho$ in each iteration is estimated using `optim` function. The estimated correlation is
 
 ```{r, warning=FALSE}
-Vhat.mle = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = 'mle')
-Vhat.mle$V
+Vhat.optim = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = 'optim')
+Vhat.optim$V
 ```
 
-2. The result uses algorithm in [estimate cor em](EstimateCorMaxEM2.html). $\rho$ in each iteration is the root of a third degree polynomial.
+2. The result uses algorithm in [estimate cor em](EstimateCorEM3.html). $\rho$ in each iteration is the root of a third degree polynomial.
 
 ```{r, warning=FALSE}
-Vhat.em = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol = 1e-4, optmethod = 'em2')
-Vhat.em$V
+Vhat.mrho = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol = 1e-4, optmethod = 'mrho')
+Vhat.mrho$V
 ```
 
 The running time (in sec.) for each pairwise correlation is 
 ```{r}
-table = data.frame(rbind(Vhat.mle$ttime, Vhat.em$ttime), row.names = c('mle', 'em'))
+table = data.frame(rbind(Vhat.optim$ttime, Vhat.mrho$ttime), row.names = c('optim', 'mrho'))
 colnames(table) = c('12','13','23')
 table %>% kable() %>% kable_styling()
 ```
 The time is the total running time with different initial point.
 
-3. The result uses algorithm in [estimate cor em V](EstimateCorMaxEMV.html).
+3. The result uses algorithm in [estimate cor em V](EstimateCorMaxMV.html).
 
 ```{r, warning=FALSE}
-Vhat.emV = estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(3), clusterGeneration::rcorrmatrix(3)), tol = 1e-4, optmethod = 'emV')
-Vhat.emV$V
+Vhat.mV = estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(3), clusterGeneration::rcorrmatrix(3)), tol = 1e-4, optmethod = 'mV')
+Vhat.mV$V
 ```
 
 4. Using the original truncated correlation:
@@ -131,36 +135,36 @@ All the estimated correlation matrices above are positive definite.
 
 Check the estimation error:
 ```{r}
-FError = c(norm(Vhat.mle$V - Sigma, 'F'),
-           norm(Vhat.em$V - Sigma, 'F'),
-           norm(Vhat.emV$V - Sigma, 'F'),
+FError = c(norm(Vhat.optim$V - Sigma, 'F'),
+           norm(Vhat.mrho$V - Sigma, 'F'),
+           norm(Vhat.mV$V - Sigma, 'F'),
            norm(Vhat.tru - Sigma, 'F'),
            norm(V.mash - Sigma, 'F'))
-OpError = c(norm(Vhat.mle$V - Sigma, '2'),
-           norm(Vhat.em$V - Sigma, '2'),
-           norm(Vhat.emV$V - Sigma, '2'),
+OpError = c(norm(Vhat.optim$V - Sigma, '2'),
+           norm(Vhat.mrho$V - Sigma, '2'),
+           norm(Vhat.mV$V - Sigma, '2'),
            norm(Vhat.tru - Sigma, '2'),
            norm(V.mash - Sigma, '2'))
-table = data.frame(FrobeniusError = FError, SpectralError = OpError, row.names = c('mle','em','emV','trunc','m.1by1'))
+table = data.frame(FrobeniusError = FError, SpectralError = OpError, row.names = c('optim','mrho','mV','trunc','m.1by1'))
 table %>% kable() %>% kable_styling()
 ```
 
 ### mash log likelihood
-In mash model, the model with correlation from mle has larger loglikelihood.
+In mash model, the model with correlation from optim has larger loglikelihood.
 
 ```{r}
-m.data.mle = mash_set_data(data$Bhat, data$Shat, V=Vhat.mle$V)
-m.model.mle = mash(m.data.mle, c(U.c,U.ed), verbose = FALSE)
+m.data.optim = mash_set_data(data$Bhat, data$Shat, V=Vhat.optim$V)
+m.model.optim = mash(m.data.optim, c(U.c,U.ed), verbose = FALSE)
 ```
 
 ```{r}
-m.data.em = mash_set_data(data$Bhat, data$Shat, V=Vhat.em$V)
-m.model.em = mash(m.data.em, c(U.c,U.ed), verbose = FALSE)
+m.data.mrho = mash_set_data(data$Bhat, data$Shat, V=Vhat.mrho$V)
+m.model.mrho = mash(m.data.mrho, c(U.c,U.ed), verbose = FALSE)
 ```
 
 ```{r}
-m.data.emV = mash_set_data(data$Bhat, data$Shat, V=Vhat.emV$V)
-m.model.emV = mash(m.data.emV, c(U.c,U.ed), verbose = FALSE)
+m.data.mV = mash_set_data(data$Bhat, data$Shat, V=Vhat.mV$V)
+m.model.mV = mash(m.data.mV, c(U.c,U.ed), verbose = FALSE)
 ```
 
 ```{r}
@@ -182,34 +186,23 @@ The results are summarized in table:
 ```{r}
 null.ind = which(apply(data$B,1,sum) == 0)
 V.trun = c(get_loglik(m.model.trunc), length(get_significant_results(m.model.trunc)), sum(get_significant_results(m.model.trunc) %in% null.ind))
-V.mle = c(get_loglik(m.model.mle), length(get_significant_results(m.model.mle)), sum(get_significant_results(m.model.mle) %in% null.ind))
-V.em = c(get_loglik(m.model.em), length(get_significant_results(m.model.em)), sum(get_significant_results(m.model.em) %in% null.ind))
-V.emV = c(get_loglik(m.model.emV), length(get_significant_results(m.model.emV)), sum(get_significant_results(m.model.emV) %in% null.ind))
+V.optim = c(get_loglik(m.model.optim), length(get_significant_results(m.model.optim)), sum(get_significant_results(m.model.optim) %in% null.ind))
+V.mrho = c(get_loglik(m.model.mrho), length(get_significant_results(m.model.mrho)), sum(get_significant_results(m.model.mrho) %in% null.ind))
+V.mV = c(get_loglik(m.model.mV), length(get_significant_results(m.model.mV)), sum(get_significant_results(m.model.mV) %in% null.ind))
 V.1by1 = c(get_loglik(m.model.1by1), length(get_significant_results(m.model.1by1)), sum(get_significant_results(m.model.1by1) %in% null.ind))
 V.correct = c(get_loglik(m.model.correct), length(get_significant_results(m.model.correct)), sum(get_significant_results(m.model.correct) %in% null.ind))
-temp = cbind(V.mle, V.em, V.emV, V.trun, V.1by1, V.correct)
-colnames(temp) = c('MLE','EM','EMV', 'Truncate', 'm.1by1', 'True')
+temp = cbind(V.optim, V.mrho, V.mV, V.trun, V.1by1, V.correct)
+colnames(temp) = c('optim','Mrho','MV', 'Truncate', 'm.1by1', 'True')
 row.names(temp) = c('log likelihood', '# significance', '# False positive')
 temp %>% kable() %>% kable_styling()
-```
-
-The estimated `pi` is
-```{r fig.align = "center"}
-par(mfrow=c(2,3))
-barplot(get_estimated_pi(m.model.mle), las=2, cex.names = 0.7, main='MLE', ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.em), las=2, cex.names = 0.7, main='EM', ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.emV), las=2, cex.names = 0.7, main='EMV', ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.trunc), las=2, cex.names = 0.7, main='Truncate', ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.1by1), las=2, cex.names = 0.7, main='m.1by1', ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.correct), las=2, cex.names = 0.7, main='True', ylim=c(0,0.8))
 ```
 
 ### ROC
 
 ```{r}
-m.mle.seq = ROC.table(data$B, m.model.mle)
-m.em.seq = ROC.table(data$B, m.model.em)
-m.emV.seq = ROC.table(data$B, m.model.emV)
+m.optim.seq = ROC.table(data$B, m.model.optim)
+m.mrho.seq = ROC.table(data$B, m.model.mrho)
+m.mV.seq = ROC.table(data$B, m.model.mV)
 m.trun.seq = ROC.table(data$B, m.model.trunc)
 m.1by1.seq = ROC.table(data$B, m.model.1by1)
 m.correct.seq = ROC.table(data$B, m.model.correct)
@@ -217,25 +210,25 @@ m.correct.seq = ROC.table(data$B, m.model.correct)
 
 ```{r echo=FALSE, fig.align = "center"}
 {plot(m.correct.seq[,'FPR'], m.correct.seq[,'TPR'],type='l',xlab = 'FPR', ylab='TPR', main='True Positive vs False Positive', cex=1.5, lwd = 1.5)
-lines(m.mle.seq[,'FPR'], m.mle.seq[,'TPR'], col='red', lwd = 1.5)
-lines(m.em.seq[,'FPR'], m.em.seq[,'TPR'], col='green', lwd = 1.5)
-lines(m.emV.seq[,'FPR'], m.emV.seq[,'TPR'], col='purple', lwd = 1.5)
+lines(m.optim.seq[,'FPR'], m.optim.seq[,'TPR'], col='red', lwd = 1.5)
+lines(m.mrho.seq[,'FPR'], m.mrho.seq[,'TPR'], col='green', lwd = 1.5)
+lines(m.mV.seq[,'FPR'], m.mV.seq[,'TPR'], col='purple', lwd = 1.5)
 lines(m.trun.seq[,'FPR'], m.trun.seq[,'TPR'], col='blue', lwd = 1.5)
 lines(m.1by1.seq[,'FPR'], m.1by1.seq[,'TPR'], col='cyan', lwd = 1.5)
-legend('bottomright', c('True','MLE','EM','EMV','Trunc', 'm.1by1'),col=c('black','red','green','purple', 'blue', 'cyan'),lty=c(1,1,1,1,1,1), lwd=c(1.5,1.5,1.5,1.5,1.5, 1.5))}
+legend('bottomright', c('True','optim','Mrho','MV','Trunc', 'm.1by1'),col=c('black','red','green','purple', 'blue', 'cyan'),lty=c(1,1,1,1,1,1), lwd=c(1.5,1.5,1.5,1.5,1.5, 1.5))}
 ```
 
 ### RRMSE
 
 ```{r}
-rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.model.mle, m.model.em, m.model.emV, m.model.trunc, m.model.1by1, m.model.correct)))
-colnames(rrmse) = c('MLE','EM','EMV', 'Truncate','m.1by1','True')
+rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.model.optim, m.model.mrho, m.model.mV, m.model.trunc, m.model.1by1, m.model.correct)))
+colnames(rrmse) = c('optim','Mrho','MV', 'Truncate','m.1by1','True')
 row.names(rrmse) = 'RRMSE'
 rrmse %>% kable() %>% kable_styling()
 ```
 
 ```{r}
-barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c('MLE','EM', 'EMV','Truncate','m.1by1','True'), las=2, cex.names = 0.7, main='RRMSE')
+barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c('optim','Mrho', 'MV','Truncate','m.1by1','True'), las=2, cex.names = 0.7, main='RRMSE')
 ```
 
 ## More simulations: p = 5
@@ -257,7 +250,7 @@ U1 = U0; U1[1,1] = 1
 U2 = U0; U2[c(1:2), c(1:2)] = 1
 U3 = matrix(1, p,p)
 Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
-for(t in 1:10){
+for(t in 1:20){
   Vtrue = clusterGeneration::rcorrmatrix(p)
   data = generate_data(n, p, Vtrue, Utrue)
   # mash cov
@@ -268,10 +261,10 @@ for(t in 1:10){
   U.pca = cov_pca(m.data, 3, subset = strong)
   U.ed = cov_ed(m.data, U.pca, subset = strong)
   U.c = cov_canonical(m.data)
-  Vhat.mle <- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = 'mle')
-  Vhat.em <- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = 'em2')
-  Vhat.emV <- estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(p), clusterGeneration::rcorrmatrix(p)),tol=1e-4, optmethod = 'emV')
-  saveRDS(list(V.true = Vtrue, V.mle = Vhat.mle, V.em = Vhat.em, V.emV = Vhat.emV, data = data, strong=strong),
+  Vhat.optim <- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = 'optim')
+  Vhat.mrho <- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = 'mrho')
+  Vhat.mV <- estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(p), clusterGeneration::rcorrmatrix(p)),tol=1e-4, optmethod = 'mV')
+  saveRDS(list(V.true = Vtrue, V.optim = Vhat.optim, V.mrho = Vhat.mrho, V.mV = Vhat.mV, data = data, strong=strong),
           paste0('../output/MASH.result.',t,'.rds'))
 }
 
@@ -287,8 +280,8 @@ for(i in 1:times) {
 ```
 
 ```{r warning=FALSE}
-mle.pd = numeric(times)
-em.pd = numeric(times)
+optim.pd = numeric(times)
+mrho.pd = numeric(times)
 for(i in 1:times){
   m.data = mash_set_data(result[[i]]$data$Bhat, result[[i]]$data$Shat)
   
@@ -309,116 +302,119 @@ for(i in 1:times){
   m.data.1by1 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.1by1)
   m.model.1by1 = mash(m.data.1by1, c(U.c,U.ed), verbose = FALSE)
   
-  m.data.emV = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.emV$V)
-  m.model.emV = mash(m.data.emV, c(U.c,U.ed), verbose = FALSE)
+  m.data.mV = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.mV$V)
+  m.model.mV = mash(m.data.mV, c(U.c,U.ed), verbose = FALSE)
   
-  # MLE
+  # optim
   
-  m.model.mle = m.model.mle.F = m.model.mle.2 = list()
-  R <- tryCatch(chol(result[[i]]$V.mle$V),error = function (e) FALSE)
+  m.model.optim = m.model.optim.F = m.model.optim.2 = list()
+  R <- tryCatch(chol(result[[i]]$V.optim$V),error = function (e) FALSE)
   if(is.matrix(R)){
-    mle.pd[i] = 1
-    m.data.mle = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.mle$V)
-    m.model.mle = mash(m.data.mle, c(U.c,U.ed), verbose = FALSE)
+    optim.pd[i] = 1
+    m.data.optim = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.optim$V)
+    m.model.optim = mash(m.data.optim, c(U.c,U.ed), verbose = FALSE)
   }else{
-    V.mle.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.mle$V, conv.norm.type = 'F', keepDiag = TRUE)$mat)
-    V.mle.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.mle$V, conv.norm.type = '2', keepDiag = TRUE)$mat)
+    V.optim.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.optim$V, conv.norm.type = 'F', keepDiag = TRUE)$mat)
+    V.optim.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.optim$V, conv.norm.type = '2', keepDiag = TRUE)$mat)
     
-    result[[i]]$V.mle.F = V.mle.near.F
-    result[[i]]$V.mle.2 = V.mle.near.2
+    result[[i]]$V.optim.F = V.optim.near.F
+    result[[i]]$V.optim.2 = V.optim.near.2
     
     # mashmodel
-    m.data.mle.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mle.near.F)
-    m.model.mle.F = mash(m.data.mle.F, c(U.c,U.ed), verbose = FALSE)
+    m.data.optim.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.optim.near.F)
+    m.model.optim.F = mash(m.data.optim.F, c(U.c,U.ed), verbose = FALSE)
     
-    m.data.mle.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mle.near.2)
-    m.model.mle.2 = mash(m.data.mle.2, c(U.c,U.ed), verbose = FALSE)
+    m.data.optim.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.optim.near.2)
+    m.model.optim.2 = mash(m.data.optim.2, c(U.c,U.ed), verbose = FALSE)
   }
   
-  # EM
-  m.model.em = m.model.em.F = m.model.em.2 = list()
-  R <- tryCatch(chol(result[[i]]$V.em$V),error = function (e) FALSE)
+  # Mrho
+  m.model.mrho = m.model.mrho.F = m.model.mrho.2 = list()
+  R <- tryCatch(chol(result[[i]]$V.mrho$V),error = function (e) FALSE)
   if(is.matrix(R)){
-    em.pd[i] = 1
-    m.data.em = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.em$V)
-    m.model.em = mash(m.data.em, c(U.c,U.ed), verbose = FALSE)
+    mrho.pd[i] = 1
+    m.data.mrho = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.mrho$V)
+    m.model.mrho = mash(m.data.mrho, c(U.c,U.ed), verbose = FALSE)
   }else{
-    V.em.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.em$V, conv.norm.type = 'F', keepDiag = TRUE)$mat)
-    V.em.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.em$V, conv.norm.type = '2', keepDiag = TRUE)$mat)
+    V.mrho.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.mrho$V, conv.norm.type = 'F', keepDiag = TRUE)$mat)
+    V.mrho.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.mrho$V, conv.norm.type = '2', keepDiag = TRUE)$mat)
     
-    result[[i]]$V.em.F = V.em.near.F
-    result[[i]]$V.em.2 = V.em.near.2
+    result[[i]]$V.mrho.F = V.mrho.near.F
+    result[[i]]$V.mrho.2 = V.mrho.near.2
     
     # mashmodel
-    m.data.em.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.em.near.F)
-    m.model.em.F = mash(m.data.em.F, c(U.c,U.ed), verbose = FALSE)
+    m.data.mrho.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mrho.near.F)
+    m.model.mrho.F = mash(m.data.mrho.F, c(U.c,U.ed), verbose = FALSE)
       
-    m.data.em.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.em.near.2)
-    m.model.em.2 = mash(m.data.em.2, c(U.c,U.ed), verbose = FALSE)
+    m.data.mrho.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mrho.near.2)
+    m.model.mrho.2 = mash(m.data.mrho.2, c(U.c,U.ed), verbose = FALSE)
   }
   
   result[[i]]$m.model = list(m.model.true = m.model.true, m.model.trunc = m.model.trunc, 
-                             m.model.1by1 = m.model.1by1, m.model.emV = m.model.emV,
-                             m.model.mle = m.model.mle,
-                             m.model.mle.F = m.model.mle.F, m.model.mle.2 = m.model.mle.2, 
-                             m.model.em = m.model.em,
-                             m.model.em.F = m.model.em.F, m.model.em.2 = m.model.em.2)
+                             m.model.1by1 = m.model.1by1, m.model.mV = m.model.mV,
+                             m.model.optim = m.model.optim,
+                             m.model.optim.F = m.model.optim.F, m.model.optim.2 = m.model.optim.2, 
+                             m.model.mrho = m.model.mrho,
+                             m.model.mrho.F = m.model.mrho.F, m.model.mrho.2 = m.model.mrho.2)
 }
 ```
 
 ### Error
 
-The column with `.F`, `.2` are from the nearest positive definite matrix with respect to Frobenius norm and spectral norm.
-
 The Frobenius norm is
 ```{r}
 temp = matrix(0,nrow = times, ncol = 7)
 for(i in 1:times){
-  temp[i, ] = error.cor(result[[i]], norm.type='F', mle.pd = mle.pd[i], em.pd = em.pd[i])
+  temp[i, ] = error.cor(result[[i]], norm.type='F', optim.pd = optim.pd[i], mrho.pd = mrho.pd[i])
 }
-colnames(temp) = c('Trunc','m.1by1', 'MLE','MLE.F', 'EM', 'EM.F', 'EMV')
-temp[temp==0] = NA
-temp %>% kable() %>% kable_styling()
+colnames(temp) = c('Trunc','m.1by1', 'optim','optim.F', 'Mrho', 'Mrho.F', 'MV')
+temp = reshape2::melt(temp[,c(-4,-6)])
+colnames(temp) = c('Data', 'Method', 'FrobError')
+ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()
 ```
 
 The spectral norm is
 ```{r}
 temp = matrix(0,nrow = times, ncol = 7)
 for(i in 1:times){
-  temp[i, ] = error.cor(result[[i]], norm.type='2', mle.pd = mle.pd[i], em.pd = em.pd[i])
+  temp[i, ] = error.cor(result[[i]], norm.type='2', optim.pd = optim.pd[i], mrho.pd = mrho.pd[i])
 }
-colnames(temp) = c('Trunc','m.1by1', 'MLE','MLE.2', 'EM', 'EM.2', 'EMV')
-temp[temp==0] = NA
-temp %>% kable() %>% kable_styling()
+colnames(temp) = c('Trunc','m.1by1', 'optim','optim.2', 'Mrho', 'Mrho.2', 'MV')
+temp = reshape2::melt(temp[,c(-4,-6)])
+colnames(temp) = c('Data', 'Method', 'SpecError')
+ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()
 ```
 
 ### Time
 
 The total running time for each matrix is
 ```{r}
-mle.time = em.time = numeric(times)
+optim.time = mrho.time = mV.time = numeric(times)
 for(i in 1:times){
-  mle.time[i] = sum(result[[i]]$V.mle$ttime)
-  em.time[i] = sum(result[[i]]$V.em$ttime)
+  optim.time[i] = sum(result[[i]]$V.optim$ttime)
+  mrho.time[i] = sum(result[[i]]$V.mrho$ttime)
+  mV.time[i] = sum(result[[i]]$V.mV$ttime)
 }
-temp = cbind(mle.time, em.time)
-colnames(temp) = c('MLE', 'EM')
-row.names(temp) = 1:10
-temp %>% kable() %>% kable_styling()
+temp = cbind(optim.time, mrho.time, mV.time)
+colnames(temp) = c('optim', 'Mrho', 'mV')
+row.names(temp) = 1:20
+
+temp = melt(temp)
+colnames(temp) = c('Data', 'Method', 'Time')
+ggplot(temp, aes(x = Data, y=Time, group = Method, color = Method)) + geom_line()
 ```
 
 ### mash log likelihood
 
-The `NA` means the estimated correlation matrix is not positive definite.
-
 ```{r}
 temp = matrix(0,nrow = times, ncol = 10)
 for(i in 1:times){
-  temp[i, ] = loglik.cor(result[[i]]$m.model, mle.pd = mle.pd[i], em.pd = em.pd[i])
+  temp[i, ] = loglik.cor(result[[i]]$m.model, optim.pd = optim.pd[i], mrho.pd = mrho.pd[i])
 }
-colnames(temp) = c('True', 'Trunc','m.1by1', 'MLE','MLE.F', 'MLE.2', 'EM', 'EM.F', 'EM.2','EMV')
-temp[temp == 0] = NA
-temp[,-c(6,9)] %>% kable() %>% kable_styling()
+colnames(temp) = c('True', 'Trunc','m.1by1', 'optim','optim.F', 'optim.2', 'Mrho', 'Mrho.F', 'Mrho.2','MV')
+temp = melt(temp[,-c(5,6,8,9)])
+colnames(temp) = c('Data', 'Method', 'loglikelihood')
+ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()
 ```
 
 ### ROC
@@ -426,7 +422,7 @@ temp[,-c(6,9)] %>% kable() %>% kable_styling()
 ```{r}
 par(mfrow=c(1,2))
 for(i in 1:times){
-  plotROC(result[[i]]$data$B, result[[i]]$m.model, mle.pd = mle.pd[i], em.pd = em.pd[i], title=paste0('Data', i, ' '))
+  plotROC(result[[i]]$data$B, result[[i]]$m.model, optim.pd = optim.pd[i], mrho.pd = mrho.pd[i], title=paste0('Data', i, ' '))
 }
 ```
 
