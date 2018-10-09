@@ -213,7 +213,7 @@ Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
 data = generate_data(n, p, Sigma, Utrue)
 ```
 
-```{r}
+```{r eval=FALSE}
 m.data = mash_set_data(data$Bhat, data$Shat)
 U.c = cov_canonical(m.data)
 grid = mashr:::autoselect_grid(m.data, sqrt(2))
@@ -221,6 +221,11 @@ Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 
 result.em <- mixture.EM.times(m.data$Bhat, xUlist)
+saveRDS(result.em, '../output/result.em.rds')
+```
+
+```{r}
+result.em = readRDS('../output/result.em.rds')
 ```
 The estimated $\rho$ is `r result.em$rho`. The running time is `result.em$time` seconds.
 
