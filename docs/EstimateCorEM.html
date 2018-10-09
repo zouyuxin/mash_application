@@ -322,7 +322,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-09-20</p>
+<p><strong>Last updated:</strong> 2018-10-09</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -346,7 +346,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/2c5aa17473dccbd983cc927afda24844f27c8add" target="_blank">2c5aa17</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/cd7ebf9f2e353299f1e85a154e4f6d0220b8427b" target="_blank">cd7ebf9</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -367,6 +367,7 @@ Untracked files:
     Untracked:  analysis/EstimateCorEM3.Rmd
     Untracked:  analysis/EstimateCorMaxEMGD.Rmd
     Untracked:  analysis/EstimateCorMaxGD.Rmd
+    Untracked:  analysis/EstimateCorMaxMV.Rmd
     Untracked:  analysis/EstimateCorOptimEM.Rmd
     Untracked:  analysis/EstimateCorPrior.Rmd
     Untracked:  analysis/EstimateCorSol.Rmd
@@ -378,9 +379,9 @@ Untracked files:
     Untracked:  analysis/OutlierDetection2.Rmd
     Untracked:  analysis/OutlierDetection3.Rmd
     Untracked:  analysis/OutlierDetection4.Rmd
-    Untracked:  analysis/Test.Rmd
     Untracked:  analysis/mash_missing_row.Rmd
     Untracked:  code/GTExNullModel.R
+    Untracked:  code/MASH.result.1.rds
     Untracked:  code/MashClassify.R
     Untracked:  code/MashCorResult.R
     Untracked:  code/MashNULLCorResult.R
@@ -453,8 +454,10 @@ Untracked files:
     Untracked:  output/UKBio_mash_model.rds
 
 Unstaged changes:
+    Modified:   analysis/EstimateCorIndex.Rmd
     Deleted:    analysis/EstimateCorMax.Rmd
     Modified:   analysis/EstimateCorMaxEM2.Rmd
+    Modified:   analysis/EstimateCorMaxMash.Rmd
     Deleted:    analysis/MashLowSignalGTEx3.5P.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
@@ -495,6 +498,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/cd7ebf9f2e353299f1e85a154e4f6d0220b8427b/analysis/EstimateCorEM.Rmd" target="_blank">cd7ebf9</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorEM.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/597d99ef0b0cf496ef608c186d21b2db694452fd/docs/EstimateCorEM.html" target="_blank">597d99e</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-09-20
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/2c5aa17473dccbd983cc927afda24844f27c8add/analysis/EstimateCorEM.Rmd" target="_blank">2c5aa17</a>
 </td>
 <td style="text-align:left;">
@@ -514,7 +551,7 @@ wflow_publish(“analysis/EstimateCorEM.Rmd”)
 <hr />
 <!-- Update knitr chunk options -->
 <!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-09-20</p>
+<p><strong>Last updated:</strong> 2018-10-09</p>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
@@ -524,29 +561,29 @@ source(&#39;../code/summary.R&#39;)</code></pre>
 <div id="e-step" class="section level2">
 <h2>E step</h2>
 <p><span class="math display">\[
-P(X,\mathbf{z}|\rho, \pi) = \prod_{i=1}^{n} \prod_{k=0}^{K}\left[\pi_{k}N(x_{i}; 0, \Sigma_{k})\right]^{\mathbb{I}(z_{i}=k)} \prod_{k=0}^{K}\pi_{k}^{\lambda_{k}-1}
+P(X,\mathbf{z}|\rho, \pi) = \prod_{i=1}^{n} \prod_{p=0}^{P}\left[\pi_{p}N(x_{i}; 0, \Omega_{p})\right]^{\mathbb{I}(z_{i}=p)} \prod_{p=0}^{P}\pi_{p}^{\lambda_{p}-1}
 \]</span></p>
 <p><span class="math display">\[
-\mathbb{E}_{\mathbf{z}|X} \log P(X,\mathbf{z}|\rho, \pi) = \sum_{i=1}^{n} \sum_{k=0}^{K} P(z_{i}=k|X)\left[ \log \pi_{k} + \log N(x_{i}; 0, \Sigma_{k})\right] + \sum_{k=0}^{K} (\lambda_{k}-1)\log \pi_{k}
+\mathbb{E}_{\mathbf{z}|X} \log P(X,\mathbf{z}|\rho, \pi) = \sum_{i=1}^{n} \sum_{p=0}^{P} P(z_{i}=p|X)\left[ \log \pi_{p} + \log N(x_{i}; 0, \Omega_{p})\right] + \sum_{p=0}^{P} (\lambda_{p}-1)\log \pi_{p}
 \]</span></p>
 <p><span class="math display">\[
-\gamma_{z_{i}}(k) = P(z_{i}=k|X_{i}) = \frac{\pi_{k}N(x_{i}; 0, \Sigma_{k})}{\sum_{k&#39;=0}^{K}\pi_{k&#39;}N(x_{i}; 0, \Sigma_{k&#39;})}
+\gamma_{z_{i}}(p) = P(z_{i}=p|X_{i}) = \frac{\pi_{p}N(x_{i}; 0, \Omega_{p})}{\sum_{p&#39;=0}^{P}\pi_{p&#39;}N(x_{i}; 0, \Omega_{p&#39;})}
 \]</span></p>
 </div>
 <div id="m-step" class="section level2">
 <h2>M step</h2>
 <p><span class="math inline">\(\pi\)</span>: <span class="math display">\[
-\sum_{i=1}^{n} \gamma_{z_{i}}(k) \frac{1}{\pi_{k}} + \frac{\lambda_{k}-1}{\pi_{k}} - \lambda = 0 \quad \rightarrow \pi_{k} = \frac{1}{\lambda} \left(\sum_{i=1}^{n} \gamma_{z_{i}}(k) + \lambda_{k}-1\right) \quad \lambda = n + \sum_{k=1}^{K}\lambda_{k} - K 
+\sum_{i=1}^{n} \gamma_{z_{i}}(p) \frac{1}{\pi_{p}} + \frac{\lambda_{p}-1}{\pi_{p}} - \lambda = 0 \quad \rightarrow \pi_{p} = \frac{1}{\lambda} \left(\sum_{i=1}^{n} \gamma_{z_{i}}(p) + \lambda_{p}-1\right) \quad \lambda = n + \sum_{p=1}^{P}\lambda_{p} - P 
 \]</span></p>
 <p><span class="math display">\[
-\hat{\pi}_{k} = \frac{\sum_{i=1}^{n} \gamma_{z_{i}}(k) + \lambda_{k} - 1 }{n + \sum_{k=1}^{K}\lambda_{k} - K } 
+\hat{\pi}_{p} = \frac{\sum_{i=1}^{n} \gamma_{z_{i}}(p) + \lambda_{p} - 1 }{n + \sum_{p=1}^{P}\lambda_{p} - P } 
 \]</span></p>
 <p><span class="math inline">\(\rho\)</span>: <span class="math display">\[
 \begin{align*}
-f(\rho) &amp;= \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{z_{i}}(k)\left[ -\frac{1}{2}\log (1-\phi_{k}^2)-\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right] \right]\\
-f(\rho)&#39; &amp;= \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{z_{i}}(k)\left[ \frac{\phi_{k}}{1-\phi_{k}^2}-\frac{\phi_{k}}{(1-\phi_{k}^2)^2}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2}\right] - \frac{\phi_{k}+1}{(1-\phi_{k}^2)^2}\frac{x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]\frac{1}{\sigma_{k11}\sigma_{k22}} = 0
+f(\rho) &amp;= \sum_{i=1}^{n} \sum_{p=1}^{P} \gamma_{z_{i}}(p)\left[ -\frac{1}{2}\log (1-\phi_{p}^2)-\frac{1}{2(1-\phi_{p}^2)}\left[ \frac{x_{i}^2}{\omega_{p11}^2} + \frac{y_{i}^2}{\omega_{p22}^2} - \frac{2\phi_{p}x_{i}y_{i}}{\omega_{p11}\omega_{p22}}\right] \right]\\
+f(\rho)&#39; &amp;= \sum_{i=1}^{n} \sum_{p=1}^{P} \gamma_{z_{i}}(p)\left[ \frac{\phi_{p}}{1-\phi_{p}^2}-\frac{\phi_{p}}{(1-\phi_{p}^2)^2}\left[ \frac{x_{i}^2}{\omega_{p11}^2} + \frac{y_{i}^2}{\omega_{p22}^2}\right] - \frac{\phi_{p}+1}{(1-\phi_{p}^2)^2}\frac{x_{i}y_{i}}{\omega_{p11}\omega_{p22}}\right]\frac{1}{\omega_{p11}\omega_{p22}} = 0
 \end{align*}
-\]</span> <span class="math inline">\(\phi_k = \frac{\rho + u_{k12}}{\sigma_{k11}\sigma_{k22}}\)</span>, <span class="math inline">\(\phi_{k}\)</span> is a function of <span class="math inline">\(\rho\)</span>.</p>
+\]</span> <span class="math inline">\(\phi_p = \frac{\rho + \sigma_{p12}}{\omega_{p11}\omega_{p22}}\)</span>, <span class="math inline">\(\phi_{p}\)</span> is a function of <span class="math inline">\(\rho\)</span>.</p>
 <p>Algorithm:</p>
 <pre class="r"><code>Input: X, Ulist, init_rho, init_pi
 Compute loglikelihood
@@ -556,7 +593,9 @@ while delta &gt; tol
   M step: update pi, update rho
   Compute loglikelihood
   Update delta</code></pre>
-<pre class="r"><code>get_sigma &lt;- function(rho, Ulist){
+<pre class="r"><code>#&#39; @param rho the off diagonal element of V, 2 by 2 correlation matrix
+#&#39; @param Ulist a list of covariance matrices, U_{k}
+get_sigma &lt;- function(rho, Ulist){
   V &lt;- matrix(c(1,rho,rho,1), 2,2)
   lapply(Ulist, function(U) U + V)
 }
@@ -566,6 +605,12 @@ penalty &lt;- function(prior, pi_s){
   sum((prior-1)[subset]*log(pi_s[subset]))
 }
 
+#&#39; @title compute log likelihood
+#&#39; @param L log likelihoods,
+#&#39; where the (i,k)th entry is the log probability of observation i
+#&#39; given it came from component k of g
+#&#39; @param p the vector of mixture proportions
+#&#39; @param prior the weight for the penalty
 compute.log.lik &lt;- function(lL, p, prior){
   p = normalize(pmax(0,p))
   temp = log(exp(lL$loglik_matrix) %*% p)+lL$lfactors
@@ -587,10 +632,10 @@ normalize &lt;- function(x){
     out.time = system.time(result[[i]] &lt;- mixture.EM(X, Ulist,
                                                      init_pi=init_pi,
                                                      init_rho=init_rho[i],
-                                                     prior=prior, 
+                                                     prior=prior,
                                                      control = control))
     time.t = c(time.t, out.time[&#39;elapsed&#39;])
-    loglik = c(loglik, -result[[i]]$B)
+    loglik = c(loglik, result[[i]]$loglik)
     rho = c(rho, result[[i]]$rhohat)
     converge.status = c(converge.status, result[[i]]$converged)
   }
@@ -611,30 +656,30 @@ mixture.EM &lt;- function(X, Ulist, init_rho=0, init_pi = NULL, prior = c(&#39;n
     init_pi &lt;- rep(1/k,k)
   }
   control = ashr:::set_control_squarem(control,nrow(X))
-  res = SQUAREM::squarem(par=c(init_pi, init_rho),fixptfn=fixpoint, objfn=negpenloglik,X=X, Ulist=Ulist, prior=prior, control=control)
-  
-  return(list(pihat = normalize(pmax(0,head(res$par, -1))), rho = tail(res$par, 1), loglik=-res$value.objfn, niter = res$iter, converged=res$convergence, control=control))
+  res = SQUAREM::squarem(par=c(init_pi, init_rho),fixptfn=fixpoint_EM, objfn=negpenloglik,X=X, Ulist=Ulist, prior=prior, control=control)
+
+  return(list(pihat = normalize(pmax(0,head(res$par, -1))), rhohat = tail(res$par, 1), loglik=-res$value.objfn, niter = res$iter, converged=res$convergence, control=control))
 }
 
-fixpoint = function(para, X, Ulist, prior){
-  rho = tail(para,1)
-  pi_s = head(para, -1)
+fixpoint_EM = function(par, X, Ulist, prior){
+  rho = tail(par,1)
+  pi_s = head(par, -1)
   pi_s = normalize(pmax(0,pi_s)) #avoid occasional problems with negative pis due to rounding
-  
+
   # compute L
   Sigma &lt;- get_sigma(rho, Ulist)
   L &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
-  
+
   # E
   m  = t(pi_s * t(L)) # matrix_lik is n by k; so this is also n by k
   m.rowsum = rowSums(m)
   classprob = m/m.rowsum #an n by k matrix
-  
+
   # M
   pinew = normalize(colSums(classprob) + prior - 1)
-  
+
   rhonew = optimize(EMloglikelihood, interval = c(-1,1), maximum = TRUE, X = X, Ulist = Ulist, z = classprob)$maximum
-  
+
   return(c(pinew,rhonew))
 }
 
@@ -644,20 +689,20 @@ EMloglikelihood = function(rho, X, Ulist, z){
   sum(L * z)
 }
 
-negpenloglik = function(para, X, Ulist, prior){
-  Sigma &lt;- get_sigma(tail(para,1), Ulist)
+negpenloglik = function(par, X, Ulist, prior){
+  Sigma &lt;- get_sigma(tail(par,1), Ulist)
   lL &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
   lfactors &lt;- apply(lL,1,max)
   matrix_llik &lt;- lL - lfactors
   lL = list(loglik_matrix = matrix_llik,
-              lfactors   = lfactors)
-  ll &lt;- compute.log.lik(lL, head(para, -1), prior)
-  
+            lfactors   = lfactors)
+  ll &lt;- compute.log.lik(lL, head(par, -1), prior)
   return(-ll)
 }</code></pre>
 </div>
-<div id="data" class="section level2">
-<h2>Data</h2>
+</div>
+<div id="data" class="section level1">
+<h1>Data</h1>
 <p><span class="math display">\[
 \hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.5 \\
                                           0.5 &amp; 1 \end{matrix}\right))
@@ -684,128 +729,13 @@ grid = mashr:::autoselect_grid(m.data, sqrt(2))
 Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 
-result.em &lt;- mixture.EM(m.data$Bhat, xUlist)</code></pre>
-<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5066755.</p>
+result.em &lt;- mixture.EM.times(m.data$Bhat, xUlist)</code></pre>
+<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5066755. The running time is <code>result.em$time</code> seconds.</p>
 <pre class="r"><code>m.data.em = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.em$rho,result.em$rho,1),2,2))
 U.c = cov_canonical(m.data.em)
 m.em = mash(m.data.em, U.c, verbose= FALSE)
 null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
-<p>The log likelihood is -1.23025410^{4}. There are 26 significant samples, 0 false positives. The RRMSE is 0.582108.</p>
-</div>
-<div id="another-em-version" class="section level2">
-<h2>Another EM version</h2>
-<p>Algorithm:</p>
-<pre class="r"><code>Input: X, Ulist, init_rho
-Given rho, estimate pi by max loglikelihood (convex problem)
-Compute loglikelihood
-delta = 1
-while delta &gt; tol
-  E step: compute z
-  M step: update rho
-  Given rho, estimate pi by max loglikelihood (convex problem)
-  Compute loglikelihood
-  Update delta</code></pre>
-<pre class="r"><code>mixture.M.times &lt;- function(X, Ulist, init_rho=0, init_pi=NULL, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;), control = list()){
-  times = length(init_rho)
-  result = list()
-  loglik = c()
-  rho = c()
-  time.t = c()
-  converge.status = c()
-  for(i in 1:times){
-    out.time = system.time(result[[i]] &lt;- mixture.M(X, Ulist,
-                                                     init_pi=init_pi,
-                                                     init_rho=init_rho[i],
-                                                     prior=prior, 
-                                                     control = control))
-    time.t = c(time.t, out.time[&#39;elapsed&#39;])
-    loglik = c(loglik, -result[[i]]$B)
-    rho = c(rho, result[[i]]$rhohat)
-    converge.status = c(converge.status, result[[i]]$converged)
-  }
-  if(abs(max(loglik) - min(loglik)) &lt; 1e-4){
-    status = &#39;global&#39;
-  }else{
-    status = &#39;local&#39;
-  }
-  ind = which.max(loglik)
-  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t, converge.status = converge.status))
-}
-
-mixture.M &lt;- function(X, Ulist, init_rho=0, init_pi = NULL, tol=1e-5, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;)) {
-  prior &lt;- match.arg(prior)
-
-  m.model = fit_mash(X, Ulist, rho = init_rho, prior=prior)
-  pi_s = get_estimated_pi(m.model, dimension = &#39;all&#39;)
-  # get complete Ulist
-  xUlist = mashr:::expand_cov(Ulist, m.model$fitted_g$grid, m.model$fitted_g$usepointmass)
-  prior.v &lt;- mashr:::set_prior(length(pi_s), prior)
-  
-  # compute loglikelihood
-  log_liks &lt;- c()
-  log_liks &lt;- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
-  delta.ll &lt;- 1
-  niter &lt;- 0
-  rho = init_rho
-  
-  while(delta.ll &gt; tol){
-    # compute L
-    Sigma &lt;- get_sigma(rho, xUlist)
-    L &lt;- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
-  
-    m  = t(pi_s * t(L)) # matrix_lik is n by k; so this is also n by k
-    m.rowsum = rowSums(m)
-    classprob = m/m.rowsum #an n by k matrix
-  
-    # max_rho
-    rho &lt;- optimize(EMloglikelihood, interval = c(-1,1), maximum = TRUE, X = X, Ulist = xUlist, z = classprob)$maximum
-    
-    m.model = fit_mash(X, Ulist, rho, prior=prior)
-    
-    pi_s = get_estimated_pi(m.model, dimension = &#39;all&#39;)
-    log_liks &lt;- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
-    # Update delta
-    delta.ll &lt;- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
-    niter &lt;- niter + 1
-  }
-
-  return(list(pihat = normalize(pi_s), rho = rho, loglik=log_liks))
-}
-
-EMloglikelihood = function(rho, X, Ulist, z){
-  Sigma = get_sigma(rho, Ulist)
-  L = t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
-  sum(L * z)
-}
-
-fit_mash &lt;- function(X, Ulist, rho, prior=c(&#39;nullbiased&#39;, &#39;uniform&#39;)){
-  m.data = mashr::mash_set_data(Bhat=X, Shat=1, V = matrix(c(1, rho, rho, 1), 2, 2))
-  m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE)
-  return(m.model)
-}</code></pre>
-<pre class="r"><code>set.seed(1)
-n = 4000; p = 2
-Sigma = matrix(c(1,0.5,0.5,1),p,p)
-U0 = matrix(0,2,2)
-U1 = U0; U1[1,1] = 1
-U2 = U0; U2[2,2] = 1
-U3 = matrix(1,2,2)
-Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
-data = generate_data(n, p, Sigma, Utrue)</code></pre>
-<pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
-U.c = cov_canonical(m.data)
-# grid = mashr:::autoselect_grid(m.data, sqrt(2))
-# Ulist = mashr:::normalize_Ulist(U.c)
-# xUlist = mashr:::expand_cov(Ulist,grid,usepointmass=TRUE)
-
-result.m &lt;- mixture.M(m.data$Bhat, Ulist)</code></pre>
-<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5062801.</p>
-<pre class="r"><code>m.data.m = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.m$rho,result.m$rho,1),2,2))
-U.c.m = cov_canonical(m.data.m)
-m.m = mash(m.data.m, U.c, verbose= FALSE)
-null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
-<p>The log likelihood is -1.23025410^{4}. There are 26 significant samples, 0 false positives. The RRMSE is 0.5820861.</p>
-</div>
+<p>The log likelihood is -12302.54. There are 26 significant samples, 0 false positives. The RRMSE is 0.582108.</p>
 </div>
 <div id="session-information" class="section level1">
 <h1>Session information</h1>
@@ -826,22 +756,22 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2-12 ashr_2.2-13 
+[1] mashr_0.2-15 ashr_2.2-14 
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.18      knitr_1.20        whisker_0.3-2    
+ [1] Rcpp_0.12.19      knitr_1.20        whisker_0.3-2    
  [4] magrittr_1.5      workflowr_1.1.1   REBayes_1.3      
- [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.11
+ [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.14
 [10] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
 [13] plyr_1.8.4        stringr_1.3.1     tools_3.5.1      
 [16] parallel_3.5.1    grid_3.5.1        R.oo_1.22.0      
 [19] rmeta_3.0         git2r_0.23.0      htmltools_0.3.6  
-[22] iterators_1.0.10  assertthat_0.2.0  yaml_2.2.0       
-[25] rprojroot_1.3-2   digest_0.6.15     Matrix_1.2-14    
-[28] codetools_0.2-15  R.utils_2.6.0     evaluate_0.11    
-[31] rmarkdown_1.10    stringi_1.2.4     compiler_3.5.1   
-[34] Rmosek_8.0.69     backports_1.1.2   R.methodsS3_1.7.1
-[37] mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
+[22] iterators_1.0.10  assertthat_0.2.0  abind_1.4-5      
+[25] yaml_2.2.0        rprojroot_1.3-2   digest_0.6.15    
+[28] Matrix_1.2-14     codetools_0.2-15  R.utils_2.6.0    
+[31] evaluate_0.11     rmarkdown_1.10    stringi_1.2.4    
+[34] compiler_3.5.1    Rmosek_8.0.69     backports_1.1.2  
+[37] R.methodsS3_1.7.1 mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
 <div id="session-information-1" class="section level2">
 <h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
@@ -860,22 +790,22 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2-12 ashr_2.2-13 
+[1] mashr_0.2-15 ashr_2.2-14 
 
 loaded via a namespace (and not attached):
- [1] Rcpp_0.12.18      knitr_1.20        whisker_0.3-2    
+ [1] Rcpp_0.12.19      knitr_1.20        whisker_0.3-2    
  [4] magrittr_1.5      workflowr_1.1.1   REBayes_1.3      
- [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.11
+ [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.14
 [10] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
 [13] plyr_1.8.4        stringr_1.3.1     tools_3.5.1      
 [16] parallel_3.5.1    grid_3.5.1        R.oo_1.22.0      
 [19] rmeta_3.0         git2r_0.23.0      htmltools_0.3.6  
-[22] iterators_1.0.10  assertthat_0.2.0  yaml_2.2.0       
-[25] rprojroot_1.3-2   digest_0.6.15     Matrix_1.2-14    
-[28] codetools_0.2-15  R.utils_2.6.0     evaluate_0.11    
-[31] rmarkdown_1.10    stringi_1.2.4     compiler_3.5.1   
-[34] Rmosek_8.0.69     backports_1.1.2   R.methodsS3_1.7.1
-[37] mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
+[22] iterators_1.0.10  assertthat_0.2.0  abind_1.4-5      
+[25] yaml_2.2.0        rprojroot_1.3-2   digest_0.6.15    
+[28] Matrix_1.2-14     codetools_0.2-15  R.utils_2.6.0    
+[31] evaluate_0.11     rmarkdown_1.10    stringi_1.2.4    
+[34] compiler_3.5.1    Rmosek_8.0.69     backports_1.1.2  
+[37] R.methodsS3_1.7.1 mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
 </div>
 </div>
 
