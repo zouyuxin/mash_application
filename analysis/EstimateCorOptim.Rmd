@@ -247,7 +247,7 @@ m.optim = mash(m.data.optim, U.c, verbose= FALSE)
 null.ind = which(apply(data$B,1,sum) == 0)
 ```
 
-The log likelihood is `r round(get_loglik(m.optim),2)`. There are `r length(get_significant_results(m.optim))` significant samples, `r sum(get_significant_results(m.optim) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.optim))`.
+The log likelihood is `r formatC(get_loglik(m.optim), digits=7)`. There are `r length(get_significant_results(m.optim))` significant samples, `r sum(get_significant_results(m.optim) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.optim))`.
 
 The ROC curve:
 ```{r}
