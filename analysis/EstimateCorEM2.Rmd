@@ -25,7 +25,7 @@ library(mashr)
 
 We use EM algorithm to update $\rho$.
 
-B is the $n\times p$ true value matrix. $\mathbf{z}$ is a length n vector.
+B is the $n\times R$ true value matrix. $\mathbf{z}$ is a length n vector.
 
 # E step
 
