@@ -232,7 +232,11 @@ Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 
 result.optim <- optimize_pi_rho_times(data$Bhat, xUlist, init_rho = 0)
-plot(result.optim$result$loglik)
+```
+
+The log likelihood at each iteration:
+```{r}
+plot(result.optim$result$loglik, ylab = 'log likelihood', xlab = 'iteration')
 ```
 The estimated $\rho$ is `r result.optim$rho`. The running time is `r result.optim$time` seconds.
 
