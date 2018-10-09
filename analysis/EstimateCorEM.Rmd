@@ -227,7 +227,7 @@ saveRDS(result.em, '../output/result.em.rds')
 ```{r}
 result.em = readRDS('../output/result.em.rds')
 ```
-The estimated $\rho$ is `r result.em$rho`. The running time is `result.em$time` seconds.
+The estimated $\rho$ is `r result.em$rho`. The running time is `r result.em$time` seconds.
 
 ```{r}
 m.data.em = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.em$rho,result.em$rho,1),2,2))
