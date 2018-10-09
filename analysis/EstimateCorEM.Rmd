@@ -30,36 +30,36 @@ source('../code/summary.R')
 ## E step
 
 $$
-P(X,\mathbf{z}|\rho, \pi) = \prod_{i=1}^{n} \prod_{k=0}^{K}\left[\pi_{k}N(x_{i}; 0, \Sigma_{k})\right]^{\mathbb{I}(z_{i}=k)} \prod_{k=0}^{K}\pi_{k}^{\lambda_{k}-1}
+P(X,\mathbf{z}|\rho, \pi) = \prod_{i=1}^{n} \prod_{p=0}^{P}\left[\pi_{p}N(x_{i}; 0, \Omega_{p})\right]^{\mathbb{I}(z_{i}=p)} \prod_{p=0}^{P}\pi_{p}^{\lambda_{p}-1}
 $$
 
 $$
-\mathbb{E}_{\mathbf{z}|X} \log P(X,\mathbf{z}|\rho, \pi) = \sum_{i=1}^{n} \sum_{k=0}^{K} P(z_{i}=k|X)\left[ \log \pi_{k} + \log N(x_{i}; 0, \Sigma_{k})\right] + \sum_{k=0}^{K} (\lambda_{k}-1)\log \pi_{k}
+\mathbb{E}_{\mathbf{z}|X} \log P(X,\mathbf{z}|\rho, \pi) = \sum_{i=1}^{n} \sum_{p=0}^{P} P(z_{i}=p|X)\left[ \log \pi_{p} + \log N(x_{i}; 0, \Omega_{p})\right] + \sum_{p=0}^{P} (\lambda_{p}-1)\log \pi_{p}
 $$
 
 $$
-\gamma_{z_{i}}(k) = P(z_{i}=k|X_{i}) = \frac{\pi_{k}N(x_{i}; 0, \Sigma_{k})}{\sum_{k'=0}^{K}\pi_{k'}N(x_{i}; 0, \Sigma_{k'})}
+\gamma_{z_{i}}(p) = P(z_{i}=p|X_{i}) = \frac{\pi_{p}N(x_{i}; 0, \Omega_{p})}{\sum_{p'=0}^{P}\pi_{p'}N(x_{i}; 0, \Omega_{p'})}
 $$
 
 ## M step
 
 $\pi$: 
 $$
-\sum_{i=1}^{n} \gamma_{z_{i}}(k) \frac{1}{\pi_{k}} + \frac{\lambda_{k}-1}{\pi_{k}} - \lambda = 0 \quad \rightarrow \pi_{k} = \frac{1}{\lambda} \left(\sum_{i=1}^{n} \gamma_{z_{i}}(k) + \lambda_{k}-1\right) \quad \lambda = n + \sum_{k=1}^{K}\lambda_{k} - K 
+\sum_{i=1}^{n} \gamma_{z_{i}}(p) \frac{1}{\pi_{p}} + \frac{\lambda_{p}-1}{\pi_{p}} - \lambda = 0 \quad \rightarrow \pi_{p} = \frac{1}{\lambda} \left(\sum_{i=1}^{n} \gamma_{z_{i}}(p) + \lambda_{p}-1\right) \quad \lambda = n + \sum_{p=1}^{P}\lambda_{p} - P 
 $$
 
 $$
-\hat{\pi}_{k} = \frac{\sum_{i=1}^{n} \gamma_{z_{i}}(k) + \lambda_{k} - 1 }{n + \sum_{k=1}^{K}\lambda_{k} - K } 
+\hat{\pi}_{p} = \frac{\sum_{i=1}^{n} \gamma_{z_{i}}(p) + \lambda_{p} - 1 }{n + \sum_{p=1}^{P}\lambda_{p} - P } 
 $$
 
 $\rho$:
 $$
 \begin{align*}
-f(\rho) &= \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{z_{i}}(k)\left[ -\frac{1}{2}\log (1-\phi_{k}^2)-\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right] \right]\\
-f(\rho)' &= \sum_{i=1}^{n} \sum_{k=1}^{K} \gamma_{z_{i}}(k)\left[ \frac{\phi_{k}}{1-\phi_{k}^2}-\frac{\phi_{k}}{(1-\phi_{k}^2)^2}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2}\right] - \frac{\phi_{k}+1}{(1-\phi_{k}^2)^2}\frac{x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]\frac{1}{\sigma_{k11}\sigma_{k22}} = 0
+f(\rho) &= \sum_{i=1}^{n} \sum_{p=1}^{P} \gamma_{z_{i}}(p)\left[ -\frac{1}{2}\log (1-\phi_{p}^2)-\frac{1}{2(1-\phi_{p}^2)}\left[ \frac{x_{i}^2}{\omega_{p11}^2} + \frac{y_{i}^2}{\omega_{p22}^2} - \frac{2\phi_{p}x_{i}y_{i}}{\omega_{p11}\omega_{p22}}\right] \right]\\
+f(\rho)' &= \sum_{i=1}^{n} \sum_{p=1}^{P} \gamma_{z_{i}}(p)\left[ \frac{\phi_{p}}{1-\phi_{p}^2}-\frac{\phi_{p}}{(1-\phi_{p}^2)^2}\left[ \frac{x_{i}^2}{\omega_{p11}^2} + \frac{y_{i}^2}{\omega_{p22}^2}\right] - \frac{\phi_{p}+1}{(1-\phi_{p}^2)^2}\frac{x_{i}y_{i}}{\omega_{p11}\omega_{p22}}\right]\frac{1}{\omega_{p11}\omega_{p22}} = 0
 \end{align*}
 $$
-$\phi_k = \frac{\rho + u_{k12}}{\sigma_{k11}\sigma_{k22}}$, $\phi_{k}$ is a function of $\rho$.
+$\phi_p = \frac{\rho + \sigma_{p12}}{\omega_{p11}\omega_{p22}}$, $\phi_{p}$ is a function of $\rho$.
 
 Algorithm: 
 ```{r, eval=FALSE, tindy = FALSE}
@@ -74,6 +74,8 @@ while delta > tol
 ```
 
 ```{r}
+#' @param rho the off diagonal element of V, 2 by 2 correlation matrix
+#' @param Ulist a list of covariance matrices, U_{k}
 get_sigma <- function(rho, Ulist){
   V <- matrix(c(1,rho,rho,1), 2,2)
   lapply(Ulist, function(U) U + V)
@@ -84,6 +86,12 @@ penalty <- function(prior, pi_s){
   sum((prior-1)[subset]*log(pi_s[subset]))
 }
 
+#' @title compute log likelihood
+#' @param L log likelihoods,
+#' where the (i,k)th entry is the log probability of observation i
+#' given it came from component k of g
+#' @param p the vector of mixture proportions
+#' @param prior the weight for the penalty
 compute.log.lik <- function(lL, p, prior){
   p = normalize(pmax(0,p))
   temp = log(exp(lL$loglik_matrix) %*% p)+lL$lfactors
@@ -108,10 +116,10 @@ mixture.EM.times <- function(X, Ulist, init_rho=0, init_pi=NULL, prior = c('null
     out.time = system.time(result[[i]] <- mixture.EM(X, Ulist,
                                                      init_pi=init_pi,
                                                      init_rho=init_rho[i],
-                                                     prior=prior, 
+                                                     prior=prior,
                                                      control = control))
     time.t = c(time.t, out.time['elapsed'])
-    loglik = c(loglik, -result[[i]]$B)
+    loglik = c(loglik, result[[i]]$loglik)
     rho = c(rho, result[[i]]$rhohat)
     converge.status = c(converge.status, result[[i]]$converged)
   }
@@ -132,30 +140,30 @@ mixture.EM <- function(X, Ulist, init_rho=0, init_pi = NULL, prior = c('nullbias
     init_pi <- rep(1/k,k)
   }
   control = ashr:::set_control_squarem(control,nrow(X))
-  res = SQUAREM::squarem(par=c(init_pi, init_rho),fixptfn=fixpoint, objfn=negpenloglik,X=X, Ulist=Ulist, prior=prior, control=control)
-  
-  return(list(pihat = normalize(pmax(0,head(res$par, -1))), rho = tail(res$par, 1), loglik=-res$value.objfn, niter = res$iter, converged=res$convergence, control=control))
+  res = SQUAREM::squarem(par=c(init_pi, init_rho),fixptfn=fixpoint_EM, objfn=negpenloglik,X=X, Ulist=Ulist, prior=prior, control=control)
+
+  return(list(pihat = normalize(pmax(0,head(res$par, -1))), rhohat = tail(res$par, 1), loglik=-res$value.objfn, niter = res$iter, converged=res$convergence, control=control))
 }
 
-fixpoint = function(para, X, Ulist, prior){
-  rho = tail(para,1)
-  pi_s = head(para, -1)
+fixpoint_EM = function(par, X, Ulist, prior){
+  rho = tail(par,1)
+  pi_s = head(par, -1)
   pi_s = normalize(pmax(0,pi_s)) #avoid occasional problems with negative pis due to rounding
-  
+
   # compute L
   Sigma <- get_sigma(rho, Ulist)
   L <- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
-  
+
   # E
   m  = t(pi_s * t(L)) # matrix_lik is n by k; so this is also n by k
   m.rowsum = rowSums(m)
   classprob = m/m.rowsum #an n by k matrix
-  
+
   # M
   pinew = normalize(colSums(classprob) + prior - 1)
-  
+
   rhonew = optimize(EMloglikelihood, interval = c(-1,1), maximum = TRUE, X = X, Ulist = Ulist, z = classprob)$maximum
-  
+
   return(c(pinew,rhonew))
 }
 
@@ -165,20 +173,19 @@ EMloglikelihood = function(rho, X, Ulist, z){
   sum(L * z)
 }
 
-negpenloglik = function(para, X, Ulist, prior){
-  Sigma <- get_sigma(tail(para,1), Ulist)
+negpenloglik = function(par, X, Ulist, prior){
+  Sigma <- get_sigma(tail(par,1), Ulist)
   lL <- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
   lfactors <- apply(lL,1,max)
   matrix_llik <- lL - lfactors
   lL = list(loglik_matrix = matrix_llik,
-              lfactors   = lfactors)
-  ll <- compute.log.lik(lL, head(para, -1), prior)
-  
+            lfactors   = lfactors)
+  ll <- compute.log.lik(lL, head(par, -1), prior)
   return(-ll)
 }
 ```
 
-## Data
+# Data
 
 $$
 \hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.5 \\
@@ -213,9 +220,9 @@ grid = mashr:::autoselect_grid(m.data, sqrt(2))
 Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 
-result.em <- mixture.EM(m.data$Bhat, xUlist)
+result.em <- mixture.EM.times(m.data$Bhat, xUlist)
 ```
-The estimated $\rho$ is `r result.em$rho`.
+The estimated $\rho$ is `r result.em$rho`. The running time is `result.em$time` seconds.
 
 ```{r}
 m.data.em = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.em$rho,result.em$rho,1),2,2))
@@ -224,139 +231,7 @@ m.em = mash(m.data.em, U.c, verbose= FALSE)
 null.ind = which(apply(data$B,1,sum) == 0)
 ```
 
-The log likelihood is `r round(get_loglik(m.em),2)`. There are `r length(get_significant_results(m.em))` significant samples, `r sum(get_significant_results(m.em) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.em))`.
-
-## Another EM version
-
-Algorithm: 
-```{r, eval=FALSE, tindy = FALSE}
-Input: X, Ulist, init_rho
-Given rho, estimate pi by max loglikelihood (convex problem)
-Compute loglikelihood
-delta = 1
-while delta > tol
-  E step: compute z
-  M step: update rho
-  Given rho, estimate pi by max loglikelihood (convex problem)
-  Compute loglikelihood
-  Update delta
-```
-
-```{r}
-mixture.M.times <- function(X, Ulist, init_rho=0, init_pi=NULL, prior = c('nullbiased', 'uniform'), control = list()){
-  times = length(init_rho)
-  result = list()
-  loglik = c()
-  rho = c()
-  time.t = c()
-  converge.status = c()
-  for(i in 1:times){
-    out.time = system.time(result[[i]] <- mixture.M(X, Ulist,
-                                                     init_pi=init_pi,
-                                                     init_rho=init_rho[i],
-                                                     prior=prior, 
-                                                     control = control))
-    time.t = c(time.t, out.time['elapsed'])
-    loglik = c(loglik, -result[[i]]$B)
-    rho = c(rho, result[[i]]$rhohat)
-    converge.status = c(converge.status, result[[i]]$converged)
-  }
-  if(abs(max(loglik) - min(loglik)) < 1e-4){
-    status = 'global'
-  }else{
-    status = 'local'
-  }
-  ind = which.max(loglik)
-  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t, converge.status = converge.status))
-}
-
-mixture.M <- function(X, Ulist, init_rho=0, init_pi = NULL, tol=1e-5, prior = c('nullbiased', 'uniform')) {
-  prior <- match.arg(prior)
-
-  m.model = fit_mash(X, Ulist, rho = init_rho, prior=prior)
-  pi_s = get_estimated_pi(m.model, dimension = 'all')
-  # get complete Ulist
-  xUlist = mashr:::expand_cov(Ulist, m.model$fitted_g$grid, m.model$fitted_g$usepointmass)
-  prior.v <- mashr:::set_prior(length(pi_s), prior)
-  
-  # compute loglikelihood
-  log_liks <- c()
-  log_liks <- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
-  delta.ll <- 1
-  niter <- 0
-  rho = init_rho
-  
-  while(delta.ll > tol){
-    # compute L
-    Sigma <- get_sigma(rho, xUlist)
-    L <- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
-  
-    m  = t(pi_s * t(L)) # matrix_lik is n by k; so this is also n by k
-    m.rowsum = rowSums(m)
-    classprob = m/m.rowsum #an n by k matrix
-  
-    # max_rho
-    rho <- optimize(EMloglikelihood, interval = c(-1,1), maximum = TRUE, X = X, Ulist = xUlist, z = classprob)$maximum
-    
-    m.model = fit_mash(X, Ulist, rho, prior=prior)
-    
-    pi_s = get_estimated_pi(m.model, dimension = 'all')
-    log_liks <- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
-    # Update delta
-    delta.ll <- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
-    niter <- niter + 1
-  }
-
-  return(list(pihat = normalize(pi_s), rho = rho, loglik=log_liks))
-}
-
-EMloglikelihood = function(rho, X, Ulist, z){
-  Sigma = get_sigma(rho, Ulist)
-  L = t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
-  sum(L * z)
-}
-
-fit_mash <- function(X, Ulist, rho, prior=c('nullbiased', 'uniform')){
-  m.data = mashr::mash_set_data(Bhat=X, Shat=1, V = matrix(c(1, rho, rho, 1), 2, 2))
-  m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE)
-  return(m.model)
-}
-
-```
-
-
-```{r}
-set.seed(1)
-n = 4000; p = 2
-Sigma = matrix(c(1,0.5,0.5,1),p,p)
-U0 = matrix(0,2,2)
-U1 = U0; U1[1,1] = 1
-U2 = U0; U2[2,2] = 1
-U3 = matrix(1,2,2)
-Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
-data = generate_data(n, p, Sigma, Utrue)
-```
-
-```{r}
-m.data = mash_set_data(data$Bhat, data$Shat)
-U.c = cov_canonical(m.data)
-# grid = mashr:::autoselect_grid(m.data, sqrt(2))
-# Ulist = mashr:::normalize_Ulist(U.c)
-# xUlist = mashr:::expand_cov(Ulist,grid,usepointmass=TRUE)
-
-result.m <- mixture.M(m.data$Bhat, Ulist)
-```
-
-The estimated $\rho$ is `r result.m$rho`.
-
-```{r}
-m.data.m = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.m$rho,result.m$rho,1),2,2))
-U.c.m = cov_canonical(m.data.m)
-m.m = mash(m.data.m, U.c, verbose= FALSE)
-null.ind = which(apply(data$B,1,sum) == 0)
-```
-
-The log likelihood is `r round(get_loglik(m.m),2)`. There are `r length(get_significant_results(m.m))` significant samples, `r sum(get_significant_results(m.m) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.m))`.
+The log likelihood is `r formatC(get_loglik(m.em), digits=7)`. There are `r length(get_significant_results(m.em))` significant samples, `r sum(get_significant_results(m.em) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.em))`.
 
 # Session information
 
