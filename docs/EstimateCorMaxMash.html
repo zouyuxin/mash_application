@@ -341,7 +341,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-08-20</p>
+<p><strong>Last updated:</strong> 2018-10-09</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -365,7 +365,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/88274cc08ba72c4a1bb7dc4aaa3fe41982ea75e1" target="_blank">88274cc</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/293f39b89fe19033de060b7be462c9868343ca60" target="_blank">293f39b</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -375,18 +375,21 @@ Ignored files:
     Ignored:    analysis/.DS_Store
     Ignored:    analysis/.Rhistory
     Ignored:    analysis/include/.DS_Store
+    Ignored:    code/.DS_Store
     Ignored:    data/.DS_Store
     Ignored:    docs/.DS_Store
     Ignored:    output/.DS_Store
 
 Untracked files:
     Untracked:  analysis/Classify.Rmd
-    Untracked:  analysis/EstimateCorMaxEM.Rmd
+    Untracked:  analysis/EstimateCorEM3W2.Rmd
     Untracked:  analysis/EstimateCorMaxEMGD.Rmd
+    Untracked:  analysis/EstimateCorMaxGD.Rmd
+    Untracked:  analysis/EstimateCorOptimEM.Rmd
     Untracked:  analysis/EstimateCorPrior.Rmd
     Untracked:  analysis/EstimateCorSol.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
-    Untracked:  analysis/MashLowSignal.Rmd
+    Untracked:  analysis/MashLowSignalGTEx4.Rmd
     Untracked:  analysis/Mash_GTEx.Rmd
     Untracked:  analysis/MeanAsh.Rmd
     Untracked:  analysis/OutlierDetection.Rmd
@@ -394,8 +397,11 @@ Untracked files:
     Untracked:  analysis/OutlierDetection3.Rmd
     Untracked:  analysis/OutlierDetection4.Rmd
     Untracked:  analysis/mash_missing_row.Rmd
+    Untracked:  code/GTExNullModel.R
+    Untracked:  code/MASH.result.1.rds
     Untracked:  code/MashClassify.R
     Untracked:  code/MashCorResult.R
+    Untracked:  code/MashNULLCorResult.R
     Untracked:  code/MashSource.R
     Untracked:  code/Weight_plot.R
     Untracked:  code/addemV.R
@@ -417,24 +423,56 @@ Untracked files:
     Untracked:  output/CovED_UKBio_strong.rds
     Untracked:  output/CovED_UKBio_strong_Z.rds
     Untracked:  output/Flash_UKBio_strong.rds
+    Untracked:  output/GTExNULLres/
+    Untracked:  output/GTEx_2.5_nullData.rds
+    Untracked:  output/GTEx_2.5_nullModel.rds
+    Untracked:  output/GTEx_2.5_nullPermData.rds
+    Untracked:  output/GTEx_2.5_nullPermModel.rds
+    Untracked:  output/GTEx_3.5_nullData.rds
+    Untracked:  output/GTEx_3.5_nullModel.rds
+    Untracked:  output/GTEx_3.5_nullPermData.rds
+    Untracked:  output/GTEx_3.5_nullPermModel.rds
+    Untracked:  output/GTEx_3_nullData.rds
+    Untracked:  output/GTEx_3_nullModel.rds
+    Untracked:  output/GTEx_3_nullPermData.rds
+    Untracked:  output/GTEx_3_nullPermModel.rds
+    Untracked:  output/GTEx_4.5_nullData.rds
+    Untracked:  output/GTEx_4.5_nullModel.rds
+    Untracked:  output/GTEx_4.5_nullPermData.rds
+    Untracked:  output/GTEx_4.5_nullPermModel.rds
+    Untracked:  output/GTEx_4_nullData.rds
+    Untracked:  output/GTEx_4_nullModel.rds
+    Untracked:  output/GTEx_4_nullPermData.rds
+    Untracked:  output/GTEx_4_nullPermModel.rds
     Untracked:  output/MASH.10.em2.result.rds
     Untracked:  output/MASH.10.mle.result.rds
-    Untracked:  output/MASH.result.1.rds
-    Untracked:  output/MASH.result.10.rds
-    Untracked:  output/MASH.result.2.rds
-    Untracked:  output/MASH.result.3.rds
-    Untracked:  output/MASH.result.4.rds
-    Untracked:  output/MASH.result.5.rds
-    Untracked:  output/MASH.result.6.rds
-    Untracked:  output/MASH.result.7.rds
-    Untracked:  output/MASH.result.8.rds
-    Untracked:  output/MASH.result.9.rds
+    Untracked:  output/MASHNULL.V.result.1.rds
+    Untracked:  output/MASHNULL.V.result.10.rds
+    Untracked:  output/MASHNULL.V.result.11.rds
+    Untracked:  output/MASHNULL.V.result.12.rds
+    Untracked:  output/MASHNULL.V.result.13.rds
+    Untracked:  output/MASHNULL.V.result.14.rds
+    Untracked:  output/MASHNULL.V.result.15.rds
+    Untracked:  output/MASHNULL.V.result.16.rds
+    Untracked:  output/MASHNULL.V.result.17.rds
+    Untracked:  output/MASHNULL.V.result.18.rds
+    Untracked:  output/MASHNULL.V.result.19.rds
+    Untracked:  output/MASHNULL.V.result.2.rds
+    Untracked:  output/MASHNULL.V.result.20.rds
+    Untracked:  output/MASHNULL.V.result.3.rds
+    Untracked:  output/MASHNULL.V.result.4.rds
+    Untracked:  output/MASHNULL.V.result.5.rds
+    Untracked:  output/MASHNULL.V.result.6.rds
+    Untracked:  output/MASHNULL.V.result.7.rds
+    Untracked:  output/MASHNULL.V.result.8.rds
+    Untracked:  output/MASHNULL.V.result.9.rds
+    Untracked:  output/MashCorSim--midway/
     Untracked:  output/Mash_EE_Cov_0_plusR1.rds
-    Untracked:  output/Trail 1/
-    Untracked:  output/Trail 2/
     Untracked:  output/UKBio_mash_model.rds
+    Untracked:  output/result.em.rds
 
 Unstaged changes:
+    Modified:   analysis/EstimateCorMaxEM2.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
     Modified:   output/Flash_T2_0.rds
@@ -469,6 +507,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/293f39b89fe19033de060b7be462c9868343ca60/analysis/EstimateCorMaxMash.Rmd" target="_blank">293f39b</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMash.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/78b075a60066769e4738fc41f530ee19d2706e39/docs/EstimateCorMaxMash.html" target="_blank">78b075a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-20
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -701,11 +773,14 @@ wflow_publish(c(“analysis/EstimateCorMaxMash.Rmd”))
 source(&#39;../code/estimate_cor.R&#39;)
 source(&#39;../code/summary.R&#39;)
 library(knitr)
-library(kableExtra)</code></pre>
-<p>Apply the max methods for correlation matrix on mash data.</p>
-<p>After we estimate each pairwise correlation, the final resulting <span class="math inline">\(p\times p\)</span> correlation matrix may not be positive definite. I estimate the nearest PD cor matrix with <code>nearPD</code> function.</p>
-<p>The estimated V from MLE(<code>optim</code> function) and <span class="math inline">\(EM_\rho\)</span> perform better than the truncated correlation (error, mash log likelihood, ROC).</p>
-<p>Comparing the estimated V from MLE and EM, <span class="math inline">\(EM_\rho\)</span> algorithm tends to compute faster, and the estimated correlation is slightly better than the one from MLE in terms of estimation error, mash log likelihood, ROC.</p>
+library(kableExtra)
+library(ggplot2)
+library(reshape2)</code></pre>
+<p>Apply the max likelihood methods for correlation matrix on mash data.</p>
+<p>After we estimate each pairwise correlation, the final resulting <span class="math inline">\(p\times p\)</span> correlation matrix may not be positive definite. I estimate the nearest PD cor matrix with <code>nearPD</code> function. <strong>In the simulations, there is no non pd resulting matrix.</strong></p>
+<p>The estimated V from optim(<code>optim</code> function), <span class="math inline">\(M_{\rho}\)</span> and <span class="math inline">\(MV\)</span> perform better than the truncated correlation (error, mash log likelihood, ROC).</p>
+<p>Comparing the estimated V from optim, <span class="math inline">\(M_{\rho}\)</span> and <span class="math inline">\(MV\)</span>, <span class="math inline">\(MV\)</span> algorithm computes much faster than <span class="math inline">\(M_{\rho}\)</span>, faster than optim. The estimated V from optim and <span class="math inline">\(M_{\rho}\)</span> are very similar. They have smaller error to the true V than <span class="math inline">\(MV\)</span>, most of the time. The estimated V from <span class="math inline">\(MV\)</span> has larger log likelihood in the final mash model. In terms of ROC and RRMSE, the estimated V from optim, <span class="math inline">\(M_{\rho}\)</span> and <span class="math inline">\(MV\)</span> performs similarly.</p>
+<p>Based on the simulation results, I prefer the <span class="math inline">\(MV\)</span> method.</p>
 <div id="one-example-p-3" class="section level2">
 <h2>One example: p = 3</h2>
 <p><span class="math display">\[
@@ -738,26 +813,56 @@ U.pca = cov_pca(m.data, 3, subset = strong)
 U.ed = cov_ed(m.data, U.pca, subset = strong)
 U.c = cov_canonical(m.data)</code></pre>
 <p>The PCA correlation matrices are: <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-3-1.png" width="768" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/78b075a60066769e4738fc41f530ee19d2706e39/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-3-1.png" target="_blank">78b075a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-20
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <ol style="list-style-type: decimal">
-<li>We run the algorithm in <a href="EstimateCorMax.html">estimate cor mle</a> with 3 different initial points for <span class="math inline">\(\rho\)</span>, (-0.5,0,0.5). The <span class="math inline">\(\rho\)</span> in each iteration is estimated using <code>optim</code> function. The estimated correlation is</li>
+<li>We run the algorithm in <a href="EstimateCorOptim.html">estimate cor optim</a> with 3 different initial points for <span class="math inline">\(\rho\)</span>, (-0.5,0,0.5). The <span class="math inline">\(\rho\)</span> in each iteration is estimated using <code>optim</code> function. The estimated correlation is</li>
 </ol>
-<pre class="r"><code>Vhat.mle = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;mle&#39;)
-Vhat.mle$V</code></pre>
+<pre class="r"><code>Vhat.optim = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;optim&#39;)
+Vhat.optim$V</code></pre>
 <pre><code>          [,1]      [,2]      [,3]
-[1,] 1.0000000 0.7009268 0.1588733
-[2,] 0.7009268 1.0000000 0.4001842
-[3,] 0.1588733 0.4001842 1.0000000</code></pre>
+[1,] 1.0000000 0.7004633 0.1571929
+[2,] 0.7004633 1.0000000 0.4174847
+[3,] 0.1571929 0.4174847 1.0000000</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li>The result uses algorithm in <a href="EstimateCorMaxEM2.html">estimate cor em</a>. <span class="math inline">\(\rho\)</span> in each iteration is the root of a third degree polynomial.</li>
+<li>The result uses algorithm in <a href="EstimateCorEM3.html">estimate cor em</a>. <span class="math inline">\(\rho\)</span> in each iteration is the root of a third degree polynomial.</li>
 </ol>
-<pre class="r"><code>Vhat.em = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol = 1e-4, optmethod = &#39;em2&#39;)
-Vhat.em$V</code></pre>
+<pre class="r"><code>Vhat.mrho = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol = 1e-4, optmethod = &#39;mrho&#39;)
+Vhat.mrho$V</code></pre>
 <pre><code>          [,1]      [,2]      [,3]
-[1,] 1.0000000 0.7086927 0.1706391
-[2,] 0.7086927 1.0000000 0.4187296
-[3,] 0.1706391 0.4187296 1.0000000</code></pre>
+[1,] 1.0000000 0.6997223 0.1568695
+[2,] 0.6997223 1.0000000 0.4171466
+[3,] 0.1568695 0.4171466 1.0000000</code></pre>
 <p>The running time (in sec.) for each pairwise correlation is</p>
-<pre class="r"><code>table = data.frame(rbind(Vhat.mle$ttime, Vhat.em$ttime), row.names = c(&#39;mle&#39;, &#39;em&#39;))
+<pre class="r"><code>table = data.frame(rbind(Vhat.optim$ttime, Vhat.mrho$ttime), row.names = c(&#39;optim&#39;, &#39;mrho&#39;))
 colnames(table) = c(&#39;12&#39;,&#39;13&#39;,&#39;23&#39;)
 table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
@@ -779,44 +884,44 @@ table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <tbody>
 <tr>
 <td style="text-align:left;">
-mle
+optim
 </td>
 <td style="text-align:right;">
-312.547
+222.186
 </td>
 <td style="text-align:right;">
-228.092
+250.286
 </td>
 <td style="text-align:right;">
-70.155
+273.947
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-em
+mrho
 </td>
 <td style="text-align:right;">
-179.781
+284.993
 </td>
 <td style="text-align:right;">
-65.843
+158.585
 </td>
 <td style="text-align:right;">
-54.555
+152.670
 </td>
 </tr>
 </tbody>
 </table>
 <p>The time is the total running time with different initial point.</p>
 <ol start="3" style="list-style-type: decimal">
-<li>The result uses algorithm in <a href="EstimateCorMaxEMV.html">estimate cor em V</a>.</li>
+<li>The result uses algorithm in <a href="EstimateCorMaxMV.html">estimate cor em V</a>.</li>
 </ol>
-<pre class="r"><code>Vhat.emV = estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(3), clusterGeneration::rcorrmatrix(3)), tol = 1e-4, optmethod = &#39;emV&#39;)
-Vhat.emV$V</code></pre>
+<pre class="r"><code>Vhat.mV = estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(3), clusterGeneration::rcorrmatrix(3)), tol = 1e-4, optmethod = &#39;mV&#39;)
+Vhat.mV$V</code></pre>
 <pre><code>          [,1]      [,2]      [,3]
-[1,] 1.0000000 0.5487183 0.2669639
-[2,] 0.5487183 1.0000000 0.4654711
-[3,] 0.2669639 0.4654711 1.0000000</code></pre>
+[1,] 1.0000000 0.6714335 0.1961885
+[2,] 0.6714335 1.0000000 0.3782850
+[3,] 0.1961885 0.3782850 1.0000000</code></pre>
 <ol start="4" style="list-style-type: decimal">
 <li>Using the original truncated correlation:</li>
 </ol>
@@ -840,17 +945,17 @@ V.mash</code></pre>
 <div id="error" class="section level3">
 <h3>Error</h3>
 <p>Check the estimation error:</p>
-<pre class="r"><code>FError = c(norm(Vhat.mle$V - Sigma, &#39;F&#39;),
-           norm(Vhat.em$V - Sigma, &#39;F&#39;),
-           norm(Vhat.emV$V - Sigma, &#39;F&#39;),
+<pre class="r"><code>FError = c(norm(Vhat.optim$V - Sigma, &#39;F&#39;),
+           norm(Vhat.mrho$V - Sigma, &#39;F&#39;),
+           norm(Vhat.mV$V - Sigma, &#39;F&#39;),
            norm(Vhat.tru - Sigma, &#39;F&#39;),
            norm(V.mash - Sigma, &#39;F&#39;))
-OpError = c(norm(Vhat.mle$V - Sigma, &#39;2&#39;),
-           norm(Vhat.em$V - Sigma, &#39;2&#39;),
-           norm(Vhat.emV$V - Sigma, &#39;2&#39;),
+OpError = c(norm(Vhat.optim$V - Sigma, &#39;2&#39;),
+           norm(Vhat.mrho$V - Sigma, &#39;2&#39;),
+           norm(Vhat.mV$V - Sigma, &#39;2&#39;),
            norm(Vhat.tru - Sigma, &#39;2&#39;),
            norm(V.mash - Sigma, &#39;2&#39;))
-table = data.frame(FrobeniusError = FError, SpectralError = OpError, row.names = c(&#39;mle&#39;,&#39;em&#39;,&#39;emV&#39;,&#39;trunc&#39;,&#39;m.1by1&#39;))
+table = data.frame(FrobeniusError = FError, SpectralError = OpError, row.names = c(&#39;optim&#39;,&#39;mrho&#39;,&#39;mV&#39;,&#39;trunc&#39;,&#39;m.1by1&#39;))
 table %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -868,35 +973,35 @@ SpectralError
 <tbody>
 <tr>
 <td style="text-align:left;">
-mle
+optim
 </td>
 <td style="text-align:right;">
-0.0581773
+0.0653970
 </td>
 <td style="text-align:right;">
-0.0411417
+0.0464039
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-em
+mrho
 </td>
 <td style="text-align:right;">
-0.0507627
+0.0656403
 </td>
 <td style="text-align:right;">
-0.0391489
+0.0465097
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-emV
+mV
 </td>
 <td style="text-align:right;">
-0.2516219
+0.0510317
 </td>
 <td style="text-align:right;">
-0.1960202
+0.0377794
 </td>
 </tr>
 <tr>
@@ -926,13 +1031,13 @@ m.1by1
 </div>
 <div id="mash-log-likelihood" class="section level3">
 <h3>mash log likelihood</h3>
-<p>In mash model, the model with correlation from mle has larger loglikelihood.</p>
-<pre class="r"><code>m.data.mle = mash_set_data(data$Bhat, data$Shat, V=Vhat.mle$V)
-m.model.mle = mash(m.data.mle, c(U.c,U.ed), verbose = FALSE)</code></pre>
-<pre class="r"><code>m.data.em = mash_set_data(data$Bhat, data$Shat, V=Vhat.em$V)
-m.model.em = mash(m.data.em, c(U.c,U.ed), verbose = FALSE)</code></pre>
-<pre class="r"><code>m.data.emV = mash_set_data(data$Bhat, data$Shat, V=Vhat.emV$V)
-m.model.emV = mash(m.data.emV, c(U.c,U.ed), verbose = FALSE)</code></pre>
+<p>In mash model, the model with correlation from optim has larger loglikelihood.</p>
+<pre class="r"><code>m.data.optim = mash_set_data(data$Bhat, data$Shat, V=Vhat.optim$V)
+m.model.optim = mash(m.data.optim, c(U.c,U.ed), verbose = FALSE)</code></pre>
+<pre class="r"><code>m.data.mrho = mash_set_data(data$Bhat, data$Shat, V=Vhat.mrho$V)
+m.model.mrho = mash(m.data.mrho, c(U.c,U.ed), verbose = FALSE)</code></pre>
+<pre class="r"><code>m.data.mV = mash_set_data(data$Bhat, data$Shat, V=Vhat.mV$V)
+m.model.mV = mash(m.data.mV, c(U.c,U.ed), verbose = FALSE)</code></pre>
 <pre class="r"><code>m.data.trunc = mash_set_data(data$Bhat, data$Shat, V=Vhat.tru)
 m.model.trunc = mash(m.data.trunc, c(U.c,U.ed), verbose = FALSE)</code></pre>
 <pre class="r"><code>m.data.1by1 = mash_set_data(data$Bhat, data$Shat, V=V.mash)
@@ -942,13 +1047,13 @@ m.model.correct = mash(m.data.correct, c(U.c,U.ed), verbose = FALSE)</code></pre
 <p>The results are summarized in table:</p>
 <pre class="r"><code>null.ind = which(apply(data$B,1,sum) == 0)
 V.trun = c(get_loglik(m.model.trunc), length(get_significant_results(m.model.trunc)), sum(get_significant_results(m.model.trunc) %in% null.ind))
-V.mle = c(get_loglik(m.model.mle), length(get_significant_results(m.model.mle)), sum(get_significant_results(m.model.mle) %in% null.ind))
-V.em = c(get_loglik(m.model.em), length(get_significant_results(m.model.em)), sum(get_significant_results(m.model.em) %in% null.ind))
-V.emV = c(get_loglik(m.model.emV), length(get_significant_results(m.model.emV)), sum(get_significant_results(m.model.emV) %in% null.ind))
+V.optim = c(get_loglik(m.model.optim), length(get_significant_results(m.model.optim)), sum(get_significant_results(m.model.optim) %in% null.ind))
+V.mrho = c(get_loglik(m.model.mrho), length(get_significant_results(m.model.mrho)), sum(get_significant_results(m.model.mrho) %in% null.ind))
+V.mV = c(get_loglik(m.model.mV), length(get_significant_results(m.model.mV)), sum(get_significant_results(m.model.mV) %in% null.ind))
 V.1by1 = c(get_loglik(m.model.1by1), length(get_significant_results(m.model.1by1)), sum(get_significant_results(m.model.1by1) %in% null.ind))
 V.correct = c(get_loglik(m.model.correct), length(get_significant_results(m.model.correct)), sum(get_significant_results(m.model.correct) %in% null.ind))
-temp = cbind(V.mle, V.em, V.emV, V.trun, V.1by1, V.correct)
-colnames(temp) = c(&#39;MLE&#39;,&#39;EM&#39;,&#39;EMV&#39;, &#39;Truncate&#39;, &#39;m.1by1&#39;, &#39;True&#39;)
+temp = cbind(V.optim, V.mrho, V.mV, V.trun, V.1by1, V.correct)
+colnames(temp) = c(&#39;optim&#39;,&#39;Mrho&#39;,&#39;MV&#39;, &#39;Truncate&#39;, &#39;m.1by1&#39;, &#39;True&#39;)
 row.names(temp) = c(&#39;log likelihood&#39;, &#39;# significance&#39;, &#39;# False positive&#39;)
 temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
@@ -957,13 +1062,13 @@ temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <th style="text-align:left;">
 </th>
 <th style="text-align:right;">
-MLE
+optim
 </th>
 <th style="text-align:right;">
-EM
+Mrho
 </th>
 <th style="text-align:right;">
-EMV
+MV
 </th>
 <th style="text-align:right;">
 Truncate
@@ -982,13 +1087,13 @@ True
 log likelihood
 </td>
 <td style="text-align:right;">
--17917.69
+-17920.2
 </td>
 <td style="text-align:right;">
--17919.23
+-17920.1
 </td>
 <td style="text-align:right;">
--17945.16
+-17912.63
 </td>
 <td style="text-align:right;">
 -17951.46
@@ -1005,13 +1110,13 @@ log likelihood
 # significance
 </td>
 <td style="text-align:right;">
-146.00
+146.0
 </td>
 <td style="text-align:right;">
-149.00
+146.0
 </td>
 <td style="text-align:right;">
-82.00
+131.00
 </td>
 <td style="text-align:right;">
 85.00
@@ -1028,10 +1133,10 @@ log likelihood
 # False positive
 </td>
 <td style="text-align:right;">
-1.00
+1.0
 </td>
 <td style="text-align:right;">
-1.00
+1.0
 </td>
 <td style="text-align:right;">
 0.00
@@ -1048,30 +1153,51 @@ log likelihood
 </tr>
 </tbody>
 </table>
-<p>The estimated <code>pi</code> is</p>
-<pre class="r"><code>par(mfrow=c(2,3))
-barplot(get_estimated_pi(m.model.mle), las=2, cex.names = 0.7, main=&#39;MLE&#39;, ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.em), las=2, cex.names = 0.7, main=&#39;EM&#39;, ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.emV), las=2, cex.names = 0.7, main=&#39;EMV&#39;, ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.trunc), las=2, cex.names = 0.7, main=&#39;Truncate&#39;, ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.1by1), las=2, cex.names = 0.7, main=&#39;m.1by1&#39;, ylim=c(0,0.8))
-barplot(get_estimated_pi(m.model.correct), las=2, cex.names = 0.7, main=&#39;True&#39;, ylim=c(0,0.8))</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="roc" class="section level3">
 <h3>ROC</h3>
-<pre class="r"><code>m.mle.seq = ROC.table(data$B, m.model.mle)
-m.em.seq = ROC.table(data$B, m.model.em)
-m.emV.seq = ROC.table(data$B, m.model.emV)
+<pre class="r"><code>m.optim.seq = ROC.table(data$B, m.model.optim)
+m.mrho.seq = ROC.table(data$B, m.model.mrho)
+m.mV.seq = ROC.table(data$B, m.model.mV)
 m.trun.seq = ROC.table(data$B, m.model.trunc)
 m.1by1.seq = ROC.table(data$B, m.model.1by1)
 m.correct.seq = ROC.table(data$B, m.model.correct)</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-19-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-19-1.png" target="_blank">802266a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="rrmse" class="section level3">
 <h3>RRMSE</h3>
-<pre class="r"><code>rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.model.mle, m.model.em, m.model.emV, m.model.trunc, m.model.1by1, m.model.correct)))
-colnames(rrmse) = c(&#39;MLE&#39;,&#39;EM&#39;,&#39;EMV&#39;, &#39;Truncate&#39;,&#39;m.1by1&#39;,&#39;True&#39;)
+<pre class="r"><code>rrmse = rbind(RRMSE(data$B, data$Bhat, list(m.model.optim, m.model.mrho, m.model.mV, m.model.trunc, m.model.1by1, m.model.correct)))
+colnames(rrmse) = c(&#39;optim&#39;,&#39;Mrho&#39;,&#39;MV&#39;, &#39;Truncate&#39;,&#39;m.1by1&#39;,&#39;True&#39;)
 row.names(rrmse) = &#39;RRMSE&#39;
 rrmse %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <table class="table" style="margin-left: auto; margin-right: auto;">
@@ -1080,13 +1206,13 @@ rrmse %&gt;% kable() %&gt;% kable_styling()</code></pre>
 <th style="text-align:left;">
 </th>
 <th style="text-align:right;">
-MLE
+optim
 </th>
 <th style="text-align:right;">
-EM
+Mrho
 </th>
 <th style="text-align:right;">
-EMV
+MV
 </th>
 <th style="text-align:right;">
 Truncate
@@ -1105,13 +1231,13 @@ True
 RRMSE
 </td>
 <td style="text-align:right;">
-0.5277488
+0.528246
 </td>
 <td style="text-align:right;">
-0.5285126
+0.5282098
 </td>
 <td style="text-align:right;">
-0.5437355
+0.5285035
 </td>
 <td style="text-align:right;">
 0.5592648
@@ -1125,8 +1251,38 @@ RRMSE
 </tr>
 </tbody>
 </table>
-<pre class="r"><code>barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c(&#39;MLE&#39;,&#39;EM&#39;, &#39;EMV&#39;,&#39;Truncate&#39;,&#39;m.1by1&#39;,&#39;True&#39;), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), names.arg = c(&#39;optim&#39;,&#39;Mrho&#39;, &#39;MV&#39;,&#39;Truncate&#39;,&#39;m.1by1&#39;,&#39;True&#39;), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-21-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-21-1.png" target="_blank">802266a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-08-15
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="more-simulations-p-5" class="section level2">
@@ -1144,7 +1300,7 @@ U1 = U0; U1[1,1] = 1
 U2 = U0; U2[c(1:2), c(1:2)] = 1
 U3 = matrix(1, p,p)
 Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
-for(t in 1:10){
+for(t in 1:20){
   Vtrue = clusterGeneration::rcorrmatrix(p)
   data = generate_data(n, p, Vtrue, Utrue)
   # mash cov
@@ -1155,10 +1311,10 @@ for(t in 1:10){
   U.pca = cov_pca(m.data, 3, subset = strong)
   U.ed = cov_ed(m.data, U.pca, subset = strong)
   U.c = cov_canonical(m.data)
-  Vhat.mle &lt;- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;mle&#39;)
-  Vhat.em &lt;- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;em2&#39;)
-  Vhat.emV &lt;- estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(p), clusterGeneration::rcorrmatrix(p)),tol=1e-4, optmethod = &#39;emV&#39;)
-  saveRDS(list(V.true = Vtrue, V.mle = Vhat.mle, V.em = Vhat.em, V.emV = Vhat.emV, data = data, strong=strong),
+  Vhat.optim &lt;- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;optim&#39;)
+  Vhat.mrho &lt;- estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4, optmethod = &#39;mrho&#39;)
+  Vhat.mV &lt;- estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(p), clusterGeneration::rcorrmatrix(p)),tol=1e-4, optmethod = &#39;mV&#39;)
+  saveRDS(list(V.true = Vtrue, V.optim = Vhat.optim, V.mrho = Vhat.mrho, V.mV = Vhat.mV, data = data, strong=strong),
           paste0(&#39;../output/MASH.result.&#39;,t,&#39;.rds&#39;))
 }</code></pre>
 <pre class="r"><code>files = dir(&quot;../output/AddEMV/&quot;); files = files[grep(&quot;MASH.result&quot;,files)]
@@ -1167,8 +1323,8 @@ result = vector(mode=&quot;list&quot;,length = times)
 for(i in 1:times) {
   result[[i]] = readRDS(paste(&quot;../output/AddEMV/&quot;, files[[i]], sep=&quot;&quot;))
 }</code></pre>
-<pre class="r"><code>mle.pd = numeric(times)
-em.pd = numeric(times)
+<pre class="r"><code>optim.pd = numeric(times)
+mrho.pd = numeric(times)
 for(i in 1:times){
   m.data = mash_set_data(result[[i]]$data$Bhat, result[[i]]$data$Shat)
   
@@ -1189,1016 +1345,121 @@ for(i in 1:times){
   m.data.1by1 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.1by1)
   m.model.1by1 = mash(m.data.1by1, c(U.c,U.ed), verbose = FALSE)
   
-  m.data.emV = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.emV$V)
-  m.model.emV = mash(m.data.emV, c(U.c,U.ed), verbose = FALSE)
+  m.data.mV = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.mV$V)
+  m.model.mV = mash(m.data.mV, c(U.c,U.ed), verbose = FALSE)
   
-  # MLE
+  # optim
   
-  m.model.mle = m.model.mle.F = m.model.mle.2 = list()
-  R &lt;- tryCatch(chol(result[[i]]$V.mle$V),error = function (e) FALSE)
+  m.model.optim = m.model.optim.F = m.model.optim.2 = list()
+  R &lt;- tryCatch(chol(result[[i]]$V.optim$V),error = function (e) FALSE)
   if(is.matrix(R)){
-    mle.pd[i] = 1
-    m.data.mle = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.mle$V)
-    m.model.mle = mash(m.data.mle, c(U.c,U.ed), verbose = FALSE)
+    optim.pd[i] = 1
+    m.data.optim = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.optim$V)
+    m.model.optim = mash(m.data.optim, c(U.c,U.ed), verbose = FALSE)
   }else{
-    V.mle.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.mle$V, conv.norm.type = &#39;F&#39;, keepDiag = TRUE)$mat)
-    V.mle.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.mle$V, conv.norm.type = &#39;2&#39;, keepDiag = TRUE)$mat)
+    V.optim.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.optim$V, conv.norm.type = &#39;F&#39;, keepDiag = TRUE)$mat)
+    V.optim.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.optim$V, conv.norm.type = &#39;2&#39;, keepDiag = TRUE)$mat)
     
-    result[[i]]$V.mle.F = V.mle.near.F
-    result[[i]]$V.mle.2 = V.mle.near.2
+    result[[i]]$V.optim.F = V.optim.near.F
+    result[[i]]$V.optim.2 = V.optim.near.2
     
     # mashmodel
-    m.data.mle.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mle.near.F)
-    m.model.mle.F = mash(m.data.mle.F, c(U.c,U.ed), verbose = FALSE)
+    m.data.optim.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.optim.near.F)
+    m.model.optim.F = mash(m.data.optim.F, c(U.c,U.ed), verbose = FALSE)
     
-    m.data.mle.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mle.near.2)
-    m.model.mle.2 = mash(m.data.mle.2, c(U.c,U.ed), verbose = FALSE)
+    m.data.optim.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.optim.near.2)
+    m.model.optim.2 = mash(m.data.optim.2, c(U.c,U.ed), verbose = FALSE)
   }
   
-  # EM
-  m.model.em = m.model.em.F = m.model.em.2 = list()
-  R &lt;- tryCatch(chol(result[[i]]$V.em$V),error = function (e) FALSE)
+  # Mrho
+  m.model.mrho = m.model.mrho.F = m.model.mrho.2 = list()
+  R &lt;- tryCatch(chol(result[[i]]$V.mrho$V),error = function (e) FALSE)
   if(is.matrix(R)){
-    em.pd[i] = 1
-    m.data.em = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.em$V)
-    m.model.em = mash(m.data.em, c(U.c,U.ed), verbose = FALSE)
+    mrho.pd[i] = 1
+    m.data.mrho = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.mrho$V)
+    m.model.mrho = mash(m.data.mrho, c(U.c,U.ed), verbose = FALSE)
   }else{
-    V.em.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.em$V, conv.norm.type = &#39;F&#39;, keepDiag = TRUE)$mat)
-    V.em.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.em$V, conv.norm.type = &#39;2&#39;, keepDiag = TRUE)$mat)
+    V.mrho.near.F = as.matrix(Matrix::nearPD(result[[i]]$V.mrho$V, conv.norm.type = &#39;F&#39;, keepDiag = TRUE)$mat)
+    V.mrho.near.2 = as.matrix(Matrix::nearPD(result[[i]]$V.mrho$V, conv.norm.type = &#39;2&#39;, keepDiag = TRUE)$mat)
     
-    result[[i]]$V.em.F = V.em.near.F
-    result[[i]]$V.em.2 = V.em.near.2
+    result[[i]]$V.mrho.F = V.mrho.near.F
+    result[[i]]$V.mrho.2 = V.mrho.near.2
     
     # mashmodel
-    m.data.em.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.em.near.F)
-    m.model.em.F = mash(m.data.em.F, c(U.c,U.ed), verbose = FALSE)
+    m.data.mrho.F = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mrho.near.F)
+    m.model.mrho.F = mash(m.data.mrho.F, c(U.c,U.ed), verbose = FALSE)
       
-    m.data.em.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.em.near.2)
-    m.model.em.2 = mash(m.data.em.2, c(U.c,U.ed), verbose = FALSE)
+    m.data.mrho.2 = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = V.mrho.near.2)
+    m.model.mrho.2 = mash(m.data.mrho.2, c(U.c,U.ed), verbose = FALSE)
   }
   
   result[[i]]$m.model = list(m.model.true = m.model.true, m.model.trunc = m.model.trunc, 
-                             m.model.1by1 = m.model.1by1, m.model.emV = m.model.emV,
-                             m.model.mle = m.model.mle,
-                             m.model.mle.F = m.model.mle.F, m.model.mle.2 = m.model.mle.2, 
-                             m.model.em = m.model.em,
-                             m.model.em.F = m.model.em.F, m.model.em.2 = m.model.em.2)
+                             m.model.1by1 = m.model.1by1, m.model.mV = m.model.mV,
+                             m.model.optim = m.model.optim,
+                             m.model.optim.F = m.model.optim.F, m.model.optim.2 = m.model.optim.2, 
+                             m.model.mrho = m.model.mrho,
+                             m.model.mrho.F = m.model.mrho.F, m.model.mrho.2 = m.model.mrho.2)
 }</code></pre>
 <div id="error-1" class="section level3">
 <h3>Error</h3>
-<p>The column with <code>.F</code>, <code>.2</code> are from the nearest positive definite matrix with respect to Frobenius norm and spectral norm.</p>
 <p>The Frobenius norm is</p>
 <pre class="r"><code>temp = matrix(0,nrow = times, ncol = 7)
 for(i in 1:times){
-  temp[i, ] = error.cor(result[[i]], norm.type=&#39;F&#39;, mle.pd = mle.pd[i], em.pd = em.pd[i])
+  temp[i, ] = error.cor(result[[i]], norm.type=&#39;F&#39;, optim.pd = optim.pd[i], mrho.pd = mrho.pd[i])
 }
-colnames(temp) = c(&#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;MLE&#39;,&#39;MLE.F&#39;, &#39;EM&#39;, &#39;EM.F&#39;, &#39;EMV&#39;)
-temp[temp==0] = NA
-temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
-<table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:right;">
-Trunc
-</th>
-<th style="text-align:right;">
-m.1by1
-</th>
-<th style="text-align:right;">
-MLE
-</th>
-<th style="text-align:right;">
-MLE.F
-</th>
-<th style="text-align:right;">
-EM
-</th>
-<th style="text-align:right;">
-EM.F
-</th>
-<th style="text-align:right;">
-EMV
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-0.5847549
-</td>
-<td style="text-align:right;">
-0.9286016
-</td>
-<td style="text-align:right;">
-0.3185293
-</td>
-<td style="text-align:right;">
-0.3053278
-</td>
-<td style="text-align:right;">
-0.0941757
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-1.0198618
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.6345196
-</td>
-<td style="text-align:right;">
-0.8140108
-</td>
-<td style="text-align:right;">
-0.1169154
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.0981075
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.8913631
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.7201453
-</td>
-<td style="text-align:right;">
-0.9531300
-</td>
-<td style="text-align:right;">
-0.2344733
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.1734402
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-1.0216638
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.8370832
-</td>
-<td style="text-align:right;">
-1.0534335
-</td>
-<td style="text-align:right;">
-0.1968091
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.2411372
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-1.1115619
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.8206008
-</td>
-<td style="text-align:right;">
-0.8466408
-</td>
-<td style="text-align:right;">
-0.1194142
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.1189734
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.9176794
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.8455747
-</td>
-<td style="text-align:right;">
-1.1393764
-</td>
-<td style="text-align:right;">
-0.1650726
-</td>
-<td style="text-align:right;">
-0.1479670
-</td>
-<td style="text-align:right;">
-0.1653665
-</td>
-<td style="text-align:right;">
-0.1516188
-</td>
-<td style="text-align:right;">
-1.2178752
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.5173056
-</td>
-<td style="text-align:right;">
-0.8194980
-</td>
-<td style="text-align:right;">
-0.1211599
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.0861518
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.8914736
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.8840057
-</td>
-<td style="text-align:right;">
-0.9546138
-</td>
-<td style="text-align:right;">
-0.1642744
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.1563607
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-1.0169747
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.6535878
-</td>
-<td style="text-align:right;">
-1.0554833
-</td>
-<td style="text-align:right;">
-0.1240352
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.1323659
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-1.1491978
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.6425639
-</td>
-<td style="text-align:right;">
-0.9346341
-</td>
-<td style="text-align:right;">
-0.0794776
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.0700813
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-1.0196620
-</td>
-</tr>
-</tbody>
-</table>
+colnames(temp) = c(&#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;optim&#39;,&#39;optim.F&#39;, &#39;Mrho&#39;, &#39;Mrho.F&#39;, &#39;MV&#39;)
+temp = reshape2::melt(temp[,c(-4,-6)])
+colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;FrobError&#39;)
+ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-25-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>The spectral norm is</p>
 <pre class="r"><code>temp = matrix(0,nrow = times, ncol = 7)
 for(i in 1:times){
-  temp[i, ] = error.cor(result[[i]], norm.type=&#39;2&#39;, mle.pd = mle.pd[i], em.pd = em.pd[i])
+  temp[i, ] = error.cor(result[[i]], norm.type=&#39;2&#39;, optim.pd = optim.pd[i], mrho.pd = mrho.pd[i])
 }
-colnames(temp) = c(&#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;MLE&#39;,&#39;MLE.2&#39;, &#39;EM&#39;, &#39;EM.2&#39;, &#39;EMV&#39;)
-temp[temp==0] = NA
-temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
-<table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:right;">
-Trunc
-</th>
-<th style="text-align:right;">
-m.1by1
-</th>
-<th style="text-align:right;">
-MLE
-</th>
-<th style="text-align:right;">
-MLE.2
-</th>
-<th style="text-align:right;">
-EM
-</th>
-<th style="text-align:right;">
-EM.2
-</th>
-<th style="text-align:right;">
-EMV
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-0.4230698
-</td>
-<td style="text-align:right;">
-0.7526315
-</td>
-<td style="text-align:right;">
-0.2258153
-</td>
-<td style="text-align:right;">
-0.2205340
-</td>
-<td style="text-align:right;">
-0.0662442
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.8335745
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.5228925
-</td>
-<td style="text-align:right;">
-0.6281308
-</td>
-<td style="text-align:right;">
-0.0783098
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.0677285
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.7069909
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.5156642
-</td>
-<td style="text-align:right;">
-0.7945237
-</td>
-<td style="text-align:right;">
-0.1750836
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.1239438
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.8577274
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.6529121
-</td>
-<td style="text-align:right;">
-0.8335401
-</td>
-<td style="text-align:right;">
-0.1484773
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.1768351
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.8944724
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.6500336
-</td>
-<td style="text-align:right;">
-0.6377762
-</td>
-<td style="text-align:right;">
-0.0778356
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.0849870
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.7052165
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.5607948
-</td>
-<td style="text-align:right;">
-0.8613851
-</td>
-<td style="text-align:right;">
-0.1001500
-</td>
-<td style="text-align:right;">
-0.0937816
-</td>
-<td style="text-align:right;">
-0.1085885
-</td>
-<td style="text-align:right;">
-0.1015186
-</td>
-<td style="text-align:right;">
-0.9343139
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.3157614
-</td>
-<td style="text-align:right;">
-0.6406310
-</td>
-<td style="text-align:right;">
-0.0795125
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.0659174
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.6982291
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.7134025
-</td>
-<td style="text-align:right;">
-0.7290570
-</td>
-<td style="text-align:right;">
-0.1090477
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.1103719
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.7987348
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.4767534
-</td>
-<td style="text-align:right;">
-0.8894951
-</td>
-<td style="text-align:right;">
-0.0964157
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.0957622
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.9760343
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-0.4591215
-</td>
-<td style="text-align:right;">
-0.7926789
-</td>
-<td style="text-align:right;">
-0.0568252
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.0558999
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
-0.8740268
-</td>
-</tr>
-</tbody>
-</table>
+colnames(temp) = c(&#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;optim&#39;,&#39;optim.2&#39;, &#39;Mrho&#39;, &#39;Mrho.2&#39;, &#39;MV&#39;)
+temp = reshape2::melt(temp[,c(-4,-6)])
+colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;SpecError&#39;)
+ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-26-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="time" class="section level3">
 <h3>Time</h3>
 <p>The total running time for each matrix is</p>
-<pre class="r"><code>mle.time = em.time = numeric(times)
+<pre class="r"><code>optim.time = mrho.time = mV.time = numeric(times)
 for(i in 1:times){
-  mle.time[i] = sum(result[[i]]$V.mle$ttime)
-  em.time[i] = sum(result[[i]]$V.em$ttime)
+  optim.time[i] = sum(result[[i]]$V.optim$ttime)
+  mrho.time[i] = sum(result[[i]]$V.mrho$ttime)
+  mV.time[i] = sum(result[[i]]$V.mV$ttime)
 }
-temp = cbind(mle.time, em.time)
-colnames(temp) = c(&#39;MLE&#39;, &#39;EM&#39;)
-row.names(temp) = 1:10
-temp %&gt;% kable() %&gt;% kable_styling()</code></pre>
-<table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:right;">
-MLE
-</th>
-<th style="text-align:right;">
-EM
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
-3171.983
-</td>
-<td style="text-align:right;">
-848.351
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2341.424
-</td>
-<td style="text-align:right;">
-704.601
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-1990.764
-</td>
-<td style="text-align:right;">
-740.046
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-3249.162
-</td>
-<td style="text-align:right;">
-1072.233
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-1988.220
-</td>
-<td style="text-align:right;">
-717.808
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2580.794
-</td>
-<td style="text-align:right;">
-958.710
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-1928.634
-</td>
-<td style="text-align:right;">
-597.511
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2992.277
-</td>
-<td style="text-align:right;">
-1114.932
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2339.513
-</td>
-<td style="text-align:right;">
-708.779
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-2727.560
-</td>
-<td style="text-align:right;">
-772.780
-</td>
-</tr>
-</tbody>
-</table>
+temp = cbind(optim.time, mrho.time, mV.time)
+colnames(temp) = c(&#39;optim&#39;, &#39;Mrho&#39;, &#39;mV&#39;)
+row.names(temp) = 1:20
+
+temp = melt(temp)
+colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;Time&#39;)
+ggplot(temp, aes(x = Data, y=Time, group = Method, color = Method)) + geom_line()</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-27-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="mash-log-likelihood-1" class="section level3">
 <h3>mash log likelihood</h3>
-<p>The <code>NA</code> means the estimated correlation matrix is not positive definite.</p>
 <pre class="r"><code>temp = matrix(0,nrow = times, ncol = 10)
 for(i in 1:times){
-  temp[i, ] = loglik.cor(result[[i]]$m.model, mle.pd = mle.pd[i], em.pd = em.pd[i])
+  temp[i, ] = loglik.cor(result[[i]]$m.model, optim.pd = optim.pd[i], mrho.pd = mrho.pd[i])
 }
-colnames(temp) = c(&#39;True&#39;, &#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;MLE&#39;,&#39;MLE.F&#39;, &#39;MLE.2&#39;, &#39;EM&#39;, &#39;EM.F&#39;, &#39;EM.2&#39;,&#39;EMV&#39;)
-temp[temp == 0] = NA
-temp[,-c(6,9)] %&gt;% kable() %&gt;% kable_styling()</code></pre>
-<table class="table" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:right;">
-True
-</th>
-<th style="text-align:right;">
-Trunc
-</th>
-<th style="text-align:right;">
-m.1by1
-</th>
-<th style="text-align:right;">
-MLE
-</th>
-<th style="text-align:right;">
-MLE.F
-</th>
-<th style="text-align:right;">
-EM
-</th>
-<th style="text-align:right;">
-EM.F
-</th>
-<th style="text-align:right;">
-EMV
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:right;">
--26039.92
-</td>
-<td style="text-align:right;">
--26130.50
-</td>
-<td style="text-align:right;">
--26112.94
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--26265.49
-</td>
-<td style="text-align:right;">
--26120.81
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--26136.19
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
--25669.59
-</td>
-<td style="text-align:right;">
--26997.92
-</td>
-<td style="text-align:right;">
--26950.67
-</td>
-<td style="text-align:right;">
--26028.96
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--25859.86
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--26967.47
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
--27473.71
-</td>
-<td style="text-align:right;">
--27547.11
-</td>
-<td style="text-align:right;">
--27535.67
-</td>
-<td style="text-align:right;">
--27465.76
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--27463.43
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--27551.75
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
--28215.48
-</td>
-<td style="text-align:right;">
--28604.98
-</td>
-<td style="text-align:right;">
--28646.72
-</td>
-<td style="text-align:right;">
--28301.41
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--28338.57
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--28669.24
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
--24988.68
-</td>
-<td style="text-align:right;">
--25236.18
-</td>
-<td style="text-align:right;">
--25110.41
-</td>
-<td style="text-align:right;">
--25056.59
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--25048.86
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--25123.96
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
--24299.89
-</td>
-<td style="text-align:right;">
--24978.79
-</td>
-<td style="text-align:right;">
--24972.25
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--24492.32
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--24478.09
-</td>
-<td style="text-align:right;">
--25020.38
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
--27574.71
-</td>
-<td style="text-align:right;">
--27698.40
-</td>
-<td style="text-align:right;">
--27662.48
-</td>
-<td style="text-align:right;">
--27517.65
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--27540.65
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--27684.83
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
--27941.86
-</td>
-<td style="text-align:right;">
--28159.65
-</td>
-<td style="text-align:right;">
--28182.04
-</td>
-<td style="text-align:right;">
--27979.99
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--27953.02
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--28222.45
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
--29788.75
-</td>
-<td style="text-align:right;">
--29824.45
-</td>
-<td style="text-align:right;">
--29921.87
-</td>
-<td style="text-align:right;">
--29760.81
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--29759.50
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--29954.96
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
--28542.34
-</td>
-<td style="text-align:right;">
--28922.58
-</td>
-<td style="text-align:right;">
--29163.51
-</td>
-<td style="text-align:right;">
--28537.96
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--28550.73
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:right;">
--29221.61
-</td>
-</tr>
-</tbody>
-</table>
+colnames(temp) = c(&#39;True&#39;, &#39;Trunc&#39;,&#39;m.1by1&#39;, &#39;optim&#39;,&#39;optim.F&#39;, &#39;optim.2&#39;, &#39;Mrho&#39;, &#39;Mrho.F&#39;, &#39;Mrho.2&#39;,&#39;MV&#39;)
+temp = melt(temp[,-c(5,6,8,9)])
+colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;loglikelihood&#39;)
+ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()</code></pre>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="roc-1" class="section level3">
 <h3>ROC</h3>
 <pre class="r"><code>par(mfrow=c(1,2))
 for(i in 1:times){
-  plotROC(result[[i]]$data$B, result[[i]]$m.model, mle.pd = mle.pd[i], em.pd = em.pd[i], title=paste0(&#39;Data&#39;, i, &#39; &#39;))
+  plotROC(result[[i]]$data$B, result[[i]]$m.model, optim.pd = optim.pd[i], mrho.pd = mrho.pd[i], title=paste0(&#39;Data&#39;, i, &#39; &#39;))
 }</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-29-10.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="rrmse-1" class="section level3">
 <h3>RRMSE</h3>
@@ -2207,8 +1468,8 @@ for(i in 1:times){
   rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result[[i]]$m.model))
   barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)
 }</code></pre>
-<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-1.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-1.png:</em></summary>
+<p><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-30-1.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
@@ -2226,19 +1487,19 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-1.png" target="_blank">802266a</a>
+<a href="https://github.com/zouyuxin/mash_application/blob/78b075a60066769e4738fc41f530ee19d2706e39/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-1.png" target="_blank">78b075a</a>
 </td>
 <td style="text-align:left;">
 zouyuxin
 </td>
 <td style="text-align:left;">
-2018-08-15
+2018-08-20
 </td>
 </tr>
 </tbody>
 </table>
-<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-2.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-2.png:</em></summary>
+<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-30-2.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
@@ -2256,19 +1517,19 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-2.png" target="_blank">802266a</a>
+<a href="https://github.com/zouyuxin/mash_application/blob/78b075a60066769e4738fc41f530ee19d2706e39/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-2.png" target="_blank">78b075a</a>
 </td>
 <td style="text-align:left;">
 zouyuxin
 </td>
 <td style="text-align:left;">
-2018-08-15
+2018-08-20
 </td>
 </tr>
 </tbody>
 </table>
-<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-3.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-3.png:</em></summary>
+<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-30-3.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
@@ -2286,19 +1547,19 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-3.png" target="_blank">802266a</a>
+<a href="https://github.com/zouyuxin/mash_application/blob/78b075a60066769e4738fc41f530ee19d2706e39/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-3.png" target="_blank">78b075a</a>
 </td>
 <td style="text-align:left;">
 zouyuxin
 </td>
 <td style="text-align:left;">
-2018-08-15
+2018-08-20
 </td>
 </tr>
 </tbody>
 </table>
-<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-4.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-4.png:</em></summary>
+<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-4.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-30-4.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
@@ -2316,19 +1577,19 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-4.png" target="_blank">802266a</a>
+<a href="https://github.com/zouyuxin/mash_application/blob/78b075a60066769e4738fc41f530ee19d2706e39/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-4.png" target="_blank">78b075a</a>
 </td>
 <td style="text-align:left;">
 zouyuxin
 </td>
 <td style="text-align:left;">
-2018-08-15
+2018-08-20
 </td>
 </tr>
 </tbody>
 </table>
-<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-5.png" width="672" style="display: block; margin: auto;" /></p>
-<details> <summary><em>Expand here to see past versions of unnamed-chunk-31-5.png:</em></summary>
+<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-5.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-30-5.png:</em></summary>
 <table style="border-collapse:separate; border-spacing:5px;">
 <thead>
 <tr>
@@ -2346,18 +1607,18 @@ Date
 <tbody>
 <tr>
 <td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/802266a425e0d3d094e12390a082354c95c6676f/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-31-5.png" target="_blank">802266a</a>
+<a href="https://github.com/zouyuxin/mash_application/blob/78b075a60066769e4738fc41f530ee19d2706e39/docs/figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-5.png" target="_blank">78b075a</a>
 </td>
 <td style="text-align:left;">
 zouyuxin
 </td>
 <td style="text-align:left;">
-2018-08-15
+2018-08-20
 </td>
 </tr>
 </tbody>
 </table>
-<p></details></p>
+<p></details> <img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMash.Rmd/unnamed-chunk-30-10.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="session-information" class="section level2">
@@ -2378,38 +1639,43 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] kableExtra_0.9.0 knitr_1.20       mashr_0.2-11     ashr_2.2-10     
+[1] reshape2_1.4.3    ggplot2_3.0.0     kableExtra_0.9.0  knitr_1.20       
+[5] plyr_1.8.4        mashr_0.2.16.0442 ashr_2.2-18      
 
 loaded via a namespace (and not attached):
- [1] corrplot_0.84            lattice_0.20-35         
- [3] Rmosek_8.0.69            colorspace_1.3-2        
- [5] htmltools_0.3.6          viridisLite_0.3.0       
- [7] yaml_2.2.0               rlang_0.2.1             
- [9] R.oo_1.22.0              pillar_1.3.0            
-[11] R.utils_2.6.0            ExtremeDeconvolution_1.3
-[13] REBayes_1.3              foreach_1.4.4           
-[15] plyr_1.8.4               stringr_1.3.1           
-[17] munsell_0.5.0            workflowr_1.1.1         
-[19] rvest_0.3.2              R.methodsS3_1.7.1       
-[21] mvtnorm_1.0-8            codetools_0.2-15        
-[23] evaluate_0.11            pscl_1.5.2              
-[25] doParallel_1.0.11        parallel_3.5.1          
-[27] highr_0.7                Rcpp_0.12.18            
-[29] readr_1.1.1              backports_1.1.2         
-[31] scales_0.5.0             rmeta_3.0               
-[33] clusterGeneration_1.3.4  truncnorm_1.0-8         
-[35] hms_0.4.2                digest_0.6.15           
-[37] stringi_1.2.4            grid_3.5.1              
-[39] rprojroot_1.3-2          tools_3.5.1             
-[41] magrittr_1.5             tibble_1.4.2            
-[43] crayon_1.3.4             whisker_0.3-2           
-[45] pkgconfig_2.0.1          MASS_7.3-50             
-[47] Matrix_1.2-14            SQUAREM_2017.10-1       
-[49] xml2_1.2.0               assertthat_0.2.0        
-[51] rmarkdown_1.10           httr_1.3.1              
-[53] rstudioapi_0.7           iterators_1.0.10        
-[55] R6_2.2.2                 git2r_0.23.0            
-[57] compiler_3.5.1          </code></pre>
+ [1] Rcpp_0.12.19             mvtnorm_1.0-8           
+ [3] lattice_0.20-35          Rmosek_8.0.69           
+ [5] assertthat_0.2.0         rprojroot_1.3-2         
+ [7] digest_0.6.15            foreach_1.4.4           
+ [9] truncnorm_1.0-8          R6_2.2.2                
+[11] backports_1.1.2          evaluate_0.11           
+[13] httr_1.3.1               highr_0.7               
+[15] pillar_1.3.0             rlang_0.2.2             
+[17] lazyeval_0.2.1           pscl_1.5.2              
+[19] rstudioapi_0.7           whisker_0.3-2           
+[21] R.utils_2.6.0            R.oo_1.22.0             
+[23] Matrix_1.2-14            rmarkdown_1.10          
+[25] labeling_0.3             readr_1.1.1             
+[27] stringr_1.3.1            REBayes_1.3             
+[29] munsell_0.5.0            compiler_3.5.1          
+[31] pkgconfig_2.0.2          SQUAREM_2017.10-1       
+[33] htmltools_0.3.6          tidyselect_0.2.4        
+[35] tibble_1.4.2             workflowr_1.1.1         
+[37] codetools_0.2-15         viridisLite_0.3.0       
+[39] crayon_1.3.4             dplyr_0.7.6             
+[41] withr_2.1.2              MASS_7.3-50             
+[43] R.methodsS3_1.7.1        grid_3.5.1              
+[45] gtable_0.2.0             git2r_0.23.0            
+[47] magrittr_1.5             ExtremeDeconvolution_1.3
+[49] scales_1.0.0             stringi_1.2.4           
+[51] doParallel_1.0.14        bindrcpp_0.2.2          
+[53] xml2_1.2.0               rmeta_3.0               
+[55] iterators_1.0.10         tools_3.5.1             
+[57] glue_1.3.0               purrr_0.2.5             
+[59] hms_0.4.2                parallel_3.5.1          
+[61] yaml_2.2.0               colorspace_1.3-2        
+[63] rvest_0.3.2              corrplot_0.84           
+[65] clusterGeneration_1.3.4  bindr_0.1.1             </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
