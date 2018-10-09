@@ -24,7 +24,7 @@ After we estimate each pairwise correlation, the final resulting $p\times p$ cor
 
 The estimated V from optim(`optim` function), $M_{\rho}$ and $MV$ perform better than the truncated correlation (error, mash log likelihood, ROC).
 
-Comparing the estimated V from optim, $M_{\rho}$ and $MV$, $MV$ algorithm computes much faster than $M_{\rho}$, faster than optim. The estimated V from optim and $M_{\rho}$ are very similar. They have smaller error to the true V than $MV$, most of the time. The estimated V from $MV$ has larger log likelihood in the final mash model. In terms of ROC and RRMSE, the estimated V from optim, $M_{\rho}$ and $MV$ performs similarly.
+Comparing the estimated V from optim, $M_{\rho}$ and $MV$, $MV$ algorithm is the fastest one, followed by $M_{\rho}$. The estimated V from optim and $M_{\rho}$ are very similar. They have smaller error to the true V than $MV$, most of the time. The estimated V from $MV$ has larger log likelihood in the final mash model. In terms of ROC and RRMSE, the estimated V from optim, $M_{\rho}$ and $MV$ performs similarly.
 
 Based on the simulation results, I prefer the $MV$ method.
 
@@ -92,7 +92,7 @@ Vhat.optim = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol=1e-4,
 Vhat.optim$V
 ```
 
-2. The result uses algorithm in [estimate cor em](EstimateCorEM3.html). $\rho$ in each iteration is the root of a third degree polynomial.
+2. The result uses algorithm in [estimate cor mrho](EstimateCorEM3.html). $\rho$ in each iteration is the root of a third degree polynomial.
 
 ```{r, warning=FALSE}
 Vhat.mrho = estimateV(m.data, c(U.c, U.ed), init_rho = c(-0.5,0,0.5), tol = 1e-4, optmethod = 'mrho')
@@ -107,7 +107,7 @@ table %>% kable() %>% kable_styling()
 ```
 The time is the total running time with different initial point.
 
-3. The result uses algorithm in [estimate cor em V](EstimateCorMaxMV.html).
+3. The result uses algorithm in [estimate cor mV](EstimateCorMaxMV.html).
 
 ```{r, warning=FALSE}
 Vhat.mV = estimateV(m.data, c(U.c, U.ed), init_V = list(diag(ncol(m.data$Bhat)), clusterGeneration::rcorrmatrix(3), clusterGeneration::rcorrmatrix(3)), tol = 1e-4, optmethod = 'mV')
