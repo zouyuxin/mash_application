@@ -20,28 +20,28 @@ $$
 \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) | \left(\begin{matrix} x \\ y \end{matrix} \right) \sim N(\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) ; \left(\begin{matrix} x \\ y \end{matrix} \right), \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right))
 $$
 $$
-\left(\begin{matrix} x \\ y \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} x \\ y \end{matrix} \right); 0, U_{k} )
+\left(\begin{matrix} x \\ y \end{matrix} \right) \sim \sum_{p=0}^{P} \pi_{p} N( \left(\begin{matrix} x \\ y \end{matrix} \right); 0, \Sigma_{p} )
 $$
 $\Rightarrow$
 $$
-\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) \sim \sum_{k=0}^{K} \pi_{k} N( \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right); 0, \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right) + U_{k} )
+\left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right) \sim \sum_{p=0}^{P} \pi_{p} N( \left(\begin{matrix} \hat{x} \\ \hat{y} \end{matrix} \right); 0, \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right) + \Sigma_{p} )
 $$
 $$
-\Sigma_{k} = \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right) + U_{k} = \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right) + \left( \begin{matrix} u_{k11} & u_{k12} \\ u_{k21} & u_{k22} \end{matrix} \right) = \left( \begin{matrix} 1+u_{k11} & \rho+u_{k12} \\ \rho+u_{k21} & 1+u_{k22} \end{matrix} \right)
+\Omega_{p} = \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right) + \Sigma_{p} = \left( \begin{matrix} 1 & \rho \\ \rho & 1 \end{matrix} \right) + \left( \begin{matrix} \sigma_{p11} & \sigma_{p12} \\ \sigma_{p21} & \sigma_{p22} \end{matrix} \right) = \left( \begin{matrix} 1+\sigma_{p11} & \rho+\sigma_{p12} \\ \rho+\sigma_{p21} & 1+\sigma_{p22} \end{matrix} \right)
 $$
-Let $\sigma_{k11} = \sqrt{1+u_{k11}}$, $\sigma_{k22} = \sqrt{1+u_{k22}}$, $\phi_{k}=\frac{\rho+u_{k12}}{\sigma_{k11}\sigma_{k22}}$
+Let $\omega_{p11} = \sqrt{1+\sigma_{p11}}$, $\omega_{p22} = \sqrt{1+\sigma_{p22}}$, $\phi_{p}=\frac{\rho+\sigma_{p12}}{\omega_{k11}\omega_{p22}}$
 
 ## MLE
 
 The loglikelihood is (with penalty)
 $$
-l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}N(x_{i}; 0, \Sigma_{k}) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{p=0}^{P} \pi_{p}N(x_{i}; 0, \Omega_{p}) + \sum_{p=0}^{P} (\lambda_{p}-1) \log \pi_{p}
 $$
 
-The penalty on $\pi$ encourages over-estimation of $\pi_{0}$, $\lambda_{k}\geq 1$.
+The penalty on $\pi$ encourages over-estimation of $\pi_{0}$, $\lambda_{p}\geq 1$.
 
 $$
-l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{k=0}^{K} \pi_{k}\frac{1}{2\pi\sigma_{k11}\sigma_{k22}\sqrt{1-\phi_{k}^2}} \exp\left( -\frac{1}{2(1-\phi_{k}^2)}\left[ \frac{x_{i}^2}{\sigma_{k11}^2} + \frac{y_{i}^2}{\sigma_{k22}^2} - \frac{2\phi_{k}x_{i}y_{i}}{\sigma_{k11}\sigma_{k22}}\right]  \right) + \sum_{k=0}^{K} (\lambda_{k}-1) \log \pi_{k}
+l(\rho, \pi) = \sum_{i=1}^{n} \log \sum_{p=0}^{P} \pi_{p}\frac{1}{2\pi\omega_{p11}\omega_{p22}\sqrt{1-\phi_{p}^2}} \exp\left( -\frac{1}{2(1-\phi_{p}^2)}\left[ \frac{x_{i}^2}{\omega_{p11}^2} + \frac{y_{i}^2}{\omega_{p22}^2} - \frac{2\phi_{p}x_{i}y_{i}}{\omega_{p11}\omega_{p22}}\right]  \right) + \sum_{p=0}^{P} (\lambda_{p}-1) \log \pi_{p}
 $$
 
 **Note:** This probelm is convex with respect to $\pi$. In terms of $\rho$, the covenxity depends on the data.
@@ -231,10 +231,10 @@ grid = mashr:::autoselect_grid(m.data, sqrt(2))
 Ulist = mashr:::normalize_Ulist(U.c)
 xUlist = mashr:::expand_cov(Ulist,grid,usepointmass =  TRUE)
 
-result.optim <- optimize_pi_rho(data$Bhat, xUlist, init_rho = 0)
-plot(result.optim$loglik)
+result.optim <- optimize_pi_rho_times(data$Bhat, xUlist, init_rho = 0)
+plot(result.optim$result$loglik)
 ```
-The estimated $\rho$ is `r result.optim$rho`.
+The estimated $\rho$ is `r result.optim$rho`. The running time is `r result.optim$time` seconds.
 
 ```{r}
 m.data.optim = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.optim$rho,result.optim$rho,1),2,2))
