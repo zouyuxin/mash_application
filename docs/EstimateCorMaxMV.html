@@ -24,6 +24,7 @@
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 <link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
@@ -169,6 +170,14 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
 
 
 
@@ -313,6 +322,14 @@ div.section {
 
 <div class="fluid-row" id="header">
 
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
 
 
 <h1 class="title toc-ignore">Estimate cor — M V decompose</h1>
@@ -346,7 +363,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/cd82d7ef90cc06703cdf5f6b54fac396988e813d" target="_blank">cd82d7e</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/52d66f31880595ec749f61cfca7737b1ac243475" target="_blank">52d66f3</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -497,6 +514,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/52d66f31880595ec749f61cfca7737b1ac243475/analysis/EstimateCorMaxMV.Rmd" target="_blank">52d66f3</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMV.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/4e61be5170a2dd75f652405049c0604d73c593ea/docs/EstimateCorMaxMV.html" target="_blank">4e61be5</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/cd82d7ef90cc06703cdf5f6b54fac396988e813d/analysis/EstimateCorMaxMV.Rmd" target="_blank">cd82d7e</a>
 </td>
 <td style="text-align:left;">
@@ -548,17 +599,14 @@ wflow_publish(“analysis/EstimateCorMaxMV.Rmd”)
 </ul>
 <p></details></p>
 <hr />
-<!-- Update knitr chunk options -->
-<!-- Insert the date the file was last updated -->
-<p><strong>Last updated:</strong> 2018-10-09</p>
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
 source(&#39;../code/summary.R&#39;)</code></pre>
 <p>We use EM algorithm to update <span class="math inline">\(\rho\)</span>.</p>
 <p>B is the <span class="math inline">\(n\times R\)</span> true value matrix. <span class="math inline">\(\mathbf{z}\)</span> is a length n vector.</p>
-<div id="e-step" class="section level1">
-<h1>E step</h1>
+<div id="e-step" class="section level2">
+<h2>E step</h2>
 <p><span class="math display">\[
 P(\hat{B},B|\rho, \pi) = \prod_{i=1}^{n} \left[N(\hat{b}_{i}; b_{i}, V)\sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})\right]
 \]</span></p>
@@ -704,6 +752,7 @@ fit_mash_V &lt;- function(X, Ulist, V, prior=c(&#39;nullbiased&#39;, &#39;unifor
   m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE, outputlevel = 3)
   return(m.model)
 }</code></pre>
+</div>
 <div id="data" class="section level2">
 <h2>Data</h2>
 <pre class="r"><code>set.seed(1)
@@ -724,7 +773,7 @@ result.mV &lt;- mixture.MV.times(m.data$Bhat, U.c)</code></pre>
 <pre><code>          [,1]      [,2]
 [1,] 1.0000000 0.5087773
 [2,] 0.5087773 1.0000000</code></pre>
-<p>The running time is 25.541 seconds.</p>
+<p>The running time is 26.366 seconds.</p>
 <pre class="r"><code>m.data.mV = mash_set_data(data$Bhat, data$Shat, V = result.mV$result$V)
 U.c.mV = cov_canonical(m.data.mV)
 m.mV = mash(m.data.mV, U.c, verbose= FALSE)
@@ -765,7 +814,6 @@ loaded via a namespace (and not attached):
 [31] evaluate_0.11     rmarkdown_1.10    stringi_1.2.4    
 [34] compiler_3.5.1    Rmosek_8.0.69     backports_1.1.2  
 [37] R.methodsS3_1.7.1 mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
-</div>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
