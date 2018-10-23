@@ -20,22 +20,22 @@ B is the $n\times R$ true value matrix. $\mathbf{z}$ is a length n vector.
 ## E step
 
 $$
-P(\hat{B},B|\rho, \pi) = \prod_{i=1}^{n} \left[N(\hat{b}_{i}; b_{i}, V)\sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})\right]
+P(\hat{B},B|\rho, \pi) = \prod_{i=1}^{n} \left[N(\hat{b}_{i}; b_{i}, S_{i}VS_{i})\sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})\right]
 $$
 
 $$
 \begin{align*}
-\mathbb{E}_{B|\hat{B}} \log P(\hat{B},B|\rho, \pi) &= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\left[ \log N(\hat{b}_{i}; b_{i}, V) + \log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p}) \right] \\
-&= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\log N(\hat{b}_{i}; b_{i}, V) + \sum_{i=1}^{n}\mathbb{E}_{b_{i}|\hat{b}_{i}}\log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})
+\mathbb{E}_{B|\hat{B}} \log P(\hat{B},B|\rho, \pi) &= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\left[ \log N(\hat{b}_{i}; b_{i}, S_{i}VS_{i}) + \log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p}) \right] \\
+&= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\log N(\hat{b}_{i}; b_{i}, S_{i}VS_{i}) + \sum_{i=1}^{n}\mathbb{E}_{b_{i}|\hat{b}_{i}}\log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})
 \end{align*}
 $$
 
 $V$ depends on the first term only. Let $\mu_{i} = \mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i})$
 $$
 \begin{align*}
-\log N(\hat{b}_{i}; b_{i}, V) &= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |V| - \frac{1}{2}(\hat{b}_{i}-b_{i})^{T}V^{-1}(\hat{b}_{i}-b_{i}) \\
-&= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \frac{1}{2}b_{i}^{T}V^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}V^{-1}b_{i} -\frac{1}{2}b_{i}^{T}V^{-1}b_{i} \\
-\mathbb{E}_{b_{i}|\hat{b}_{i}} \log N(\hat{b}_{i}; b_{i}, V) &= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}V^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\mu_{i} -\frac{1}{2}tr(V^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
+\log N(\hat{b}_{i}; b_{i}, V) &= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |S_{i}VS_{i}| - \frac{1}{2}(\hat{b}_{i}-b_{i})^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}(\hat{b}_{i}-b_{i}) \\
+&= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |S_{i}VS_{i}| - \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}b_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}b_{i} -\frac{1}{2}b_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}b_{i} \\
+\mathbb{E}_{b_{i}|\hat{b}_{i}} \log N(\hat{b}_{i}; b_{i}, V) &= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |S_{i}VS_{i}| - \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\mu_{i} -\frac{1}{2}tr(S_{i}^{-1}V^{-1}S_{i}^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
 \end{align*}
 $$
 
@@ -44,29 +44,29 @@ Maximize with respect to V:
 We have constraint on V, the diagonal of V must be 1. Let $V = DCD$, C is the covariance matrix, D = $diag(1/sqrt(C_{jj}))$.
 
 $$
-f(C) = \sum_{i=1}^{n} -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |C|- \log |D| - \frac{1}{2}\hat{b}_{i}^{T}D^{-1}C^{-1}D^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}D^{-1}C^{-1}D^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}D^{-1}C^{-1}D^{-1}\mu_{i} -\frac{1}{2}tr(D^{-1}C^{-1}D^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
+f(C) = \sum_{i=1}^{n} -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |C|- \log |DS_{i}| - \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\mu_{i} -\frac{1}{2}tr(S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
 $$
 
 $$
 \begin{align*}
-f(C)' &= \sum_{i=1}^{n} -\frac{1}{2}C^{-1} + \frac{1}{2}C^{-1}D^{-1}\hat{b}_{i}\hat{b}_{i}^{T}D^{-1}C^{-1} - \frac{1}{2} C^{-1}D^{-1}\mu_{i}\hat{b}_{i}^{T}D^{-1}C^{-1} - \frac{1}{2}C^{-1}D^{-1}\hat{b}_{i}\mu_{i}^{T}D^{-1}C^{-1} + \frac{1}{2} C^{-1}D^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})D^{-1}C^{-1} = 0 \\
-0 &= \sum_{i=1}^{n} -\frac{1}{2}C + \frac{1}{2}D^{-1}\hat{b}_{i}\hat{b}_{i}^{T}D^{-1} - \frac{1}{2}D^{-1}\mu_{i}\hat{b}_{i}^{T}D^{-1} - \frac{1}{2}D^{-1}\hat{b}_{i}\mu_{i}^{T}D^{-1} + \frac{1}{2} D^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})D^{-1} \\
-\hat{C} &= \frac{1}{n} \sum_{i=1}^{n} \left[D^{-1}\hat{b}_{i}\hat{b}_{i}^{T}D^{-1} - D^{-1}\mu_{i}\hat{b}_{i}^{T}D^{-1} - D^{-1}\hat{b}_{i}\mu_{i}^{T}D^{-1} + D^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})D^{-1} \right] \\
-&= \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (D^{-1}(\hat{b}_{i} - b_{i}))(D^{-1}(\hat{b}_{i} - b_{i}))^{T} | \hat{b}_{i}\right] \\
-&= D^{-1}\frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]D^{-1}
+f(C)' &= \sum_{i=1}^{n} -\frac{1}{2}C^{-1} + \frac{1}{2}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1} - \frac{1}{2} C^{-1}D^{-1}S_{i}^{-1}\mu_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1} - \frac{1}{2}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i}\mu_{i}^{T}S_{i}^{-1}D^{-1}C^{-1} + \frac{1}{2} C^{-1}D^{-1}S_{i}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})S_{i}^{-1}D^{-1}C^{-1} = 0 \\
+0 &= \sum_{i=1}^{n} -\frac{1}{2}C + \frac{1}{2}D^{-1}S_{i}^{-1}\hat{b}_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - \frac{1}{2}D^{-1}S_{i}^{-1}\mu_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - \frac{1}{2}D^{-1}S_{i}^{-1}\hat{b}_{i}\mu_{i}^{T}S_{i}^{-1}D^{-1} + \frac{1}{2} D^{-1}S_{i}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})S_{i}^{-1}D^{-1} \\
+\hat{C} &= \frac{1}{n} \sum_{i=1}^{n} \left[D^{-1}S_{i}^{-1}\hat{b}_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - D^{-1}S_{i}^{-1}\mu_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - D^{-1}S_{i}^{-1}\hat{b}_{i}\mu_{i}^{T}S_{i}^{-1}D^{-1} + D^{-1}S_{i}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})S_{i}^{-1}D^{-1} \right] \\
+&= \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (D^{-1}S_{i}^{-1}(\hat{b}_{i} - b_{i}))(D^{-1}S_{i}^{-1}(\hat{b}_{i} - b_{i}))^{T} | \hat{b}_{i}\right] \\
+&= D^{-1}\frac{1}{n} \sum_{i=1}^{n} S_{i}^{-1}\mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right] S_{i}^{-1} D^{-1}
 \end{align*}
 $$
 
 We can update C and V as
 $$
-\hat{C}_{(t+1)} =  \hat{D}^{-1}_{(t)}\frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]\hat{D}^{-1}_{(t)} \\
+\hat{C}_{(t+1)} =  \hat{D}^{-1}_{(t)}\frac{1}{n} \left[\sum_{i=1}^{n} S_{i}^{-1}\mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]S_{i}^{-1} \right] \hat{D}^{-1}_{(t)} \\
 \hat{D}_{(t+1)} = diag(1/\sqrt{\hat{C}_{(t+1)jj}}) \\
 \hat{V}_{(t+1)} = \hat{D}_{(t+1)}\hat{C}_{(t+1)}\hat{D}_{(t+1)}
 $$
 
 The resulting $\hat{V}_{(t+1)}$ is equivalent as
 $$
-\hat{C}_{(t+1)} = \frac{1}{n}\sum_{i=1}^{n} \mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right] \\
+\hat{C}_{(t+1)} = \frac{1}{n}\sum_{i=1}^{n} S_{i}^{-1}\mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]S_{i}^{-1} \\
 \hat{D}_{(t+1)} = diag(1/\sqrt{\hat{C}_{(t+1)jj}}) \\
 \hat{V}_{(t+1)} = \hat{D}_{(t+1)}\hat{C}_{(t+1)}\hat{D}_{(t+1)}
 $$
@@ -95,93 +95,63 @@ penalty <- function(prior, pi_s){
   sum((prior-1)[subset]*log(pi_s[subset]))
 }
 
-#' @title compute log likelihood
-#' @param L log likelihoods,
-#' where the (i,k)th entry is the log probability of observation i
-#' given it came from component k of g
-#' @param p the vector of mixture proportions
-#' @param prior the weight for the penalty
-compute.log.lik <- function(lL, p, prior){
-  p = normalize(pmax(0,p))
-  temp = log(exp(lL$loglik_matrix) %*% p)+lL$lfactors
-  return(sum(temp) + penalty(prior, p))
-  # return(sum(temp))
-}
-
-normalize <- function(x){
-  x/sum(x)
-}
-```
-
-```{r}
-mixture.MV.times <- function(X, Ulist, init_V = list(diag(ncol(X))), tol=1e-5, prior = c('nullbiased', 'uniform')){
-  times = length(init_V)
-  result = list()
-  loglik = c()
-  V = list()
-  time.t = c()
-  converge.status = c()
-  for(i in 1:times){
-    out.time = system.time(result[[i]] <- mixture.MV(X, Ulist,
-                                                      init_V=init_V[[i]],
-                                                      prior=prior,
-                                                      tol = tol))
-    time.t = c(time.t, out.time['elapsed'])
-    loglik = c(loglik, tail(result[[i]]$loglik, 1))
-    V = c(V, list(result[[i]]$V))
-  }
-  if(abs(max(loglik) - min(loglik)) < 1e-4){
-    status = 'global'
-  }else{
-    status = 'local'
-  }
-  ind = which.max(loglik)
-  return(list(result=result[[ind]], status = status, loglik = loglik, V=V, time = time.t))
-}
-
-mixture.MV <- function(X, Ulist, init_V=diag(ncol(X)), tol=1e-5, prior = c('nullbiased', 'uniform')){
+mixture.MV <- function(mash.data, Ulist, init_V=diag(ncol(mash.data$Bhat)), max_iter = 500, tol=1e-5, prior = c('nullbiased', 'uniform'), cor = TRUE, track_fit = FALSE){
   prior <- match.arg(prior)
+  tracking = list()
 
-  m.model = fit_mash_V(X, Ulist, V = init_V, prior=prior)
+  m.model = fit_mash_V(mash.data, Ulist, V = init_V, prior=prior)
   pi_s = get_estimated_pi(m.model, dimension = 'all')
   prior.v <- mashr:::set_prior(length(pi_s), prior)
-
+  
   # compute loglikelihood
-  log_liks <- c()
-  log_liks <- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
-  delta.ll <- 1
-  niter <- 0
+  log_liks <- numeric(max_iter+1)
+  log_liks[1] <- get_loglik(m.model)+penalty(prior.v, pi_s)
   V = init_V
-
-  while(delta.ll > tol){
+  
+  result = list(V = V, logliks = log_liks[1], mash.model = m.model)
+  
+  for(i in 1:max_iter){
+    if(track_fit){
+      tracking[[i]] = result
+    }
     # max_V
-    V = E_V(X, m.model)
-    V = cov2cor(V)
-    m.model = fit_mash_V(X, Ulist, V, prior=prior)
+    V = E_V(mash.data, m.model)
+    if(cor){
+        V = cov2cor(V)
+    }
+    m.model = fit_mash_V(mash.data, Ulist, V, prior=prior)
     pi_s = get_estimated_pi(m.model, dimension = 'all')
 
-    log_liks <- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
+    log_liks[i+1] <- get_loglik(m.model)+penalty(prior.v, pi_s)
+    
+    result = list(V = V, logliks = log_liks[1:(i+1)], mash.model = m.model)
+
     # Update delta
-    delta.ll <- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
-    niter <- niter + 1
+    delta.ll <- log_liks[i+1] - log_liks[i]
+    if(delta.ll<=tol) break;
   }
-  return(list(pi = normalize(pi_s), V=V, loglik = log_liks))
+  
+  if(track_fit){
+    result$trace = tracking
+  }
+  
+  return(result)
 }
 
-E_V = function(X, m.model){
-  n = nrow(X)
-  post.m = m.model$result$PosteriorMean
-  post.sec = plyr::laply(1:n, function(i) m.model$result$PosteriorCov[,,i] + tcrossprod(post.m[i,])) # nx2x2 array
-
-  temp1 = crossprod(X)
-  temp2 = crossprod(post.m, X) + crossprod(X, post.m)
-  temp3 = unname(plyr::aaply(post.sec, c(2,3), sum))
+E_V = function(mash.data, m.model){
+  n = mashr:::n_effects(mash.data)
+  Z = mash.data$Bhat/mash.data$Shat
+  post.m.shat = m.model$result$PosteriorMean / mash.data$Shat
+  post.sec.shat = plyr::laply(1:n, function(i) (t(m.model$result$PosteriorCov[,,i]/mash.data$Shat[i,])/mash.data$Shat[i,]) + tcrossprod(post.m.shat[i,])) # nx2x2 array
+  temp1 = crossprod(Z)
+  temp2 = crossprod(post.m.shat, Z) + crossprod(Z, post.m.shat)
+  temp3 = unname(plyr::aaply(post.sec.shat, c(2,3), sum))
 
   (temp1 - temp2 + temp3)/n
 }
 
-fit_mash_V <- function(X, Ulist, V, prior=c('nullbiased', 'uniform')){
-  m.data = mashr::mash_set_data(Bhat=X, Shat=1, V = V)
+fit_mash_V <- function(mash.data, Ulist, V, prior=c('nullbiased', 'uniform')){
+  m.data = mashr::mash_set_data(Bhat=mash.data$Bhat, Shat=mash.data$Shat, V = V, alpha = mash.data$alpha)
   m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE, outputlevel = 3)
   return(m.model)
 }
@@ -205,19 +175,17 @@ data = generate_data(n, p, Sigma, Utrue)
 m.data = mash_set_data(data$Bhat, data$Shat)
 U.c = cov_canonical(m.data)
 
-result.mV <- mixture.MV.times(m.data$Bhat, U.c)
+result.mV <- mixture.MV(m.data, U.c)
 ```
 
 The estimated $V$ is 
 ```{r}
-result.mV$result$V
+result.mV$V
 ```
 The running time is `r result.mV$time` seconds.
 
 ```{r}
-m.data.mV = mash_set_data(data$Bhat, data$Shat, V = result.mV$result$V)
-U.c.mV = cov_canonical(m.data.mV)
-m.mV = mash(m.data.mV, U.c, verbose= FALSE)
+m.mV = result.mV$mash.model
 null.ind = which(apply(data$B,1,sum) == 0)
 ```
 
