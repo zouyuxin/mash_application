@@ -1,0 +1,373 @@
+---
+title: "Estimate V -- fewer iterations"
+author: "Yuxin Zou"
+date: 2018-10-22
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+```{r}
+library(mashr)
+library(ggplot2)
+source('../code/generateDataV.R')
+```
+
+```{r}
+penalty <- function(prior, pi_s){
+  subset <- (prior != 1.0)
+  sum((prior-1)[subset]*log(pi_s[subset]))
+}
+
+mixture.MV <- function(mash.data, Ulist, init_V=diag(ncol(mash.data$Bhat)), max_iter = 500, tol=1e-5, prior = c('nullbiased', 'uniform'), cor = TRUE, track_fit = FALSE){
+  prior <- match.arg(prior)
+  tracking = list()
+
+  m.model = fit_mash_V(mash.data, Ulist, V = init_V, prior=prior)
+  pi_s = get_estimated_pi(m.model, dimension = 'all')
+  prior.v <- mashr:::set_prior(length(pi_s), prior)
+  
+  # compute loglikelihood
+  log_liks <- numeric(max_iter+1)
+  log_liks[1] <- get_loglik(m.model)+penalty(prior.v, pi_s)
+  V = init_V
+  
+  result = list(V = V, logliks = log_liks[1], mash.model = m.model)
+  
+  for(i in 1:max_iter){
+    if(track_fit){
+      tracking[[i]] = result
+    }
+    # max_V
+    V = E_V(mash.data, m.model)
+    if(cor){
+        V = cov2cor(V)
+    }
+    m.model = fit_mash_V(mash.data, Ulist, V, prior=prior)
+    pi_s = get_estimated_pi(m.model, dimension = 'all')
+
+    log_liks[i+1] <- get_loglik(m.model)+penalty(prior.v, pi_s)
+    
+    result = list(V = V, logliks = log_liks[1:(i+1)], mash.model = m.model)
+
+    # Update delta
+    delta.ll <- log_liks[i+1] - log_liks[i]
+    if(delta.ll<=tol) break;
+  }
+  
+  if(track_fit){
+    result$trace = tracking
+  }
+  
+  return(result)
+}
+
+E_V = function(mash.data, m.model){
+  n = mashr:::n_effects(mash.data)
+  Z = mash.data$Bhat/mash.data$Shat
+  post.m.shat = m.model$result$PosteriorMean / mash.data$Shat
+  post.sec.shat = plyr::laply(1:n, function(i) (t(m.model$result$PosteriorCov[,,i]/mash.data$Shat[i,])/mash.data$Shat[i,]) + tcrossprod(post.m.shat[i,])) # nx2x2 array
+  temp1 = crossprod(Z)
+  temp2 = crossprod(post.m.shat, Z) + crossprod(Z, post.m.shat)
+  temp3 = unname(plyr::aaply(post.sec.shat, c(2,3), sum))
+
+  (temp1 - temp2 + temp3)/n
+}
+
+fit_mash_V <- function(mash.data, Ulist, V, prior=c('nullbiased', 'uniform')){
+  m.data = mashr::mash_set_data(Bhat=mash.data$Bhat, Shat=mash.data$Shat, V = V, alpha = mash.data$alpha)
+  m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE, outputlevel = 3)
+  return(m.model)
+}
+```
+
+## Data
+
+Simple simulation in $R^2$:
+$$
+\hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.5 \\
+                                          0.5 & 1 \end{matrix}\right))
+$$
+
+$$
+\beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 & 0 \\
+                                          0 & 0 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 0 & 0 \\
+                                          0 & 1 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 & 1 \\
+                                          1 & 1 \end{matrix}\right))
+$$
+
+```{r}
+set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)
+```
+
+```{r}
+m.data = mash_set_data(data$Bhat, data$Shat)
+U.c.full = cov_canonical(m.data)
+U.c.redu = cov_canonical(m.data, cov_methods = c("equal_effects", "simple_het"))
+```
+
+## Full VS Reduce
+
+```{r}
+result.mV.full <- mixture.MV(m.data, U.c.full, init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE))
+result.mV.redu <- mixture.MV(m.data, U.c.redu, init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE))
+```
+
+```{r}
+{
+plot(result.mV.full$loglik, xlab = 'iter', ylab = 'loglik')
+points(result.mV.redu$loglik, col='green')
+legend('bottomright', legend=c('full', 'reduce'), col=c('black', 'green'), pch=c(1,1))
+}
+```
+
+The estimated V from full Ulist is 
+```{r}
+result.mV.full$V
+```
+
+The estimated V from reduced Ulist is 
+```{r}
+result.mV.redu$V
+```
+
+The mash model from the full Ulist has the log likelihood `r formatC(get_loglik(result.mV.full$mash.model), digits=7)`. 
+
+The mash model from the reduced Ulist has the log likelihood `r formatC(get_loglik(result.mV.redu$mash.model), digits=7)`.
+
+```{r}
+m.data = mash_set_data(data$Bhat, data$Shat, V = result.mV.redu$V)
+m.model = mash(m.data, U.c.full, verbose = FALSE)
+```
+
+Using the V from the reduced Ulist, the mash model using full Ulist has the log likelihood `r formatC(get_loglik(m.model), digits=7)`.
+
+## Different number of iterations
+
+I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.
+
+$$
+\hat{b}_{j}|b_{j} \sim N_{5}(z, S_{j}VS_{j})
+$$
+$$
+b_{j}\sim\frac{1}{4}\delta_{0} + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 1 & \mathbf{0}_{1\times 4} \\ \mathbf{0}_{4\times 1} & \mathbf{0}_{4\times 4} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\left(\begin{matrix} \mathbf{1}_{2\times 2} & \mathbf{0}_{1\times 3} \\ \mathbf{0}_{3\times 1} & \mathbf{0}_{3\times 3} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\mathbf{1}_{5\times 5})
+$$
+
+```{r, warning=FALSE, eval=FALSE}
+set.seed(20181006)
+n=4000; p = 5
+U0 = matrix(0,p,p)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[c(1:2), c(1:2)] = 1
+U3 = matrix(1, p,p)
+Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
+
+for(t in 1:10){
+  print(paste0('Data: ', t))
+  Vtrue = clusterGeneration::rcorrmatrix(p)
+  data = generate_data(n, p, Vtrue, Utrue)
+  # mash cov
+  m.data = mash_set_data(Bhat = data$Bhat, Shat = data$Shat)
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+  U.c = cov_canonical(m.data)
+  print('Method: mV')
+  full.time = system.time(Vhat.mV.full <- mixture.MV(m.data, c(U.c, U.ed), init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE),
+                        tol=1e-4, track_fit = FALSE))['elapsed']
+  reduce.time = system.time(Vhat.mV.redu <- mixture.MV(m.data, cov_canonical(m.data, cov_methods = c("identity", "singletons")),
+                            init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE),
+                            tol=1e-4, track_fit = FALSE))['elapsed']
+  saveRDS(list(V.true = Vtrue, V.mV.full = Vhat.mV.full, V.mV.redu = Vhat.mV.redu, data = data, strong=strong,
+               full.time = full.time, reduce.time = reduce.time),
+          paste0('../output/MASH.mV.result.',t,'.rds'))
+}
+```
+
+```{r}
+files = dir("../output/mVUlist/"); files = files[grep("MASH.mV.result",files)]
+times = length(files)
+result = vector(mode="list",length = times)
+for(i in 1:times) {
+  result[[i]] = readRDS(paste("../output/mVUlist/", files[[i]], sep=""))
+}
+```
+
+```{r warning=FALSE}
+for(i in 1:times){
+  m.data = mash_set_data(result[[i]]$data$Bhat, result[[i]]$data$Shat)
+  result[[i]]$V.trun = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
+  
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+  
+  U.c = cov_canonical(m.data)
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+
+  m.data.true = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.true)
+  m.model.true = mash(m.data.true, c(U.c,U.ed), verbose = FALSE)
+  
+  m.data.trun = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.trun)
+  m.model.trun = mash(m.data.trun, c(U.c,U.ed), verbose = FALSE)
+  
+  # mV
+  # full
+  m.model.full = result[[i]]$V.mV.full$mash.model
+  
+  # reduce
+  m.model.redu = result[[i]]$V.mV.redu$mash.model
+  m.data.redu = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.mV.redu$V)
+  m.model.redu.full = mash(m.data.redu, c(U.c,U.ed), verbose = FALSE)
+  
+  result[[i]]$m.model = list(m.model.true = m.model.true, m.model.trun = m.model.trun,
+                             m.model.full = m.model.full,
+                             m.model.redu = m.model.redu, m.model.redu.full = m.model.redu.full)
+}
+```
+
+### Error
+
+The Frobenius norm is
+```{r}
+norm.type='F'
+temp = matrix(0,nrow = times, ncol = 3)
+for(i in 1:times){
+  temp[i, ] = c(norm(result[[i]]$V.trun - result[[i]]$V.true, type = norm.type),
+                norm(result[[i]]$V.mV.full$V - result[[i]]$V.true, type = norm.type), 
+                norm(result[[i]]$V.mV.redu$V - result[[i]]$V.true, type = norm.type))
+}
+colnames(temp) = c('Trun', 'Full','Reduce')
+temp = reshape2::melt(temp[])
+colnames(temp) = c('Data', 'Method', 'FrobError')
+ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()
+```
+
+The spectral norm is
+```{r}
+norm.type='2'
+temp = matrix(0,nrow = times, ncol = 3)
+for(i in 1:times){
+  temp[i, ] = c(norm(result[[i]]$V.trun - result[[i]]$V.true, type = norm.type),
+                norm(result[[i]]$V.mV.full$V - result[[i]]$V.true, type = norm.type), 
+                norm(result[[i]]$V.mV.redu$V - result[[i]]$V.true, type = norm.type))
+}
+colnames(temp) = c('Trun', 'Full','Reduce')
+temp = reshape2::melt(temp)
+colnames(temp) = c('Data', 'Method', 'SpecError')
+ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()
+```
+
+### Time
+
+The total running time for each matrix is
+```{r}
+mV.full.time = mV.redu.time = numeric(times)
+for(i in 1:times){
+  mV.full.time[i] = result[[i]]$full.time
+  mV.redu.time[i] = result[[i]]$reduce.time
+}
+temp = cbind(mV.full.time, mV.redu.time)
+colnames(temp) = c('Full', 'Reduce')
+row.names(temp) = 1:10
+
+temp = reshape2::melt(temp)
+colnames(temp) = c('Data', 'Method', 'Time')
+ggplot(temp, aes(x = Data, y=Time, group = Method, color = Method)) + geom_line()
+```
+
+### mash log likelihood
+
+```{r}
+temp = matrix(0,nrow = times, ncol = 5)
+for(i in 1:times){
+  temp[i, ] = c(get_loglik(result[[i]]$m.model$m.model.true),
+                get_loglik(result[[i]]$m.model$m.model.trun),
+                get_loglik(result[[i]]$m.model$m.model.full),
+                get_loglik(result[[i]]$m.model$m.model.redu), 
+                get_loglik(result[[i]]$m.model$m.model.redu.full))
+}
+colnames(temp) = c('True','Trun', 'Full','Reduce', 'Reduce+Full')
+temp = reshape2::melt(temp)
+colnames(temp) = c('Data', 'Method', 'loglikelihood')
+ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()
+```
+
+### ROC
+
+```{r}
+ROC.table = function(data, model){
+  sign.test = data*model$result$PosteriorMean
+  thresh.seq = seq(0, 1, by=0.005)[-1]
+  m.seq = matrix(0,length(thresh.seq), 2)
+  colnames(m.seq) = c('TPR', 'FPR')
+  for(t in 1:length(thresh.seq)){
+    m.seq[t,] = c(sum(sign.test>0 & model$result$lfsr <= thresh.seq[t])/sum(data!=0),
+                  sum(data==0 & model$result$lfsr <=thresh.seq[t])/sum(data==0))
+  }
+  return(m.seq)
+}
+plotROC = function(data.true, result.model, title){
+  m.true.seq = ROC.table(data.true, result.model$m.model.true)
+  m.trun.seq = ROC.table(data.true, result.model$m.model.trun)
+  m.mV.full.seq = ROC.table(data.true, result.model$m.model.full)
+  m.mV.reduce.seq = ROC.table(data.true, result.model$m.model.redu)
+  m.mV.reduce.full.seq = ROC.table(data.true, result.model$m.model.redu.full)
+
+  plot(m.true.seq[,'FPR'], m.true.seq[,'TPR'],type='l',xlab = 'FPR', ylab='TPR',
+       main=paste0(title, 'True Pos vs False Pos'), cex=1.5, lwd = 1.5)
+  lines(m.mV.full.seq[,'FPR'], m.mV.full.seq[,'TPR'], col='red', lwd = 1.5)
+  lines(m.mV.reduce.seq[,'FPR'], m.mV.reduce.seq[,'TPR'], col='darkorchid', lwd = 1.5)
+  lines(m.mV.reduce.full.seq[,'FPR'], m.mV.reduce.full.seq[,'TPR'], col='darkgoldenrod', lwd = 1.5)
+  lines(m.trun.seq[,'FPR'], m.trun.seq[,'TPR'], col='blue', lwd = 1.5)
+  legend('bottomright', c('True','Trun', 'Full', 'Reduce', 'Reduce+Full'),col=c('black','blue', 'red','darkorchid','darkgoldenrod'),
+           lty=c(1,1,1,1,1), lwd=c(1.5,1.5,1.5,1.5,1.5))
+}
+```
+
+```{r}
+par(mfrow=c(1,2))
+for(i in 1:times){
+  plotROC(result[[i]]$data$B, result[[i]]$m.model, title=paste0('Data', i, ' '))
+}
+```
+
+### RRMSE
+
+```{r}
+RRMSE = function(datatrue, dataobs, model){
+  model = Filter(length, model)
+  rrmse = numeric(length(model))
+  for(k in 1:length(model)){
+    rrmse[k] = sqrt(mean((datatrue - model[[k]]$result$PosteriorMean)^2)/mean((datatrue - dataobs)^2))
+  }
+  rrmse = as.matrix(t(rrmse))
+  colnames(rrmse) = names(model)
+  return(rrmse)
+}
+```
+
+```{r}
+par(mfrow=c(1,2))
+for(i in 1:times){
+  rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result[[i]]$m.model))
+  barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main='RRMSE')
+}
+```
+
+
+
+
+
+
+
