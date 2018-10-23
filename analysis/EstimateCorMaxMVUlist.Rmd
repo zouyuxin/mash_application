@@ -152,9 +152,9 @@ m.model = mash(m.data, U.c.full, verbose = FALSE)
 
 Using the V from the reduced Ulist, the mash model using full Ulist has the log likelihood `r formatC(get_loglik(m.model), digits=7)`.
 
-## Different number of iterations
+## Different Ulist
 
-I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.
+I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000. The reduced Ulist only contain identity and singletons.
 
 $$
 \hat{b}_{j}|b_{j} \sim N_{5}(z, S_{j}VS_{j})
