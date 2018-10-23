@@ -111,10 +111,12 @@ data = generate_data(n, p, Sigma, Utrue)
 ```{r}
 m.data = mash_set_data(data$Bhat, data$Shat)
 U.c.full = cov_canonical(m.data)
-U.c.redu = cov_canonical(m.data, cov_methods = c("equal_effects", "simple_het"))
+U.c.redu = cov_canonical(m.data, cov_methods = "simple_het")
 ```
 
 ## Full VS Reduce
+
+The reduced Ulist only contains simple_het.
 
 ```{r}
 result.mV.full <- mixture.MV(m.data, U.c.full, init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE))
