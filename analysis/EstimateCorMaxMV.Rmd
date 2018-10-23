@@ -182,7 +182,6 @@ The estimated $V$ is
 ```{r}
 result.mV$V
 ```
-The running time is `r result.mV$time` seconds.
 
 ```{r}
 m.mV = result.mV$mash.model
