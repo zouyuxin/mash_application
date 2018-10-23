@@ -20,3 +20,7 @@ output:
 * Using EM to estimate cor ($V$): [Estimate cor EM V](EstimateCorMaxMV.html)
 
 * The examples above are in $\mathcal{R}^{2}$. Here are more simulations to compare different methods for $R > 2$ : [Estimate cor in mash](EstimateCorMaxMash.html)
+
+* Fewer iteration: [Estimate cor EM V fewer iteration](EstimateCorMaxMVIter.html) (niter = 3)
+
+* Shorter Ulist: [Estimate cor EM V shorter Ulist](EstimateCorMaxMVUlist.html)
