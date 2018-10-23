@@ -363,7 +363,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/6a7014a573c1c4c057da6682e9897d9f87a8db16" target="_blank">6a7014a</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/9abd1d044d669388f4703734059f2f5521f33c30" target="_blank">9abd1d0</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -382,8 +382,6 @@ Untracked files:
     Untracked:  analysis/Classify.Rmd
     Untracked:  analysis/EstimateCorMaxEMGD.Rmd
     Untracked:  analysis/EstimateCorMaxGD.Rmd
-    Untracked:  analysis/EstimateCorPrior.Rmd
-    Untracked:  analysis/EstimateCorSol.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
     Untracked:  analysis/MashLowSignalGTEx4.Rmd
     Untracked:  analysis/Mash_GTEx.Rmd
@@ -486,6 +484,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/9abd1d044d669388f4703734059f2f5521f33c30/analysis/EstimateCorMaxMV.Rmd" target="_blank">9abd1d0</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMV.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/3889d0726202db1bc76ecd65ed5496d578ed2e99/docs/EstimateCorMaxMV.html" target="_blank">3889d07</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -757,7 +789,6 @@ result.mV &lt;- mixture.MV(m.data, U.c)</code></pre>
 <pre><code>          [,1]      [,2]
 [1,] 1.0000000 0.5087773
 [2,] 0.5087773 1.0000000</code></pre>
-<p>The running time is seconds.</p>
 <pre class="r"><code>m.mV = result.mV$mash.model
 null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
 <p>The log likelihood is -12302.52. There are 26 significant samples, 0 false positives. The RRMSE is 0.5822283.</p>
