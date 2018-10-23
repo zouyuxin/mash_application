@@ -13,7 +13,7 @@
 
 <meta name="date" content="2018-10-22" />
 
-<title>Estimate V -- fewer iterations</title>
+<title>Estimate V -- shorter Ulist</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -333,7 +333,7 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Estimate V – fewer iterations</h1>
+<h1 class="title toc-ignore">Estimate V – shorter Ulist</h1>
 <h4 class="author"><em>Yuxin Zou</em></h4>
 <h4 class="date"><em>2018-10-22</em></h4>
 
@@ -364,7 +364,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/e0610817379aadef6ddd97a14467d79059817f42" target="_blank">e061081</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/0ecda8f8d94f4a4d943eaa0b54297d51bac9391e" target="_blank">0ecda8f</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -494,6 +494,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/0ecda8f8d94f4a4d943eaa0b54297d51bac9391e/analysis/EstimateCorMaxMVUlist.Rmd" target="_blank">0ecda8f</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMVUlist.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/EstimateCorMaxMVUlist.html" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/e0610817379aadef6ddd97a14467d79059817f42/analysis/EstimateCorMaxMVUlist.Rmd" target="_blank">e061081</a>
 </td>
 <td style="text-align:left;">
@@ -615,6 +649,36 @@ points(result.mV.redu$loglik, col=&#39;green&#39;)
 legend(&#39;bottomright&#39;, legend=c(&#39;full&#39;, &#39;reduce&#39;), col=c(&#39;black&#39;, &#39;green&#39;), pch=c(1,1))
 }</code></pre>
 <p><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-6-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-6-1.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The estimated V from full Ulist is</p>
 <pre class="r"><code>result.mV.full$V</code></pre>
 <pre><code>          [,1]      [,2]
@@ -720,6 +784,36 @@ temp = reshape2::melt(temp[])
 colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;FrobError&#39;)
 ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()</code></pre>
 <p><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-13-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-13-1.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The spectral norm is</p>
 <pre class="r"><code>norm.type=&#39;2&#39;
 temp = matrix(0,nrow = times, ncol = 3)
@@ -733,6 +827,36 @@ temp = reshape2::melt(temp)
 colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;SpecError&#39;)
 ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()</code></pre>
 <p><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-14-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-14-1.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="time" class="section level3">
 <h3>Time</h3>
@@ -750,6 +874,36 @@ temp = reshape2::melt(temp)
 colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;Time&#39;)
 ggplot(temp, aes(x = Data, y=Time, group = Method, color = Method)) + geom_line()</code></pre>
 <p><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-15-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-15-1.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="mash-log-likelihood" class="section level3">
 <h3>mash log likelihood</h3>
@@ -766,6 +920,36 @@ temp = reshape2::melt(temp)
 colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;loglikelihood&#39;)
 ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()</code></pre>
 <p><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-16-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-16-1.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="roc" class="section level3">
 <h3>ROC</h3>
@@ -800,7 +984,157 @@ plotROC = function(data.true, result.model, title){
 for(i in 1:times){
   plotROC(result[[i]]$data$B, result[[i]]$m.model, title=paste0(&#39;Data&#39;, i, &#39; &#39;))
 }</code></pre>
-<p><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-1.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-2.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-3.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-4.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-4.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-4.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-5.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-18-5.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-18-5.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="rrmse" class="section level3">
 <h3>RRMSE</h3>
@@ -819,7 +1153,157 @@ for(i in 1:times){
   rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result[[i]]$m.model))
   barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)
 }</code></pre>
-<p><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-20-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-1.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-20-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-2.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-3.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-20-3.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-3.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-4.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-20-4.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-4.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details> <img src="figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-5.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-20-5.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/eb57faf6219113ea956a0aba6d823608ac6ee9e0/docs/figure/EstimateCorMaxMVUlist.Rmd/unnamed-chunk-20-5.png" target="_blank">eb57faf</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 </div>
 <div id="session-information" class="section level2">
