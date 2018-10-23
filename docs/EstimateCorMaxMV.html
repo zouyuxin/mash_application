@@ -339,7 +339,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-10-09</p>
+<p><strong>Last updated:</strong> 2018-10-22</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -363,7 +363,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/52d66f31880595ec749f61cfca7737b1ac243475" target="_blank">52d66f3</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/6a7014a573c1c4c057da6682e9897d9f87a8db16" target="_blank">6a7014a</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -380,10 +380,8 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/Classify.Rmd
-    Untracked:  analysis/EstimateCorEM3W2.Rmd
     Untracked:  analysis/EstimateCorMaxEMGD.Rmd
     Untracked:  analysis/EstimateCorMaxGD.Rmd
-    Untracked:  analysis/EstimateCorOptimEM.Rmd
     Untracked:  analysis/EstimateCorPrior.Rmd
     Untracked:  analysis/EstimateCorSol.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
@@ -396,9 +394,9 @@ Untracked files:
     Untracked:  analysis/OutlierDetection4.Rmd
     Untracked:  analysis/mash_missing_row.Rmd
     Untracked:  code/GTExNullModel.R
-    Untracked:  code/MASH.result.1.rds
     Untracked:  code/MashClassify.R
     Untracked:  code/MashCorResult.R
+    Untracked:  code/MashCormVResult.R
     Untracked:  code/MashNULLCorResult.R
     Untracked:  code/MashSource.R
     Untracked:  code/Weight_plot.R
@@ -406,6 +404,7 @@ Untracked files:
     Untracked:  code/estimate_cor.R
     Untracked:  code/generateDataV.R
     Untracked:  code/johnprocess.R
+    Untracked:  code/mV.R
     Untracked:  code/sim_mean_sig.R
     Untracked:  code/summary.R
     Untracked:  data/Blischak_et_al_2015/
@@ -444,37 +443,15 @@ Untracked files:
     Untracked:  output/GTEx_4_nullPermModel.rds
     Untracked:  output/MASH.10.em2.result.rds
     Untracked:  output/MASH.10.mle.result.rds
-    Untracked:  output/MASHNULL.V.result.1.rds
-    Untracked:  output/MASHNULL.V.result.10.rds
-    Untracked:  output/MASHNULL.V.result.11.rds
-    Untracked:  output/MASHNULL.V.result.12.rds
-    Untracked:  output/MASHNULL.V.result.13.rds
-    Untracked:  output/MASHNULL.V.result.14.rds
-    Untracked:  output/MASHNULL.V.result.15.rds
-    Untracked:  output/MASHNULL.V.result.16.rds
-    Untracked:  output/MASHNULL.V.result.17.rds
-    Untracked:  output/MASHNULL.V.result.18.rds
-    Untracked:  output/MASHNULL.V.result.19.rds
-    Untracked:  output/MASHNULL.V.result.2.rds
-    Untracked:  output/MASHNULL.V.result.20.rds
-    Untracked:  output/MASHNULL.V.result.3.rds
-    Untracked:  output/MASHNULL.V.result.4.rds
-    Untracked:  output/MASHNULL.V.result.5.rds
-    Untracked:  output/MASHNULL.V.result.6.rds
-    Untracked:  output/MASHNULL.V.result.7.rds
-    Untracked:  output/MASHNULL.V.result.8.rds
-    Untracked:  output/MASHNULL.V.result.9.rds
     Untracked:  output/MashCorSim--midway/
     Untracked:  output/Mash_EE_Cov_0_plusR1.rds
     Untracked:  output/UKBio_mash_model.rds
+    Untracked:  output/mVIterations/
+    Untracked:  output/mVUlist/
     Untracked:  output/result.em.rds
 
 Unstaged changes:
-    Deleted:    analysis/EstimateCorMax.Rmd
     Modified:   analysis/EstimateCorMaxEM2.Rmd
-    Deleted:    analysis/EstimateCorMaxEMV.Rmd
-    Modified:   analysis/EstimateCorMaxMash.Rmd
-    Deleted:    analysis/MashLowSignalGTEx3.5P.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
     Modified:   output/Flash_T2_0.rds
@@ -509,6 +486,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/6a7014a573c1c4c057da6682e9897d9f87a8db16/analysis/EstimateCorMaxMV.Rmd" target="_blank">6a7014a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMV.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/8f39f1cd280cab7429fa78b6112a11c60b8a18b1/docs/EstimateCorMaxMV.html" target="_blank">8f39f1c</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -608,42 +619,42 @@ source(&#39;../code/summary.R&#39;)</code></pre>
 <div id="e-step" class="section level2">
 <h2>E step</h2>
 <p><span class="math display">\[
-P(\hat{B},B|\rho, \pi) = \prod_{i=1}^{n} \left[N(\hat{b}_{i}; b_{i}, V)\sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})\right]
+P(\hat{B},B|\rho, \pi) = \prod_{i=1}^{n} \left[N(\hat{b}_{i}; b_{i}, S_{i}VS_{i})\sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})\right]
 \]</span></p>
 <p><span class="math display">\[
 \begin{align*}
-\mathbb{E}_{B|\hat{B}} \log P(\hat{B},B|\rho, \pi) &amp;= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\left[ \log N(\hat{b}_{i}; b_{i}, V) + \log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p}) \right] \\
-&amp;= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\log N(\hat{b}_{i}; b_{i}, V) + \sum_{i=1}^{n}\mathbb{E}_{b_{i}|\hat{b}_{i}}\log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})
+\mathbb{E}_{B|\hat{B}} \log P(\hat{B},B|\rho, \pi) &amp;= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\left[ \log N(\hat{b}_{i}; b_{i}, S_{i}VS_{i}) + \log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p}) \right] \\
+&amp;= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\log N(\hat{b}_{i}; b_{i}, S_{i}VS_{i}) + \sum_{i=1}^{n}\mathbb{E}_{b_{i}|\hat{b}_{i}}\log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})
 \end{align*}
 \]</span></p>
 <p><span class="math inline">\(V\)</span> depends on the first term only. Let <span class="math inline">\(\mu_{i} = \mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i})\)</span> <span class="math display">\[
 \begin{align*}
-\log N(\hat{b}_{i}; b_{i}, V) &amp;= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |V| - \frac{1}{2}(\hat{b}_{i}-b_{i})^{T}V^{-1}(\hat{b}_{i}-b_{i}) \\
-&amp;= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \frac{1}{2}b_{i}^{T}V^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}V^{-1}b_{i} -\frac{1}{2}b_{i}^{T}V^{-1}b_{i} \\
-\mathbb{E}_{b_{i}|\hat{b}_{i}} \log N(\hat{b}_{i}; b_{i}, V) &amp;= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}V^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}V^{-1}\mu_{i} -\frac{1}{2}tr(V^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
+\log N(\hat{b}_{i}; b_{i}, V) &amp;= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |S_{i}VS_{i}| - \frac{1}{2}(\hat{b}_{i}-b_{i})^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}(\hat{b}_{i}-b_{i}) \\
+&amp;= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |S_{i}VS_{i}| - \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}b_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}b_{i} -\frac{1}{2}b_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}b_{i} \\
+\mathbb{E}_{b_{i}|\hat{b}_{i}} \log N(\hat{b}_{i}; b_{i}, V) &amp;= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |S_{i}VS_{i}| - \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\mu_{i} -\frac{1}{2}tr(S_{i}^{-1}V^{-1}S_{i}^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
 \end{align*}
 \]</span></p>
 <p>Maximize with respect to V:</p>
 <p>We have constraint on V, the diagonal of V must be 1. Let <span class="math inline">\(V = DCD\)</span>, C is the covariance matrix, D = <span class="math inline">\(diag(1/sqrt(C_{jj}))\)</span>.</p>
 <p><span class="math display">\[
-f(C) = \sum_{i=1}^{n} -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |C|- \log |D| - \frac{1}{2}\hat{b}_{i}^{T}D^{-1}C^{-1}D^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}D^{-1}C^{-1}D^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}D^{-1}C^{-1}D^{-1}\mu_{i} -\frac{1}{2}tr(D^{-1}C^{-1}D^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
+f(C) = \sum_{i=1}^{n} -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |C|- \log |DS_{i}| - \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\mu_{i} -\frac{1}{2}tr(S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
 \]</span></p>
 <p><span class="math display">\[
 \begin{align*}
-f(C)&#39; &amp;= \sum_{i=1}^{n} -\frac{1}{2}C^{-1} + \frac{1}{2}C^{-1}D^{-1}\hat{b}_{i}\hat{b}_{i}^{T}D^{-1}C^{-1} - \frac{1}{2} C^{-1}D^{-1}\mu_{i}\hat{b}_{i}^{T}D^{-1}C^{-1} - \frac{1}{2}C^{-1}D^{-1}\hat{b}_{i}\mu_{i}^{T}D^{-1}C^{-1} + \frac{1}{2} C^{-1}D^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})D^{-1}C^{-1} = 0 \\
-0 &amp;= \sum_{i=1}^{n} -\frac{1}{2}C + \frac{1}{2}D^{-1}\hat{b}_{i}\hat{b}_{i}^{T}D^{-1} - \frac{1}{2}D^{-1}\mu_{i}\hat{b}_{i}^{T}D^{-1} - \frac{1}{2}D^{-1}\hat{b}_{i}\mu_{i}^{T}D^{-1} + \frac{1}{2} D^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})D^{-1} \\
-\hat{C} &amp;= \frac{1}{n} \sum_{i=1}^{n} \left[D^{-1}\hat{b}_{i}\hat{b}_{i}^{T}D^{-1} - D^{-1}\mu_{i}\hat{b}_{i}^{T}D^{-1} - D^{-1}\hat{b}_{i}\mu_{i}^{T}D^{-1} + D^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})D^{-1} \right] \\
-&amp;= \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (D^{-1}(\hat{b}_{i} - b_{i}))(D^{-1}(\hat{b}_{i} - b_{i}))^{T} | \hat{b}_{i}\right] \\
-&amp;= D^{-1}\frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]D^{-1}
+f(C)&#39; &amp;= \sum_{i=1}^{n} -\frac{1}{2}C^{-1} + \frac{1}{2}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1} - \frac{1}{2} C^{-1}D^{-1}S_{i}^{-1}\mu_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1} - \frac{1}{2}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i}\mu_{i}^{T}S_{i}^{-1}D^{-1}C^{-1} + \frac{1}{2} C^{-1}D^{-1}S_{i}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})S_{i}^{-1}D^{-1}C^{-1} = 0 \\
+0 &amp;= \sum_{i=1}^{n} -\frac{1}{2}C + \frac{1}{2}D^{-1}S_{i}^{-1}\hat{b}_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - \frac{1}{2}D^{-1}S_{i}^{-1}\mu_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - \frac{1}{2}D^{-1}S_{i}^{-1}\hat{b}_{i}\mu_{i}^{T}S_{i}^{-1}D^{-1} + \frac{1}{2} D^{-1}S_{i}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})S_{i}^{-1}D^{-1} \\
+\hat{C} &amp;= \frac{1}{n} \sum_{i=1}^{n} \left[D^{-1}S_{i}^{-1}\hat{b}_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - D^{-1}S_{i}^{-1}\mu_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - D^{-1}S_{i}^{-1}\hat{b}_{i}\mu_{i}^{T}S_{i}^{-1}D^{-1} + D^{-1}S_{i}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})S_{i}^{-1}D^{-1} \right] \\
+&amp;= \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (D^{-1}S_{i}^{-1}(\hat{b}_{i} - b_{i}))(D^{-1}S_{i}^{-1}(\hat{b}_{i} - b_{i}))^{T} | \hat{b}_{i}\right] \\
+&amp;= D^{-1}\frac{1}{n} \sum_{i=1}^{n} S_{i}^{-1}\mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right] S_{i}^{-1} D^{-1}
 \end{align*}
 \]</span></p>
 <p>We can update C and V as <span class="math display">\[
-\hat{C}_{(t+1)} =  \hat{D}^{-1}_{(t)}\frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]\hat{D}^{-1}_{(t)} \\
+\hat{C}_{(t+1)} =  \hat{D}^{-1}_{(t)}\frac{1}{n} \left[\sum_{i=1}^{n} S_{i}^{-1}\mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]S_{i}^{-1} \right] \hat{D}^{-1}_{(t)} \\
 \hat{D}_{(t+1)} = diag(1/\sqrt{\hat{C}_{(t+1)jj}}) \\
 \hat{V}_{(t+1)} = \hat{D}_{(t+1)}\hat{C}_{(t+1)}\hat{D}_{(t+1)}
 \]</span></p>
 <p>The resulting <span class="math inline">\(\hat{V}_{(t+1)}\)</span> is equivalent as <span class="math display">\[
-\hat{C}_{(t+1)} = \frac{1}{n}\sum_{i=1}^{n} \mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right] \\
+\hat{C}_{(t+1)} = \frac{1}{n}\sum_{i=1}^{n} S_{i}^{-1}\mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]S_{i}^{-1} \\
 \hat{D}_{(t+1)} = diag(1/\sqrt{\hat{C}_{(t+1)jj}}) \\
 \hat{V}_{(t+1)} = \hat{D}_{(t+1)}\hat{C}_{(t+1)}\hat{D}_{(t+1)}
 \]</span></p>
@@ -665,90 +676,63 @@ while delta &gt; tol
   sum((prior-1)[subset]*log(pi_s[subset]))
 }
 
-#&#39; @title compute log likelihood
-#&#39; @param L log likelihoods,
-#&#39; where the (i,k)th entry is the log probability of observation i
-#&#39; given it came from component k of g
-#&#39; @param p the vector of mixture proportions
-#&#39; @param prior the weight for the penalty
-compute.log.lik &lt;- function(lL, p, prior){
-  p = normalize(pmax(0,p))
-  temp = log(exp(lL$loglik_matrix) %*% p)+lL$lfactors
-  return(sum(temp) + penalty(prior, p))
-  # return(sum(temp))
-}
-
-normalize &lt;- function(x){
-  x/sum(x)
-}</code></pre>
-<pre class="r"><code>mixture.MV.times &lt;- function(X, Ulist, init_V = list(diag(ncol(X))), tol=1e-5, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;)){
-  times = length(init_V)
-  result = list()
-  loglik = c()
-  V = list()
-  time.t = c()
-  converge.status = c()
-  for(i in 1:times){
-    out.time = system.time(result[[i]] &lt;- mixture.MV(X, Ulist,
-                                                      init_V=init_V[[i]],
-                                                      prior=prior,
-                                                      tol = tol))
-    time.t = c(time.t, out.time[&#39;elapsed&#39;])
-    loglik = c(loglik, tail(result[[i]]$loglik, 1))
-    V = c(V, list(result[[i]]$V))
-  }
-  if(abs(max(loglik) - min(loglik)) &lt; 1e-4){
-    status = &#39;global&#39;
-  }else{
-    status = &#39;local&#39;
-  }
-  ind = which.max(loglik)
-  return(list(result=result[[ind]], status = status, loglik = loglik, V=V, time = time.t))
-}
-
-mixture.MV &lt;- function(X, Ulist, init_V=diag(ncol(X)), tol=1e-5, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;)){
+mixture.MV &lt;- function(mash.data, Ulist, init_V=diag(ncol(mash.data$Bhat)), max_iter = 500, tol=1e-5, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;), cor = TRUE, track_fit = FALSE){
   prior &lt;- match.arg(prior)
+  tracking = list()
 
-  m.model = fit_mash_V(X, Ulist, V = init_V, prior=prior)
+  m.model = fit_mash_V(mash.data, Ulist, V = init_V, prior=prior)
   pi_s = get_estimated_pi(m.model, dimension = &#39;all&#39;)
   prior.v &lt;- mashr:::set_prior(length(pi_s), prior)
-
+  
   # compute loglikelihood
-  log_liks &lt;- c()
-  log_liks &lt;- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
-  delta.ll &lt;- 1
-  niter &lt;- 0
+  log_liks &lt;- numeric(max_iter+1)
+  log_liks[1] &lt;- get_loglik(m.model)+penalty(prior.v, pi_s)
   V = init_V
-
-  while(delta.ll &gt; tol){
+  
+  result = list(V = V, logliks = log_liks[1], mash.model = m.model)
+  
+  for(i in 1:max_iter){
+    if(track_fit){
+      tracking[[i]] = result
+    }
     # max_V
-    V = E_V(X, m.model)
-    V = cov2cor(V)
-    m.model = fit_mash_V(X, Ulist, V, prior=prior)
+    V = E_V(mash.data, m.model)
+    if(cor){
+        V = cov2cor(V)
+    }
+    m.model = fit_mash_V(mash.data, Ulist, V, prior=prior)
     pi_s = get_estimated_pi(m.model, dimension = &#39;all&#39;)
 
-    log_liks &lt;- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
+    log_liks[i+1] &lt;- get_loglik(m.model)+penalty(prior.v, pi_s)
+    
+    result = list(V = V, logliks = log_liks[1:(i+1)], mash.model = m.model)
+
     # Update delta
-    delta.ll &lt;- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
-    niter &lt;- niter + 1
+    delta.ll &lt;- log_liks[i+1] - log_liks[i]
+    if(delta.ll&lt;=tol) break;
   }
-  return(list(pi = normalize(pi_s), V=V, loglik = log_liks))
+  
+  if(track_fit){
+    result$trace = tracking
+  }
+  
+  return(result)
 }
 
-E_V = function(X, m.model){
-  n = nrow(X)
-  post.m = m.model$result$PosteriorMean
-  post.sec = plyr::laply(1:n, function(i) m.model$result$PosteriorCov[,,i] + tcrossprod(post.m[i,])) # nx2x2 array
-
-  temp1 = crossprod(X)
-  temp2 = crossprod(post.m, X) + crossprod(X, post.m)
-  temp3 = unname(plyr::aaply(post.sec, c(2,3), sum))
+E_V = function(mash.data, m.model){
+  n = mashr:::n_effects(mash.data)
+  Z = mash.data$Bhat/mash.data$Shat
+  post.m.shat = m.model$result$PosteriorMean / mash.data$Shat
+  post.sec.shat = plyr::laply(1:n, function(i) (t(m.model$result$PosteriorCov[,,i]/mash.data$Shat[i,])/mash.data$Shat[i,]) + tcrossprod(post.m.shat[i,])) # nx2x2 array
+  temp1 = crossprod(Z)
+  temp2 = crossprod(post.m.shat, Z) + crossprod(Z, post.m.shat)
+  temp3 = unname(plyr::aaply(post.sec.shat, c(2,3), sum))
 
   (temp1 - temp2 + temp3)/n
 }
 
-fit_mash_V &lt;- function(X, Ulist, V, prior=c(&#39;nullbiased&#39;, &#39;uniform&#39;)){
-  m.data = mashr::mash_set_data(Bhat=X, Shat=1, V = V)
+fit_mash_V &lt;- function(mash.data, Ulist, V, prior=c(&#39;nullbiased&#39;, &#39;uniform&#39;)){
+  m.data = mashr::mash_set_data(Bhat=mash.data$Bhat, Shat=mash.data$Shat, V = V, alpha = mash.data$alpha)
   m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE, outputlevel = 3)
   return(m.model)
 }</code></pre>
@@ -767,16 +751,14 @@ data = generate_data(n, p, Sigma, Utrue)</code></pre>
 <pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
 U.c = cov_canonical(m.data)
 
-result.mV &lt;- mixture.MV.times(m.data$Bhat, U.c)</code></pre>
+result.mV &lt;- mixture.MV(m.data, U.c)</code></pre>
 <p>The estimated <span class="math inline">\(V\)</span> is</p>
-<pre class="r"><code>result.mV$result$V</code></pre>
+<pre class="r"><code>result.mV$V</code></pre>
 <pre><code>          [,1]      [,2]
 [1,] 1.0000000 0.5087773
 [2,] 0.5087773 1.0000000</code></pre>
-<p>The running time is 26.366 seconds.</p>
-<pre class="r"><code>m.data.mV = mash_set_data(data$Bhat, data$Shat, V = result.mV$result$V)
-U.c.mV = cov_canonical(m.data.mV)
-m.mV = mash(m.data.mV, U.c, verbose= FALSE)
+<p>The running time is seconds.</p>
+<pre class="r"><code>m.mV = result.mV$mash.model
 null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
 <p>The log likelihood is -12302.52. There are 26 significant samples, 0 false positives. The RRMSE is 0.5822283.</p>
 </div>
@@ -785,7 +767,7 @@ null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.5.1 (2018-07-02)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS High Sierra 10.13.6
+Running under: macOS  10.14
 
 Matrix products: default
 BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
@@ -798,7 +780,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2-15 ashr_2.2-14 
+[1] mashr_0.2.18.0454 ashr_2.2-7       
 
 loaded via a namespace (and not attached):
  [1] Rcpp_0.12.19      knitr_1.20        whisker_0.3-2    
@@ -809,9 +791,9 @@ loaded via a namespace (and not attached):
 [16] parallel_3.5.1    grid_3.5.1        R.oo_1.22.0      
 [19] rmeta_3.0         git2r_0.23.0      htmltools_0.3.6  
 [22] iterators_1.0.10  assertthat_0.2.0  abind_1.4-5      
-[25] yaml_2.2.0        rprojroot_1.3-2   digest_0.6.15    
-[28] Matrix_1.2-14     codetools_0.2-15  R.utils_2.6.0    
-[31] evaluate_0.11     rmarkdown_1.10    stringi_1.2.4    
+[25] yaml_2.2.0        rprojroot_1.3-2   digest_0.6.18    
+[28] Matrix_1.2-14     codetools_0.2-15  R.utils_2.7.0    
+[31] evaluate_0.12     rmarkdown_1.10    stringi_1.2.4    
 [34] compiler_3.5.1    Rmosek_8.0.69     backports_1.1.2  
 [37] R.methodsS3_1.7.1 mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
 </div>
