@@ -101,6 +101,108 @@ while delta > tol
   Update delta
 ```
 
+```{r}
+mixture.EM.times <- function(X, Ulist, init_rho=0, tol=1e-5, prior = c('nullbiased', 'uniform'), grid = 1,...){
+  times = length(init_rho)
+  result = list()
+  loglik = c()
+  rho = c()
+  time.t = c()
+  converge.status = c()
+  for(i in 1:times){
+    if(is.null(grid)){
+      out.time = system.time(result[[i]] <- mixture.EM(X, Ulist,
+                                                        init_rho=init_rho[i],
+                                                        prior=prior,
+                                                        tol = tol))
+    }else{
+      out.time = system.time(result[[i]] <- mixture.EM(X, Ulist,
+                                                        init_rho=init_rho[i],
+                                                        prior=prior,
+                                                        tol = tol,
+                                                        grid = grid, ...))
+    }
+
+    time.t = c(time.t, out.time['elapsed'])
+    loglik = c(loglik, tail(result[[i]]$log_liks, 1))
+    rho = c(rho, result[[i]]$rho)
+  }
+  if(abs(max(loglik) - min(loglik)) < 1e-4){
+    status = 'global'
+  }else{
+    status = 'local'
+  }
+  ind = which.max(loglik)
+  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t))
+}
+
+mixture.EM <- function(X, Ulist, init_rho=0, tol=1e-5, prior = c('nullbiased', 'uniform'), grid=1, usepointmass=FALSE,...){
+  prior <- match.arg(prior)
+  prior.v <- mashr:::set_prior(length(Ulist), prior)
+  # estimate pi
+  m.model = fit_mash(X, Ulist, rho = init_rho, prior=prior, grid=grid,usepointmass=usepointmass, ...)
+  pi_s = get_estimated_pi(m.model)
+  # compute loglikelihood
+  log_liks <- c()
+  log_liks <- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
+  delta.ll <- 1
+  niter <- 0
+  while(delta.ll > tol){
+    # max_rho
+    rho_s <- E_rho(X, m.model)
+    if(length(rho_s) == 1){
+      m.model = fit_mash(X, Ulist, rho_s, prior=prior, grid=grid, usepointmass=usepointmass,...)
+      pi_s = get_estimated_pi(m.model)
+      log_liks <- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
+      # Update delta
+      delta.ll <- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
+      niter <- niter + 1
+    }else{
+      temp.ll = c()
+      temp.model = list()
+      for(i in 1:3){
+        temp.m = fit_mash(X, Ulist, rho_s[i], prior = prior, grid=grid, ...)
+        temp.ll = c(temp.ll, get_loglik(temp.m)+penalty(prior.v, pi_s))
+        temp.model = c(temp.model, list(temp.m))
+      }
+      rho_s = rho_s[which.max(temp.ll)]
+      m.model = temp.model[[which.max(temp.ll)]]
+      pi_s = get_estimated_pi(m.model)
+      log_liks <- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
+      # Update delta
+      delta.ll <- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
+      niter <- niter + 1
+    }
+  }
+  return(list(pi = pi_s, rho = rho_s, log_liks = log_liks))
+}
+
+E_rho <- function(X, m.model){
+  n = nrow(X)
+  post.m = m.model$result$PosteriorMean
+  post.sec = array(unlist(lapply(1:n, function(i) m.model$result$PosteriorCov[,,i] + post.m[i,] %*% t(post.m[i,]))),
+                   dim=c(2, 2, n))
+  temp2 = -sum(X[,1]*X[,2]) + sum(X[,1]*post.m[,2]) + sum(X[,2]*post.m[,1]) - sum(post.sec[1,2,])
+  temp1 = sum(X[,1]^2 + X[,2]^2) - 2*sum(X[,1]*post.m[,1]) - 2*sum(X[,2]*post.m[,2]) + sum(post.sec[1,1,] + post.sec[2,2,])
+
+  rts = polyroot(c(temp2, temp1-n, temp2, n))
+  
+  # check complex number
+  is.real = abs(Im(rts))<1e-12
+  if(sum(is.real) == 1){
+    return(Re(rts[is.real]))
+  }else{
+    return(Re(rts))
+  }
+}
+
+fit_mash <- function(X, Ulist, rho, prior=c('nullbiased', 'uniform'), grid = 1, ...){
+  m.data = mashr::mash_set_data(Bhat=X, V = matrix(c(1, rho, rho, 1), 2, 2))
+  m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE, outputlevel = 3, grid = grid, ...)
+  return(m.model)
+}
+```
+
 ## Data
 
 $$
@@ -168,3 +270,132 @@ lines(m.em.seq[,'FPR'], m.em.seq[,'TPR'], col='red', lwd = 1.5)
 legend('bottomright', c('True','EM'),col=c('black','red'),lty=c(1,1), lwd=c(1.5,1.5))}
 ```
 
+# Another EM version for rho optim
+
+Algorithm: 
+```{r, eval=FALSE, tindy = FALSE}
+Input: X, Ulist, init_rho
+Given rho, estimate pi by max loglikelihood (convex problem)
+Compute loglikelihood
+delta = 1
+while delta > tol
+  E step: compute z
+  M step: update rho
+  Given rho, estimate pi by max loglikelihood (convex problem)
+  Compute loglikelihood
+  Update delta
+```
+
+```{r}
+mixture.M.times <- function(X, Ulist, init_rho=0, init_pi=NULL, prior = c('nullbiased', 'uniform'), control = list()){
+  times = length(init_rho)
+  result = list()
+  loglik = c()
+  rho = c()
+  time.t = c()
+  converge.status = c()
+  for(i in 1:times){
+    out.time = system.time(result[[i]] <- mixture.M(X, Ulist,
+                                                     init_pi=init_pi,
+                                                     init_rho=init_rho[i],
+                                                     prior=prior, 
+                                                     control = control))
+    time.t = c(time.t, out.time['elapsed'])
+    loglik = c(loglik, -result[[i]]$B)
+    rho = c(rho, result[[i]]$rhohat)
+    converge.status = c(converge.status, result[[i]]$converged)
+  }
+  if(abs(max(loglik) - min(loglik)) < 1e-4){
+    status = 'global'
+  }else{
+    status = 'local'
+  }
+  ind = which.max(loglik)
+  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t, converge.status = converge.status))
+}
+
+mixture.M <- function(X, Ulist, init_rho=0, tol=1e-5, prior = c('nullbiased', 'uniform')) {
+  prior <- match.arg(prior)
+
+  m.model = fit_mash(X, Ulist, rho = init_rho, prior=prior)
+  pi_s = get_estimated_pi(m.model, dimension = 'all')
+  # get complete Ulist
+  xUlist = mashr:::expand_cov(Ulist, m.model$fitted_g$grid, m.model$fitted_g$usepointmass)
+  prior.v <- mashr:::set_prior(length(pi_s), prior)
+  
+  # compute loglikelihood
+  log_liks <- c()
+  log_liks <- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
+  delta.ll <- 1
+  niter <- 0
+  rho = init_rho
+  
+  while(delta.ll > tol){
+    # compute L
+    Sigma <- get_sigma(rho, xUlist)
+    L <- t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U)}))
+  
+    m  = t(pi_s * t(L)) # matrix_lik is n by k; so this is also n by k
+    m.rowsum = rowSums(m)
+    classprob = m/m.rowsum #an n by k matrix
+  
+    # max_rho
+    rho <- optimize(EMloglikelihood, interval = c(-1,1), maximum = TRUE, X = X, Ulist = xUlist, z = classprob)$maximum
+    
+    m.model = fit_mash(X, Ulist, rho, prior=prior)
+    
+    pi_s = get_estimated_pi(m.model, dimension = 'all')
+    log_liks <- c(log_liks, get_loglik(m.model)+penalty(prior.v, pi_s))
+    # Update delta
+    delta.ll <- log_liks[length(log_liks)] - log_liks[length(log_liks)-1]
+    niter <- niter + 1
+  }
+
+  return(list(pihat = normalize(pi_s), rho = rho, loglik=log_liks))
+}
+
+EMloglikelihood = function(rho, X, Ulist, z){
+  Sigma = get_sigma(rho, Ulist)
+  L = t(plyr::laply(Sigma,function(U){mvtnorm::dmvnorm(x=X,sigma=U, log=TRUE)}))
+  sum(L * z)
+}
+
+fit_mash <- function(X, Ulist, rho, prior=c('nullbiased', 'uniform')){
+  m.data = mashr::mash_set_data(Bhat=X, Shat=1, V = matrix(c(1, rho, rho, 1), 2, 2))
+  m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE)
+  return(m.model)
+}
+
+```
+
+# Data
+
+```{r}
+set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)
+```
+
+```{r}
+m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+
+result.m <- mixture.M(m.data$Bhat, U.c)
+```
+
+The estimated $\rho$ is `r result.m$rho`.
+
+```{r}
+m.data.m = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.m$rho,result.m$rho,1),2,2))
+U.c.m = cov_canonical(m.data.m)
+m.m = mash(m.data.m, U.c, verbose= FALSE)
+null.ind = which(apply(data$B,1,sum) == 0)
+```
+
+The log likelihood is `r round(get_loglik(m.m),2)`. There are `r length(get_significant_results(m.m))` significant samples, `r sum(get_significant_results(m.m) %in% null.ind)` false positives. The RRMSE is `r RRMSE(data$B, data$Bhat, list(m.m))`.
