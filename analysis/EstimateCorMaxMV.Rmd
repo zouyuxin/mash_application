@@ -20,22 +20,26 @@ B is the $n\times R$ true value matrix. $\mathbf{z}$ is a length n vector.
 ## E step
 
 $$
-P(\hat{B},B|\rho, \pi) = \prod_{i=1}^{n} \left[N(\hat{b}_{i}; b_{i}, S_{i}VS_{i})\sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})\right]
+p(\hat{\mathbf{B}}, \mathbf{B}, \mathbf{z}) h(\boldsymbol{\pi}) = \prod_{j=1}^{J} \prod_{p = 1}^{P}\left[\pi_{p} N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{b}_{j}, \mathbf{S}_{j}\mathbf{V}\mathbf{S}_{j})N_{R}(\mathbf{b}_{j}; \mathbf{0}, \Sigma_{p})\right]^{\mathbb{I}(z_{j} = p)} \prod_{p=1}^{P} \pi_{p}^{\lambda_{p}-1}
 $$
 
 $$
 \begin{align*}
-\mathbb{E}_{B|\hat{B}} \log P(\hat{B},B|\rho, \pi) &= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\left[ \log N(\hat{b}_{i}; b_{i}, S_{i}VS_{i}) + \log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p}) \right] \\
-&= \sum_{i=1}^{n} \mathbb{E}_{b_{i}|\hat{b}_{i}}\log N(\hat{b}_{i}; b_{i}, S_{i}VS_{i}) + \sum_{i=1}^{n}\mathbb{E}_{b_{i}|\hat{b}_{i}}\log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})
+P(z_{j}=p, \mathbf{b}_{j}|\hat{\mathbf{b}}_{j}) &= \frac{P(z_{j}=p, \mathbf{b}_{j},\hat{\mathbf{b}}_{j})}{P(\hat{\mathbf{b}}_{j})} = \frac{P(\hat{\mathbf{b}}_{j}|\mathbf{b}_{j})P(\mathbf{b}_{j}|z_{j}=p) P(z_{j}=p)}{P(\hat{\mathbf{b}}_{j})} \\
+&= \frac{\pi_{p} N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{b}_{j}, \mathbf{S}_{j}\mathbf{V}\mathbf{S}_{j})N_{R}(\mathbf{b}_{j}; \mathbf{0}, \Sigma_{p})}{\sum_{p'}\pi_{p'} N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{0}, \mathbf{S}_{j}\mathbf{V}\mathbf{S}_{j} + \Sigma_{p'})} \\
+&= \frac{\pi_{p} N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{0}, \mathbf{S}_{j}\mathbf{V}\mathbf{S}_{j} + \Sigma_{p})}{\sum_{p'}\pi_{p'} N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{0}, \mathbf{S}_{j}\mathbf{V}\mathbf{S}_{j} + \Sigma_{p'})} \frac{N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{b}_{j}, \mathbf{S}_{j}\mathbf{V}\mathbf{S}_{j})N_{R}(\mathbf{b}_{j}; \mathbf{0}, \Sigma_{p})}{N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{0}, \mathbf{S}_{j}\mathbf{V}\mathbf{S}_{j} + \Sigma_{p})} \\
+&= \gamma_{jp} P(\mathbf{b}_{j}|z_{j}=p, \hat{\mathbf{b}}_{j}) \\
+&= P(z_{j}=p|\hat{\mathbf{b}}_{j}) P(\mathbf{b}_{j}|z_{j}=p, \hat{\mathbf{b}}_{j})
 \end{align*}
 $$
 
-$V$ depends on the first term only. Let $\mu_{i} = \mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i})$
+E step:
 $$
 \begin{align*}
-\log N(\hat{b}_{i}; b_{i}, V) &= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |S_{i}VS_{i}| - \frac{1}{2}(\hat{b}_{i}-b_{i})^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}(\hat{b}_{i}-b_{i}) \\
-&= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |S_{i}VS_{i}| - \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}b_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}b_{i} -\frac{1}{2}b_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}b_{i} \\
-\mathbb{E}_{b_{i}|\hat{b}_{i}} \log N(\hat{b}_{i}; b_{i}, V) &= -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |S_{i}VS_{i}| - \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}V^{-1}S_{i}^{-1}\mu_{i} -\frac{1}{2}tr(S_{i}^{-1}V^{-1}S_{i}^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
+\mathbb{E}_{\mathbf{z}, \mathbf{B}|\hat{\mathbf{B}}}\log p(\hat{\mathbf{B}}, \mathbf{B}, \mathbf{z}) h(\boldsymbol{\pi}) &= \mathbb{E}_{\mathbf{z}, \mathbf{B}|\hat{\mathbf{B}}}  \{
+\sum_{j=1}^{J}\sum_{p = 1}^{P}  \mathbb{I}(z_{j} = p)\left[\log \pi_{p} + \log N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{b}_{j}, \mathbf{S}_{j}\mathbf{V}\mathbf{S}_{j}) + \log N_{R}(\mathbf{b}_{j}; \mathbf{0}, \Sigma_{p})\right] + \sum_{p=1}^{P} (\lambda_{p}-1) \log \pi_{p} \} \\
+&= \sum_{j=1}^{J} \sum_{p=1}^{P} \gamma_{jp} \left[\log \pi_{p} - \frac{1}{2}\log |\mathbf{V}| - \log |\mathbf{S}_{j}| - \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}, z_{j}=p}\left((\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}\mathbf{S}_{j}^{-1}\mathbf{V}^{-1}\mathbf{S}_{j}^{-1}(\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})\right)
+- \frac{1}{2}\log |\Sigma_{p}| - \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}, z_{j}=p}\left(\mathbf{b}_{j}^{T}\Sigma_{p}^{-1}\mathbf{b}_{j} \right)  \right]  + \sum_{p=1}^{P} (\lambda_{p}-1)\log \pi_{p}
 \end{align*}
 $$
 
@@ -44,34 +48,30 @@ Maximize with respect to V:
 We have constraint on V, the diagonal of V must be 1. Let $V = DCD$, C is the covariance matrix, D = $diag(1/sqrt(C_{jj}))$.
 
 $$
-f(C) = \sum_{i=1}^{n} -\frac{R}{2}\log 2\pi -\frac{1}{2}\log |C|- \log |DS_{i}| - \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\mu_{i}^{T}S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i} + \frac{1}{2}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\mu_{i} -\frac{1}{2}tr(S_{i}^{-1}D^{-1}C^{-1}D^{-1}S_{i}^{-1}\mathbb{E}_{b_{i}|\hat{b}_{i}}(b_{i}b_{i}^{T}))
-$$
-
-$$
 \begin{align*}
-f(C)' &= \sum_{i=1}^{n} -\frac{1}{2}C^{-1} + \frac{1}{2}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1} - \frac{1}{2} C^{-1}D^{-1}S_{i}^{-1}\mu_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1}C^{-1} - \frac{1}{2}C^{-1}D^{-1}S_{i}^{-1}\hat{b}_{i}\mu_{i}^{T}S_{i}^{-1}D^{-1}C^{-1} + \frac{1}{2} C^{-1}D^{-1}S_{i}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})S_{i}^{-1}D^{-1}C^{-1} = 0 \\
-0 &= \sum_{i=1}^{n} -\frac{1}{2}C + \frac{1}{2}D^{-1}S_{i}^{-1}\hat{b}_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - \frac{1}{2}D^{-1}S_{i}^{-1}\mu_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - \frac{1}{2}D^{-1}S_{i}^{-1}\hat{b}_{i}\mu_{i}^{T}S_{i}^{-1}D^{-1} + \frac{1}{2} D^{-1}S_{i}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})S_{i}^{-1}D^{-1} \\
-\hat{C} &= \frac{1}{n} \sum_{i=1}^{n} \left[D^{-1}S_{i}^{-1}\hat{b}_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - D^{-1}S_{i}^{-1}\mu_{i}\hat{b}_{i}^{T}S_{i}^{-1}D^{-1} - D^{-1}S_{i}^{-1}\hat{b}_{i}\mu_{i}^{T}S_{i}^{-1}D^{-1} + D^{-1}S_{i}^{-1}\mathbb{E}(b_{i}b_{i}^{T}|\hat{b}_{i})S_{i}^{-1}D^{-1} \right] \\
-&= \frac{1}{n} \sum_{i=1}^{n} \mathbb{E}\left[ (D^{-1}S_{i}^{-1}(\hat{b}_{i} - b_{i}))(D^{-1}S_{i}^{-1}(\hat{b}_{i} - b_{i}))^{T} | \hat{b}_{i}\right] \\
-&= D^{-1}\frac{1}{n} \sum_{i=1}^{n} S_{i}^{-1}\mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right] S_{i}^{-1} D^{-1}
+f(\mathbf{C}) &= \sum_{j=1}^{J} \sum_{p=1}^{P} \gamma_{jp} \left[- \frac{1}{2}\log |\mathbf{D}\mathbf{C}\mathbf{D}| - \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}, z_{j}=p}\left((\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}\mathbf{S}_{j}^{-1}\mathbf{D}^{-1}\mathbf{C}^{-1}\mathbf{D}^{-1}\mathbf{S}_{j}^{-1}(\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})\right) \right] \\
+&= \sum_{j=1}^{J} \sum_{p=1}^{P} \gamma_{jp} \left[- \frac{1}{2}\log |\mathbf{C}| - \log |\mathbf{D}|- \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}, z_{j}=p}\left((\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}\mathbf{S}_{j}^{-1}\mathbf{D}^{-1}\mathbf{C}^{-1}\mathbf{D}^{-1}\mathbf{S}_{j}^{-1}(\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})\right) \right] \\
+f(\mathbf{C})' &= \sum_{j=1}^{J} \sum_{p=1}^{P} \gamma_{jp}\left[ -\frac{1}{2} \mathbf{C}^{-1} + \frac{1}{2} \mathbf{C}^{-1} \mathbf{D}^{-1}\mathbf{S}_{j}^{-1}\mathbb{E}\left((\hat{\mathbf{b}}_{j}-\mathbf{b}_{j}) (\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}|\hat{\mathbf{b}}_{j}, z_{j} = p \right)\mathbf{S}_{j}^{-1}\mathbf{D}^{-1} \mathbf{C}^{-1} \right] = 0 \\
+\mathbf{C} &= \frac{1}{J} \sum_{j=1}^{J} \sum_{p=1}^{P} \gamma_{jp}\mathbf{D}^{-1}\mathbf{S}_{j}^{-1}\mathbb{E}\left((\hat{\mathbf{b}}_{j}-\mathbf{b}_{j}) (\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}|\hat{\mathbf{b}}_{j}, z_{j} = p \right)\mathbf{S}_{j}^{-1}\mathbf{D}^{-1} \\
+&= \frac{1}{J} \mathbf{D}^{-1}\sum_{j=1}^{J} \mathbf{S}_{j}^{-1}\mathbb{E}\left((\hat{\mathbf{b}}_{j}-\mathbf{b}_{j}) (\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}|\hat{\mathbf{b}}_{j}\right)\mathbf{S}_{j}^{-1}\mathbf{D}^{-1}
 \end{align*}
 $$
 
-We can update C and V as
+We can update $\mathbf{C}$ and $\mathbf{V}$ as
 $$
-\hat{C}_{(t+1)} =  \hat{D}^{-1}_{(t)}\frac{1}{n} \left[\sum_{i=1}^{n} S_{i}^{-1}\mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]S_{i}^{-1} \right] \hat{D}^{-1}_{(t)} \\
-\hat{D}_{(t+1)} = diag(1/\sqrt{\hat{C}_{(t+1)jj}}) \\
-\hat{V}_{(t+1)} = \hat{D}_{(t+1)}\hat{C}_{(t+1)}\hat{D}_{(t+1)}
-$$
-
-The resulting $\hat{V}_{(t+1)}$ is equivalent as
-$$
-\hat{C}_{(t+1)} = \frac{1}{n}\sum_{i=1}^{n} S_{i}^{-1}\mathbb{E}\left[ (\hat{b}_{i} - b_{i})(\hat{b}_{i} - b_{i})^{T} | \hat{b}_{i}\right]S_{i}^{-1} \\
-\hat{D}_{(t+1)} = diag(1/\sqrt{\hat{C}_{(t+1)jj}}) \\
-\hat{V}_{(t+1)} = \hat{D}_{(t+1)}\hat{C}_{(t+1)}\hat{D}_{(t+1)}
+\hat{\mathbf{C}}_{(t+1)} =  \hat{\mathbf{D}}^{-1}_{(t)}\frac{1}{J} \left[\sum_{j=1}^{J} \mathbf{S}_{j}^{-1}\mathbb{E}\left[ (\hat{\mathbf{b}}_{j} - \mathbf{b}_{j})(\hat{\mathbf{b}}_{j} - \mathbf{b}_{j})^{T} | \hat{\mathbf{b}}_{j}\right]\mathbf{S}_{j}^{-1} \right] \hat{\mathbf{D}}^{-1}_{(t)} \\
+\hat{\mathbf{D}}_{(t+1)} = diag(1/\sqrt{\hat{\mathbf{C}}_{(t+1)jj}}) \\
+\hat{\mathbf{V}}_{(t+1)} = \hat{\mathbf{D}}_{(t+1)}\hat{\mathbf{C}}_{(t+1)}\hat{\mathbf{D}}_{(t+1)}
 $$
 
-It is hard to estimate $\boldsymbol{\pi}$ from the second term, $\sum_{i=1}^{n}\mathbb{E}_{b_{i}|\hat{b}_{i}}\log \sum_{p=0}^{P} \pi_{p} N(b_{i}; 0, \Sigma_{p})$.
+The resulting $\hat{\mathbf{V}}_{(t+1)}$ is equivalent as
+$$
+\hat{\mathbf{C}}_{(t+1)} =\frac{1}{J} \left[\sum_{j=1}^{J} \mathbf{S}_{j}^{-1}\mathbb{E}\left[ (\hat{\mathbf{b}}_{j} - \mathbf{b}_{j})(\hat{\mathbf{b}}_{j} - \mathbf{b}_{j})^{T} | \hat{\mathbf{b}}_{j}\right]\mathbf{S}_{j}^{-1} \right] \\
+\hat{\mathbf{D}}_{(t+1)} = diag(1/\sqrt{\hat{\mathbf{C}}_{(t+1)jj}}) \\
+\hat{\mathbf{V}}_{(t+1)} = \hat{\mathbf{D}}_{(t+1)}\hat{\mathbf{C}}_{(t+1)}\hat{\mathbf{D}}_{(t+1)}
+$$
+
+The estimated V maximized the lower bound of the log likelihood. We estimate $\boldsymbol{\pi}$ from the log likelihood.
 
 Given V, we estimate $\boldsymbol{\pi}$ by max loglikelihood, which is a convex problem
 
