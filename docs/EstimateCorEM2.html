@@ -12,7 +12,7 @@
 <meta name="author" content="Yuxin Zou" />
 
 
-<title>Estimate cor — EM 2</title>
+<title>Estimate cor — M rho</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -332,14 +332,14 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Estimate cor — EM 2</h1>
+<h1 class="title toc-ignore">Estimate cor — M rho</h1>
 <h4 class="author"><em>Yuxin Zou</em></h4>
-<h4 class="date"><em>2018-8-2</em></h4>
+<h4 class="date"><em>2018-9-20</em></h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-10-09</p>
+<p><strong>Last updated:</strong> 2018-10-24</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -363,7 +363,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/8a7ee7c156b4213a597ad8d20ce07c204a9f76dc" target="_blank">8a7ee7c</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/0fe65ad2a419dc9709aa4a1994b37faa9f4a4975" target="_blank">0fe65ad</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -380,12 +380,8 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/Classify.Rmd
-    Untracked:  analysis/EstimateCorEM3W2.Rmd
     Untracked:  analysis/EstimateCorMaxEMGD.Rmd
     Untracked:  analysis/EstimateCorMaxGD.Rmd
-    Untracked:  analysis/EstimateCorOptimEM.Rmd
-    Untracked:  analysis/EstimateCorPrior.Rmd
-    Untracked:  analysis/EstimateCorSol.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
     Untracked:  analysis/MashLowSignalGTEx4.Rmd
     Untracked:  analysis/Mash_GTEx.Rmd
@@ -396,9 +392,9 @@ Untracked files:
     Untracked:  analysis/OutlierDetection4.Rmd
     Untracked:  analysis/mash_missing_row.Rmd
     Untracked:  code/GTExNullModel.R
-    Untracked:  code/MASH.result.1.rds
     Untracked:  code/MashClassify.R
     Untracked:  code/MashCorResult.R
+    Untracked:  code/MashCormVResult.R
     Untracked:  code/MashNULLCorResult.R
     Untracked:  code/MashSource.R
     Untracked:  code/Weight_plot.R
@@ -406,6 +402,7 @@ Untracked files:
     Untracked:  code/estimate_cor.R
     Untracked:  code/generateDataV.R
     Untracked:  code/johnprocess.R
+    Untracked:  code/mV.R
     Untracked:  code/sim_mean_sig.R
     Untracked:  code/summary.R
     Untracked:  data/Blischak_et_al_2015/
@@ -444,38 +441,16 @@ Untracked files:
     Untracked:  output/GTEx_4_nullPermModel.rds
     Untracked:  output/MASH.10.em2.result.rds
     Untracked:  output/MASH.10.mle.result.rds
-    Untracked:  output/MASHNULL.V.result.1.rds
-    Untracked:  output/MASHNULL.V.result.10.rds
-    Untracked:  output/MASHNULL.V.result.11.rds
-    Untracked:  output/MASHNULL.V.result.12.rds
-    Untracked:  output/MASHNULL.V.result.13.rds
-    Untracked:  output/MASHNULL.V.result.14.rds
-    Untracked:  output/MASHNULL.V.result.15.rds
-    Untracked:  output/MASHNULL.V.result.16.rds
-    Untracked:  output/MASHNULL.V.result.17.rds
-    Untracked:  output/MASHNULL.V.result.18.rds
-    Untracked:  output/MASHNULL.V.result.19.rds
-    Untracked:  output/MASHNULL.V.result.2.rds
-    Untracked:  output/MASHNULL.V.result.20.rds
-    Untracked:  output/MASHNULL.V.result.3.rds
-    Untracked:  output/MASHNULL.V.result.4.rds
-    Untracked:  output/MASHNULL.V.result.5.rds
-    Untracked:  output/MASHNULL.V.result.6.rds
-    Untracked:  output/MASHNULL.V.result.7.rds
-    Untracked:  output/MASHNULL.V.result.8.rds
-    Untracked:  output/MASHNULL.V.result.9.rds
     Untracked:  output/MashCorSim--midway/
     Untracked:  output/Mash_EE_Cov_0_plusR1.rds
     Untracked:  output/UKBio_mash_model.rds
+    Untracked:  output/mVIterations/
+    Untracked:  output/mVUlist/
     Untracked:  output/result.em.rds
 
 Unstaged changes:
-    Deleted:    analysis/EstimateCorMax.Rmd
+    Deleted:    analysis/EstimateCorEM3.Rmd
     Modified:   analysis/EstimateCorMaxEM2.Rmd
-    Deleted:    analysis/EstimateCorMaxEMV.Rmd
-    Modified:   analysis/EstimateCorMaxMV.Rmd
-    Modified:   analysis/EstimateCorMaxMash.Rmd
-    Deleted:    analysis/MashLowSignalGTEx3.5P.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
     Modified:   output/Flash_T2_0.rds
@@ -510,6 +485,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/0fe65ad2a419dc9709aa4a1994b37faa9f4a4975/analysis/EstimateCorEM2.Rmd" target="_blank">0fe65ad</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-24
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorEM2.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/c3d87aa8e11e399224a4cf2772cb8f3779cdda67/docs/EstimateCorEM2.html" target="_blank">c3d87aa</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-09
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -602,26 +611,213 @@ wflow_publish(“analysis/EstimateCorEM2.Rmd”)
 <hr />
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
+source(&#39;../code/summary.R&#39;)</code></pre>
 <p>We use EM algorithm to update <span class="math inline">\(\rho\)</span>.</p>
 <p>B is the <span class="math inline">\(n\times R\)</span> true value matrix. <span class="math inline">\(\mathbf{z}\)</span> is a length n vector.</p>
 <div id="e-step" class="section level2">
 <h2>E step</h2>
 <p><span class="math display">\[
-P(\hat{B},B,\mathbf{z}|\rho, \pi) = \prod_{i=1}^{n} \prod_{p=0}^{P}\left[\pi_{p}N(\hat{b}_{i}; b_{i}, V)N(b_{i}; 0, \Sigma_{p})\right]^{\mathbb{I}(z_{i}=p)}
+P(\hat{B},B, \mathbf{z}|\rho, \pi) = \prod_{j=1}^{J} \prod_{p=0}^{P}\left[\pi_{p}N(\hat{\mathbf{b}}_{j}; \mathbf{b}_{j}, \mathbf{V})N(\mathbf{b}_{i}; 0, \Sigma_{p})\right]^{\mathbb{I}(z_{i}=p)}
 \]</span></p>
 <p><span class="math display">\[
-\mathbb{E}_{\mathbf{z},B|\hat{B}} \log P(\hat{B},B,\mathbf{z}|\rho, \pi) = \sum_{i=1}^{n} \sum_{p=0}^{P} \mathbb{E}_{b_{i}|\hat{b}_{i}}\left[ P(z_{i}=p|b_{i})\left( \log \pi_{p} + \log N(\hat{b}_{i}; b_{i}, V) + \log N(b_{i}; 0, \Sigma_{p}) \right) \right]
-\]</span> <span class="math display">\[
-\gamma_{z_{i}}(p) = P(z_{i}=p|b_{i}) = \frac{\pi_{p}N(b_{i}; 0, \Sigma_{p})}{\sum_{p&#39;=0}^{P}\pi_{p&#39;}N(b_{i}; 0, \Sigma_{p&#39;})}
+\begin{align*}
+P(z_{j}=p, \mathbf{b}_{j}|\hat{\mathbf{b}}_{j}) &amp;= \frac{P(z_{j}=p, \mathbf{b}_{j},\hat{\mathbf{b}}_{j})}{P(\hat{\mathbf{b}}_{j})} = \frac{P(\hat{\mathbf{b}}_{j}|\mathbf{b}_{j})P(\mathbf{b}_{j}|z_{j}=p) P(z_{j}=p)}{P(\hat{\mathbf{b}}_{j})} \\
+&amp;= \frac{\pi_{p} N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{b}_{j},\mathbf{V})N_{R}(\mathbf{b}_{j}; \mathbf{0}, \Sigma_{p})}{\sum_{p&#39;}\pi_{p&#39;} N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{0},\mathbf{V} + \Sigma_{p&#39;})} \\
+&amp;= \frac{\pi_{p} N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{0},\mathbf{V} + \Sigma_{p})}{\sum_{p&#39;}\pi_{p&#39;} N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{0},\mathbf{V} + \Sigma_{p&#39;})} \frac{N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{b}_{j},\mathbf{V})N_{R}(\mathbf{b}_{j}; \mathbf{0}, \Sigma_{p})}{N_{R}(\hat{\mathbf{b}}_{j}; \mathbf{0},\mathbf{V} + \Sigma_{p})} \\
+&amp;= \gamma_{jp} P(\mathbf{b}_{j}|z_{j}=p, \hat{\mathbf{b}}_{j}) \\
+&amp;= P(z_{j}=p|\hat{\mathbf{b}}_{j}) P(\mathbf{b}_{j}|z_{j}=p, \hat{\mathbf{b}}_{j})
+\end{align*}
 \]</span></p>
-<p>It is hard to compute the expectation.</p>
+<p><span class="math display">\[
+\mathbb{E}_{\mathbf{z}, \mathbf{B}|\hat{\mathbf{B}}}\log p(\hat{\mathbf{B}}, \mathbf{B}, \mathbf{z}) = \sum_{j=1}^{J} \sum_{p=1}^{P} \gamma_{jp} \left[\log \pi_{p} - \frac{1}{2}\log |\mathbf{V}| - \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}, z_{j}=p}\left[(\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}\mathbf{V}^{-1}(\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})\right] \\
+- \frac{1}{2}\log |\Sigma_{p}| - \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}, z_{j}=p}\left[\mathbf{b}_{j}^{T}\Sigma_{p}^{-1}\mathbf{b}_{j} \right]  \right]
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
+f(\mathbf{V}) &amp;= \sum_{j=1}^{J} \sum_{p=1}^{P} \gamma_{jp} \left[- \frac{1}{2}\log |\mathbf{V}| - \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}, z_{j}=p}\left[(\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}\mathbf{V}^{-1}(\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})\right]\right] \\
+&amp;= \sum_{j=1}^{J} \left[- \frac{1}{2}\log |\mathbf{V}| - \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}}\left[(\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}\mathbf{V}^{-1}(\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})\right]\right]
+\end{align*}
+\]</span></p>
+<p>V has a specific form: <span class="math display">\[
+V = \left( \begin{matrix}1 &amp; \rho \\ \rho &amp; 1 \end{matrix} \right)
+\]</span></p>
+<p>Let <span class="math inline">\(\mu_{j} = \mathbb{E}_{b_{j}|\hat{b}_{j}}(b_{j})\)</span> <span class="math display">\[
+\begin{align*}
+\log N(\hat{b}_{j}; b_{j}, V) &amp;= -\frac{1}{2}\log |V| - \frac{1}{2}(\hat{b}_{j}-b_{j})^{T}V^{-1}(\hat{b}_{j}-b_{j}) \\
+&amp;= -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{j}^{T}V^{-1}\hat{b}_{j} + \frac{1}{2}b_{j}^{T}V^{-1}\hat{b}_{j} + \frac{1}{2}\hat{b}_{j}^{T}V^{-1}b_{j} -\frac{1}{2}b_{j}^{T}V^{-1}b_{j} \\
+\mathbb{E}_{b_{j}|\hat{b}_{j}} \log N(\hat{b}_{j}; b_{j}, V) &amp;= -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{j}^{T}V^{-1}\hat{b}_{j} + \frac{1}{2}\mu_{j}^{T}V^{-1}\hat{b}_{j} + \frac{1}{2}\hat{b}_{j}^{T}V^{-1}\mu_{j} -\frac{1}{2}tr(V^{-1}\mathbb{E}_{b_{j}|\hat{b}_{j}}(b_{j}b_{j}^{T}))
+\end{align*}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbb{E}_{b_{j}|\hat{b}_{j}} \log N(\hat{b}_{j}; b_{j}, V) &amp;= -\frac{1}{2}\log |V| - \frac{1}{2}\hat{b}_{j}^{T}V^{-1}\hat{b}_{j} + \frac{1}{2}\mu_{j}^{T}V^{-1}\hat{b}_{j} + \frac{1}{2}\hat{b}_{j}^{T}V^{-1}\mu_{j} -\frac{1}{2}tr(V^{-1}\mathbb{E}_{b_{j}|\hat{b}_{j}}(b_{j}b_{j}^{T})) \\
+&amp;= -\frac{1}{2}\log(1-\rho^2) - \frac{1}{2(1-\rho^2)}\left(\hat{b}_{j1}^2 + \hat{b}_{j2}^2 - 2\hat{b}_{j1}\hat{b}_{j2}\rho -2\hat{b}_{j1} \mu_{j1} -2\hat{b}_{j2} \mu_{j2} + 2\hat{b}_{j2}\mu_{j1}\rho + 2\hat{b}_{j1}\mu_{j2}\rho + \mathbb{E}(b_{j1}^2|\hat{b}_{j}) + \mathbb{E}(b_{j2}^2|\hat{b}_{j}) - 2\rho\mathbb{E}(b_{j1}b_{j2}|\hat{b}_{j}) \right)
+\end{align*}
+\]</span></p>
+<p><span class="math display">\[
+f(\rho) = \sum_{j=1}^{J} -\frac{1}{2}\log(1-\rho^2) - \frac{1}{2(1-\rho^2)}\left(\hat{b}_{j1}^2 + \hat{b}_{j2}^2 - 2\hat{b}_{j1}\hat{b}_{j2}\rho -2\hat{b}_{j1} \mu_{j1} -2\hat{b}_{j2} \mu_{j2} + 2\hat{b}_{j2}\mu_{j1}\rho + 2\hat{b}_{j1}\mu_{j2}\rho + \mathbb{E}(b_{j1}^2|\hat{b}_{j}) + \mathbb{E}(b_{j2}^2|\hat{b}_{j}) - 2\rho\mathbb{E}(b_{j1}b_{j2}|\hat{b}_{j}) \right)
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
+f(\rho)&#39; &amp;= \sum_{j=1}^{J} \frac{\rho}{1-\rho^2} -\frac{\rho}{(1-\rho^2)^2}\left( \hat{b}_{j1}^2 + \hat{b}_{j2}^2 -2\hat{b}_{j1} \mu_{j1} -2\hat{b}_{j2} \mu_{j2} + \mathbb{E}(b_{j1}^2|\hat{b}_{j}) + \mathbb{E}(b_{j2}^2|\hat{b}_{j}) \right) -\frac{\rho^2+1}{(1-\rho^2)^2}\left( -\hat{b}_{j1}\hat{b}_{j2} + \hat{b}_{j1}\mu_{j2} +\hat{b}_{j2}\mu_{j1} - \mathbb{E}(b_{j1}b_{j2}|\hat{b}_{j}) \right) = 0 \\
+0 &amp;= \rho(1-\rho^2)n - \rho \sum_{j=1}^{n} \left( \hat{b}_{j1}^2 + \hat{b}_{j2}^2 -2\hat{b}_{j1} \mu_{j1} -2\hat{b}_{j2} \mu_{j2} + \mathbb{E}(b_{j1}^2|\hat{b}_{j}) + \mathbb{E}(b_{j2}^2|\hat{b}_{j}) \right) - (\rho^2 + 1) \sum_{j=1}^{n} \left( -\hat{b}_{j1}\hat{b}_{j2} + \hat{b}_{j1}\mu_{j2} +\hat{b}_{j2}\mu_{j1} - \mathbb{E}(b_{j1}b_{j2}|\hat{b}_{j}) \right) \\
+0 &amp;=-n\rho^{3} - \rho^2 \sum_{j=1}^{n} \left( -\hat{b}_{j1}\hat{b}_{j2} + \hat{b}_{j1}\mu_{j2} +\hat{b}_{j2}\mu_{j1} - \mathbb{E}(b_{j1}b_{j2}|\hat{b}_{j}) \right) - \rho \sum_{j=1}^{n} \left( \hat{b}_{j1}^2 + \hat{b}_{j2}^2 -2\hat{b}_{j1} \mu_{j1} -2\hat{b}_{j2} \mu_{j2} + \mathbb{E}(b_{j1}^2|\hat{b}_{j}) + \mathbb{E}(b_{j2}^2|\hat{b}_{j}) -1\right) - \sum_{j=1}^{n} \left( -\hat{b}_{j1}\hat{b}_{j2} + \hat{b}_{j1}\mu_{j2} +\hat{b}_{j2}\mu_{j1} - \mathbb{E}(b_{j1}b_{j2}|\hat{b}_{j}) \right)
+\end{align*}
+\]</span> The polynomial has either 1 or 3 real roots in (-1, 1).</p>
+</div>
+<div id="solution" class="section level2">
+<h2>Solution</h2>
+<p>Given <span class="math inline">\(\rho\)</span>, we estimate <span class="math inline">\(\boldsymbol{\pi}\)</span> by max loglikelihood (convex problem)</p>
+<p>Algorithm:</p>
+<pre class="r"><code>Input: X, Ulist, init_rho
+Given rho, estimate pi by max loglikelihood (convex problem)
+Compute loglikelihood
+delta = 1
+while delta &gt; tol
+  M step: update rho
+  Given rho, estimate pi by max loglikelihood (convex problem)
+  Compute loglikelihood
+  Update delta</code></pre>
+<pre class="r"><code>#&#39; @param rho the off diagonal element of V, 2 by 2 correlation matrix
+#&#39; @param Ulist a list of covariance matrices, U_{k}
+get_sigma &lt;- function(rho, Ulist){
+  V &lt;- matrix(c(1,rho,rho,1), 2,2)
+  lapply(Ulist, function(U) U + V)
+}
+
+penalty &lt;- function(prior, pi_s){
+  subset &lt;- (prior != 1.0)
+  sum((prior-1)[subset]*log(pi_s[subset]))
+}
+
+#&#39; @title compute log likelihood
+#&#39; @param L log likelihoods,
+#&#39; where the (i,k)th entry is the log probability of observation i
+#&#39; given it came from component k of g
+#&#39; @param p the vector of mixture proportions
+#&#39; @param prior the weight for the penalty
+compute.log.lik &lt;- function(lL, p, prior){
+  p = normalize(pmax(0,p))
+  temp = log(exp(lL$loglik_matrix) %*% p)+lL$lfactors
+  return(sum(temp) + penalty(prior, p))
+  # return(sum(temp))
+}
+
+normalize &lt;- function(x){
+  x/sum(x)
+}</code></pre>
+<pre class="r"><code>mixture.M.rho.times &lt;- function(X, Ulist, init_rho=0, tol=1e-5, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;)){
+  times = length(init_rho)
+  result = list()
+  loglik = c()
+  rho = c()
+  time.t = c()
+  converge.status = c()
+  for(i in 1:times){
+    out.time = system.time(result[[i]] &lt;- mixture.M.rho(X, Ulist,
+                                                      init_rho=init_rho[i],
+                                                      prior=prior,
+                                                      tol=tol))
+    time.t = c(time.t, out.time[&#39;elapsed&#39;])
+    loglik = c(loglik, tail(result[[i]]$loglik, 1))
+    rho = c(rho, result[[i]]$rho)
+  }
+  if(abs(max(loglik) - min(loglik)) &lt; 1e-4){
+    status = &#39;global&#39;
+  }else{
+    status = &#39;local&#39;
+  }
+  ind = which.max(loglik)
+  return(list(result = result[[ind]], status = status, loglik = loglik, rho=rho, time = time.t))
+}
+
+mixture.M.rho &lt;- function(X, Ulist, init_rho=0, tol=1e-5, prior = c(&#39;nullbiased&#39;, &#39;uniform&#39;)) {
+
+  prior &lt;- match.arg(prior)
+
+  m.model = fit_mash(X, Ulist, rho = init_rho, prior=prior)
+  pi_s = get_estimated_pi(m.model, dimension = &#39;all&#39;)
+  prior.v &lt;- mashr:::set_prior(length(pi_s), prior)
+
+  # compute loglikelihood
+  loglik &lt;- c()
+  loglik &lt;- c(loglik, get_loglik(m.model)+penalty(prior.v, pi_s))
+  delta.ll &lt;- 1
+  niter &lt;- 0
+  rho = init_rho
+
+  while(delta.ll &gt; tol){
+    # max_rho
+    rho &lt;- E_rho(X, m.model)
+
+    m.model = fit_mash(X, Ulist, rho, prior=prior)
+
+    pi_s = get_estimated_pi(m.model, dimension = &#39;all&#39;)
+
+    loglik &lt;- c(loglik, get_loglik(m.model)+penalty(prior.v, pi_s))
+    # Update delta
+    delta.ll &lt;- loglik[length(loglik)] - loglik[length(loglik)-1]
+    niter &lt;- niter + 1
+  }
+
+  return(list(pihat = normalize(pi_s), rho = rho, loglik=loglik))
+}
+
+E_rho &lt;- function(X, m.model){
+  n = nrow(X)
+  post.m = m.model$result$PosteriorMean
+  post.sec = plyr::laply(1:n, function(i) m.model$result$PosteriorCov[,,i] + tcrossprod(post.m[i,])) # nx2x2 array
+
+  temp2 = -sum(X[,1]*X[,2]) + sum(X[,1]*post.m[,2]) + sum(X[,2]*post.m[,1]) - sum(post.sec[,1,2])
+  temp1 = sum(X[,1]^2 + X[,2]^2) - 2*sum(X[,1]*post.m[,1]) - 2*sum(X[,2]*post.m[,2]) + sum(post.sec[,1,1] + post.sec[,2,2])
+
+  rts = polyroot(c(temp2, temp1-n, temp2, n))
+
+  # check complex number
+  is.real = abs(Im(rts))&lt;1e-12
+  if(sum(is.real) == 1){
+    return(Re(rts[is.real]))
+  }else{
+    print(&#39;3 real roots&#39;)
+    return(Re(rts))
+  }
+}
+
+fit_mash &lt;- function(X, Ulist, rho, prior=c(&#39;nullbiased&#39;, &#39;uniform&#39;)){
+  m.data = mashr::mash_set_data(Bhat=X, Shat=1, V = matrix(c(1, rho, rho, 1), 2, 2))
+  m.model = mashr::mash(m.data, Ulist, prior=prior, verbose = FALSE, outputlevel = 3)
+  return(m.model)
+}</code></pre>
+</div>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<pre class="r"><code>set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)</code></pre>
+<pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+
+result.mrho &lt;- mixture.M.rho.times(m.data$Bhat, U.c)</code></pre>
+<p>The estimated <span class="math inline">\(\rho\)</span> is 0.5060756. The running time is 65.74 seconds.</p>
+<pre class="r"><code>m.data.mrho = mash_set_data(data$Bhat, data$Shat, V = matrix(c(1,result.mrho$rho,result.mrho$rho,1),2,2))
+U.c.mrho = cov_canonical(m.data.mrho)
+m.mrho = mash(m.data.mrho, U.c, verbose= FALSE)
+null.ind = which(apply(data$B,1,sum) == 0)</code></pre>
+<p>The log likelihood is -12302.54. There are 26 significant samples, 0 false positives. The RRMSE is 0.5820749.</p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
 <pre class="r"><code>sessionInfo()</code></pre>
 <pre><code>R version 3.5.1 (2018-07-02)
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS High Sierra 10.13.6
+Running under: macOS  10.14
 
 Matrix products: default
 BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
@@ -634,22 +830,22 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2-15 ashr_2.2-14 
+[1] mashr_0.2.18.0454 ashr_2.2-7       
 
 loaded via a namespace (and not attached):
  [1] Rcpp_0.12.19      knitr_1.20        whisker_0.3-2    
- [4] magrittr_1.5      workflowr_1.1.1   MASS_7.3-50      
- [7] pscl_1.5.2        doParallel_1.0.14 SQUAREM_2017.10-1
-[10] lattice_0.20-35   foreach_1.4.4     plyr_1.8.4       
-[13] stringr_1.3.1     tools_3.5.1       parallel_3.5.1   
-[16] grid_3.5.1        R.oo_1.22.0       rmeta_3.0        
-[19] git2r_0.23.0      htmltools_0.3.6   iterators_1.0.10 
-[22] assertthat_0.2.0  abind_1.4-5       yaml_2.2.0       
-[25] rprojroot_1.3-2   digest_0.6.15     Matrix_1.2-14    
-[28] codetools_0.2-15  R.utils_2.6.0     evaluate_0.11    
-[31] rmarkdown_1.10    stringi_1.2.4     compiler_3.5.1   
-[34] backports_1.1.2   R.methodsS3_1.7.1 mvtnorm_1.0-8    
-[37] truncnorm_1.0-8  </code></pre>
+ [4] magrittr_1.5      workflowr_1.1.1   REBayes_1.3      
+ [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.14
+[10] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
+[13] plyr_1.8.4        stringr_1.3.1     tools_3.5.1      
+[16] parallel_3.5.1    grid_3.5.1        R.oo_1.22.0      
+[19] rmeta_3.0         git2r_0.23.0      htmltools_0.3.6  
+[22] iterators_1.0.10  assertthat_0.2.0  abind_1.4-5      
+[25] yaml_2.2.0        rprojroot_1.3-2   digest_0.6.18    
+[28] Matrix_1.2-14     codetools_0.2-15  R.utils_2.7.0    
+[31] evaluate_0.12     rmarkdown_1.10    stringi_1.2.4    
+[34] compiler_3.5.1    Rmosek_8.0.69     backports_1.1.2  
+[37] R.methodsS3_1.7.1 mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
