@@ -71,7 +71,7 @@ $$
 \hat{\mathbf{V}}_{(t+1)} = \hat{\mathbf{D}}_{(t+1)}\hat{\mathbf{C}}_{(t+1)}\hat{\mathbf{D}}_{(t+1)}
 $$
 
-The estimated V maximized the lower bound of the log likelihood. We estimate $\boldsymbol{\pi}$ from the log likelihood.
+The estimated V maximize the lower bound of the log likelihood. We estimate $\boldsymbol{\pi}$ from the log likelihood.
 
 Given V, we estimate $\boldsymbol{\pi}$ by max loglikelihood, which is a convex problem
 
