@@ -221,7 +221,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-10-22</p>
+<p><strong>Last updated:</strong> 2018-10-24</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -230,7 +230,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/75cd5329b29bf441156bbc5a55d6715cc5712632" target="_blank">75cd532</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/9a8ad868af143f4c2be5799afd568cff120c88f9" target="_blank">9a8ad86</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -247,13 +247,8 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/Classify.Rmd
-    Untracked:  analysis/EstimateCorEM3W2.Rmd
     Untracked:  analysis/EstimateCorMaxEMGD.Rmd
     Untracked:  analysis/EstimateCorMaxGD.Rmd
-    Untracked:  analysis/EstimateCorMaxMVIter.Rmd
-    Untracked:  analysis/EstimateCorMaxMVUlist.Rmd
-    Untracked:  analysis/EstimateCorPrior.Rmd
-    Untracked:  analysis/EstimateCorSol.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
     Untracked:  analysis/MashLowSignalGTEx4.Rmd
     Untracked:  analysis/Mash_GTEx.Rmd
@@ -321,8 +316,9 @@ Untracked files:
     Untracked:  output/result.em.rds
 
 Unstaged changes:
+    Modified:   analysis/EstimateCorEM2.Rmd
+    Deleted:    analysis/EstimateCorEM3.Rmd
     Modified:   analysis/EstimateCorMaxEM2.Rmd
-    Modified:   analysis/EstimateCorMaxMV.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
     Modified:   output/Flash_T2_0.rds
@@ -357,6 +353,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/9a8ad868af143f4c2be5799afd568cff120c88f9/analysis/EstimateCorIndex.Rmd" target="_blank">9a8ad86</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-24
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorIndex.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/c3fdfb50acba61670fe2d393517264049dd5f8c5/docs/EstimateCorIndex.html" target="_blank">c3fdfb5</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-10-22
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -656,8 +686,7 @@ wflow_publish(c(“analysis/EstimateCorIndex.Rmd”, “analysis/index.Rmd”))
 <li><p>Using <code>optim</code> function to estimate cor: <a href="EstimateCorOptim.html">Estimate cor optim</a></p></li>
 <li><p>Using EM to estimate cor (<span class="math inline">\(\rho\)</span>):</p>
 <p><a href="EstimateCorEM.html">Estimate cor EM optim</a></p>
-<p>Not work: <a href="EstimateCorEM2.html">Estimate cor EM 2</a></p>
-<p><a href="EstimateCorEM3.html">Estimate cor EM 3</a></p></li>
+<p><a href="EstimateCorEM2.html">Estimate cor EM rho</a></p></li>
 <li><p>Using EM to estimate cor (<span class="math inline">\(V\)</span>): <a href="EstimateCorMaxMV.html">Estimate cor EM V</a></p></li>
 <li><p>The examples above are in <span class="math inline">\(\mathcal{R}^{2}\)</span>. Here are more simulations to compare different methods for <span class="math inline">\(R &gt; 2\)</span> : <a href="EstimateCorMaxMash.html">Estimate cor in mash</a></p></li>
 <li><p>Fewer iteration: <a href="EstimateCorMaxMVIter.html">Estimate cor EM V fewer iteration</a> (niter = 3)</p></li>
