@@ -13,9 +13,7 @@ output:
 
     [Estimate cor EM optim](EstimateCorEM.html)
     
-    Not work: [Estimate cor EM 2](EstimateCorEM2.html)
-    
-    [Estimate cor EM 3](EstimateCorEM3.html)
+    [Estimate cor EM rho](EstimateCorEM2.html)
 
 * Using EM to estimate cor ($V$): [Estimate cor EM V](EstimateCorMaxMV.html)
 
