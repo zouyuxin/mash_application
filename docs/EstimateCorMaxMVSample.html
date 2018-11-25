@@ -28,6 +28,7 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
 <link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
 <script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
 <script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
@@ -364,7 +365,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/c09cb2a028f76fb04cba6810b4bdacf34c7c5be4" target="_blank">c09cb2a</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/c8ad3d1ba07fce6a83cf767521d7eb3f9d6a5d09" target="_blank">c8ad3d1</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -450,7 +451,6 @@ Untracked files:
     Untracked:  output/result.em.rds
 
 Unstaged changes:
-    Modified:   analysis/EstimateCorIndex.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
     Modified:   output/Flash_T2_0.rds
@@ -490,6 +490,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/c8ad3d1ba07fce6a83cf767521d7eb3f9d6a5d09/analysis/EstimateCorMaxMVSample.Rmd" target="_blank">c8ad3d1</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-11-24
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMVSample.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/f6de8631c9d40e15cdf9473b01b60e9bfbee223f/docs/EstimateCorMaxMVSample.html" target="_blank">f6de863</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-11-24
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/c09cb2a028f76fb04cba6810b4bdacf34c7c5be4/analysis/EstimateCorMaxMVSample.Rmd" target="_blank">c09cb2a</a>
 </td>
 <td style="text-align:left;">
@@ -510,6 +544,8 @@ wflow_publish(“analysis/EstimateCorMaxMVSample.Rmd”)
 <pre class="r"><code>library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>library(ggplot2)
+library(knitr)
+library(kableExtra)
 source(&#39;../code/generateDataV.R&#39;)</code></pre>
 <div id="data" class="section level2">
 <h2>Data</h2>
@@ -545,13 +581,36 @@ result.mV.subset &lt;- estimate_null_correlation(m.data.subset, U.c, tol=1e-3)</
 <pre class="r"><code>m.data.subset.V = mash_update_data(m.data, V=result.mV.subset$V)
 model.subset = mash(m.data.subset.V, U.c)</code></pre>
 <pre><code> - Computing 4000 x 106 likelihood matrix.
- - Likelihood calculations took 0.09 seconds.
+ - Likelihood calculations took 0.04 seconds.
  - Fitting model with 106 mixture components.
- - Model fitting took 0.64 seconds.
+ - Model fitting took 0.35 seconds.
  - Computing posterior matrices.
- - Computation allocated took 0.05 seconds.</code></pre>
-<pre><code>          | model with V.Full | model with V.subset</code></pre>
-<p>————–|——————-|——————– loglikelihood | get_loglik(result.mV.full$loglik) | get_loglik(model.subset)</p>
+ - Computation allocated took 0.03 seconds.</code></pre>
+<pre class="r"><code>logliks = rbind(c(get_loglik(result.mV.full$mash.model), get_loglik(model.subset)))
+colnames(logliks) = c(&#39;Full&#39;,&#39;Subset&#39;)
+logliks %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+Full
+</th>
+<th style="text-align:right;">
+Subset
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+-12302.53
+</td>
+<td style="text-align:right;">
+-12302.42
+</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="more-simulations" class="section level2">
 <h2>More simulations</h2>
@@ -637,7 +696,37 @@ colnames(temp) = c(&#39;Full&#39;,&#39;Subset&#39;)
 temp = reshape2::melt(temp[])
 colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;FrobError&#39;)
 ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()</code></pre>
-<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-11-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/f6de8631c9d40e15cdf9473b01b60e9bfbee223f/docs/figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-11-1.png" target="_blank">f6de863</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-11-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The spectral norm is</p>
 <pre class="r"><code>norm.type=&#39;2&#39;
 temp = matrix(0,nrow = times, ncol = 2)
@@ -649,7 +738,37 @@ colnames(temp) = c(&#39;Full&#39;,&#39;Subset&#39;)
 temp = reshape2::melt(temp[])
 colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;SpecError&#39;)
 ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()</code></pre>
-<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-12-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/f6de8631c9d40e15cdf9473b01b60e9bfbee223f/docs/figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-12-1.png" target="_blank">f6de863</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-11-24
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="mash-log-likelihood" class="section level3">
 <h3>mash log likelihood</h3>
@@ -662,7 +781,7 @@ colnames(temp) = c(&#39;True&#39;, &#39;Full&#39;,&#39;Subset&#39;)
 temp = reshape2::melt(temp)
 colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;loglikelihood&#39;)
 ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()</code></pre>
-<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="roc" class="section level3">
 <h3>ROC</h3>
@@ -693,7 +812,7 @@ plotROC = function(data.true, result.model, title){
 for(i in 1:times){
   plotROC(result[[i]]$data$B, result_wrap[[i]]$m.model, title=paste0(&#39;Data&#39;, i, &#39; &#39;))
 }</code></pre>
-<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-15-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-15-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-15-5.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="rrmse" class="section level3">
 <h3>RRMSE</h3>
@@ -712,7 +831,7 @@ for(i in 1:times){
   rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result_wrap[[i]]$m.model))
   barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)
 }</code></pre>
-<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-17-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-17-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-17-5.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="session-information" class="section level2">
@@ -733,29 +852,32 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_3.1.0     mashr_0.2.18.0536 ashr_2.2-23      
+[1] kableExtra_0.9.0  knitr_1.20        ggplot2_3.1.0     mashr_0.2.18.0536
+[5] ashr_2.2-23      
 
 loaded via a namespace (and not attached):
- [1] tidyselect_0.2.5  purrr_0.2.5       reshape2_1.4.3   
+ [1] tidyselect_0.2.5  reshape2_1.4.3    purrr_0.2.5      
  [4] lattice_0.20-35   Rmosek_8.0.69     colorspace_1.3-2 
- [7] htmltools_0.3.6   yaml_2.2.0        rlang_0.3.0.1    
-[10] R.oo_1.22.0       pillar_1.3.0      glue_1.3.0       
-[13] withr_2.1.2       R.utils_2.7.0     REBayes_1.3      
-[16] bindrcpp_0.2.2    foreach_1.4.4     plyr_1.8.4       
-[19] bindr_0.1.1       stringr_1.3.1     munsell_0.5.0    
-[22] gtable_0.2.0      workflowr_1.1.1   R.methodsS3_1.7.1
-[25] mvtnorm_1.0-8     codetools_0.2-15  evaluate_0.12    
-[28] labeling_0.3      knitr_1.20        pscl_1.5.2       
-[31] doParallel_1.0.14 parallel_3.5.1    Rcpp_1.0.0       
-[34] scales_1.0.0      backports_1.1.2   rmeta_3.0        
-[37] truncnorm_1.0-8   abind_1.4-5       digest_0.6.18    
-[40] stringi_1.2.4     dplyr_0.7.6       grid_3.5.1       
-[43] rprojroot_1.3-2   tools_3.5.1       magrittr_1.5     
-[46] lazyeval_0.2.1    tibble_1.4.2      crayon_1.3.4     
-[49] whisker_0.3-2     pkgconfig_2.0.2   MASS_7.3-50      
-[52] Matrix_1.2-14     SQUAREM_2017.10-1 assertthat_0.2.0 
-[55] rmarkdown_1.10    iterators_1.0.10  R6_2.3.0         
-[58] git2r_0.23.0      compiler_3.5.1   </code></pre>
+ [7] viridisLite_0.3.0 htmltools_0.3.6   yaml_2.2.0       
+[10] rlang_0.3.0.1     R.oo_1.22.0       pillar_1.3.0     
+[13] glue_1.3.0        withr_2.1.2       R.utils_2.7.0    
+[16] REBayes_1.3       bindrcpp_0.2.2    foreach_1.4.4    
+[19] plyr_1.8.4        bindr_0.1.1       stringr_1.3.1    
+[22] munsell_0.5.0     gtable_0.2.0      workflowr_1.1.1  
+[25] rvest_0.3.2       R.methodsS3_1.7.1 mvtnorm_1.0-8    
+[28] codetools_0.2-15  evaluate_0.12     labeling_0.3     
+[31] pscl_1.5.2        doParallel_1.0.14 parallel_3.5.1   
+[34] highr_0.7         Rcpp_1.0.0        readr_1.1.1      
+[37] scales_1.0.0      backports_1.1.2   rmeta_3.0        
+[40] truncnorm_1.0-8   abind_1.4-5       hms_0.4.2        
+[43] digest_0.6.18     stringi_1.2.4     dplyr_0.7.6      
+[46] grid_3.5.1        rprojroot_1.3-2   tools_3.5.1      
+[49] magrittr_1.5      lazyeval_0.2.1    tibble_1.4.2     
+[52] crayon_1.3.4      whisker_0.3-2     pkgconfig_2.0.2  
+[55] MASS_7.3-50       Matrix_1.2-14     xml2_1.2.0       
+[58] SQUAREM_2017.10-1 httr_1.3.1        assertthat_0.2.0 
+[61] rmarkdown_1.10    rstudioapi_0.8    iterators_1.0.10 
+[64] R6_2.3.0          git2r_0.23.0      compiler_3.5.1   </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
