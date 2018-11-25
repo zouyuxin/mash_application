@@ -22,3 +22,5 @@ output:
 * Fewer iteration: [Estimate cor EM V fewer iteration](EstimateCorMaxMVIter.html) (niter = 3)
 
 * Shorter Ulist: [Estimate cor EM V shorter Ulist](EstimateCorMaxMVUlist.html)
+
+* Smaller samples: [Estimate cor EM V subset data](EstimateCorMaxMVSample.html)
