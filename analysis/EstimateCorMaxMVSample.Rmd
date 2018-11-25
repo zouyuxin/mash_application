@@ -10,6 +10,8 @@ output:
 ```{r}
 library(mashr)
 library(ggplot2)
+library(knitr)
+library(kableExtra)
 source('../code/generateDataV.R')
 ```
 
@@ -62,9 +64,11 @@ m.data.subset.V = mash_update_data(m.data, V=result.mV.subset$V)
 model.subset = mash(m.data.subset.V, U.c)
 ```
 
-              | model with V.Full | model with V.subset
---------------|-------------------|--------------------
-loglikelihood | get_loglik(result.mV.full$loglik) | get_loglik(model.subset)
+```{r}
+logliks = rbind(c(get_loglik(result.mV.full$mash.model), get_loglik(model.subset)))
+colnames(logliks) = c('Full','Subset')
+logliks %>% kable() %>% kable_styling()
+```
 
 ## More simulations
 
