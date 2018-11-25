@@ -1,0 +1,276 @@
+---
+title: "Estimate V -- fewer samples"
+author: "Yuxin Zou"
+date: 2018-11-24
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+```{r}
+library(mashr)
+library(ggplot2)
+source('../code/generateDataV.R')
+```
+
+## Data
+
+Simple simulation in $R^2$:
+$$
+\hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 & 0.5 \\
+                                          0.5 & 1 \end{matrix}\right))
+$$
+
+$$
+\beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 & 0 \\
+                                          0 & 0 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 0 & 0 \\
+                                          0 & 1 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 & 1 \\
+                                          1 & 1 \end{matrix}\right))
+$$
+```{r}
+set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)
+```
+
+```{r}
+m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)
+```
+
+```{r}
+samples = sample(1:n, 1000)
+m.data.subset = mash_set_data(Bhat = data$Bhat[samples,], Shat = data$Shat)
+```
+
+## Full data vs Subset
+
+```{r}
+result.mV.full <- estimate_null_correlation(m.data, U.c, tol=1e-3)
+result.mV.subset <- estimate_null_correlation(m.data.subset, U.c, tol=1e-3)
+```
+
+Fit full mash model using estimated V
+```{r}
+m.data.subset.V = mash_update_data(m.data, V=result.mV.subset$V)
+model.subset = mash(m.data.subset.V, U.c)
+```
+
+              | model with V.Full | model with V.subset
+--------------|-------------------|--------------------
+loglikelihood | get_loglik(result.mV.full$loglik) | get_loglik(model.subset)
+
+## More simulations
+
+I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.
+
+$$
+\hat{b}_{j}|b_{j} \sim N_{5}(z, S_{j}VS_{j})
+$$
+$$
+b_{j}\sim\frac{1}{4}\delta_{0} + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 1 & \mathbf{0}_{1\times 4} \\ \mathbf{0}_{4\times 1} & \mathbf{0}_{4\times 4} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\left(\begin{matrix} \mathbf{1}_{2\times 2} & \mathbf{0}_{1\times 3} \\ \mathbf{0}_{3\times 1} & \mathbf{0}_{3\times 3} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\mathbf{1}_{5\times 5})
+$$
+
+```{r, warning=FALSE, eval=FALSE}
+set.seed(20181124)
+n=4000; p = 5
+U0 = matrix(0,p,p)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[c(1:2), c(1:2)] = 1
+U3 = matrix(1, p,p)
+Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
+
+for(t in 1:10){
+  print(paste0('Data: ', t))
+  Vtrue = clusterGeneration::rcorrmatrix(p)
+  data = generate_data(n, p, Vtrue, Utrue)
+  # mash cov
+  m.data = mash_set_data(Bhat = data$Bhat, Shat = data$Shat)
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+  U.c = cov_canonical(m.data)
+  
+  samples = sample(1:n, 1000)
+  m.data.subset = mash_set_data(Bhat = data$Bhat[samples,], Shat = data$Shat)
+  print('Method: mV')
+  print('Full')
+  Vhat.full <- estimate_null_correlation(m.data, c(U.c, U.ed),
+                        tol=1e-3, max_iter = 5)
+  print('Subset')
+  Vhat.subset <- estimate_null_correlation(m.data.subset, c(U.c, U.ed),
+                        tol=1e-3, max_iter = 5)
+  m.data.subset.V = mash_update_data(m.data, V = Vhat.subset$V)
+  model.subset = mash(m.data.subset.V, c(U.c,U.ed))
+  saveRDS(list(V.true = Vtrue, V.mV.Full = Vhat.full, V.mV.subset = Vhat.subset, 
+               model.subset = model.subset, data = data, strong=strong),
+          paste0('../output/mVsubset/MASH.mV.subset.result.',t,'.rds'))
+}
+```
+
+```{r}
+files = dir("../output/mVsubset/"); files = files[grep("MASH.mV.subset.result",files)]
+times = length(files)
+result = vector(mode="list",length = times)
+for(i in 1:times) {
+  result[[i]] = readRDS(paste("../output/mVsubset/", files[[i]], sep=""))
+}
+```
+
+```{r warning=FALSE}
+result_wrap = vector("list", times) 
+for(i in 1:times){
+  m.data = mash_set_data(result[[i]]$data$Bhat, result[[i]]$data$Shat)
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+
+  U.c = cov_canonical(m.data)
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+
+  m.data.true = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.true)
+  m.model.true = mash(m.data.true, c(U.c,U.ed), verbose = FALSE)
+  
+  # mV
+  result_wrap[[i]]$V.true = result[[i]]$V.true
+  result_wrap[[i]]$V.full = result[[i]]$V.mV.Full$V
+  result_wrap[[i]]$V.subset = result[[i]]$V.mV.subset$V
+  
+  result_wrap[[i]]$m.model = list(m.model.true = m.model.true, m.model.full = result[[i]]$V.mV.Full$mash.model,
+                             m.model.subset = result[[i]]$model.subset)
+}
+```
+
+### Error
+
+The Frobenius norm is
+```{r}
+norm.type='F'
+temp = matrix(0,nrow = times, ncol = 2)
+for(i in 1:times){
+  temp[i, ] = c(norm(result_wrap[[i]]$V.full - result_wrap[[i]]$V.true, type = norm.type), 
+                norm(result_wrap[[i]]$V.subset - result_wrap[[i]]$V.true, type = norm.type))
+}
+colnames(temp) = c('Full','Subset')
+temp = reshape2::melt(temp[])
+colnames(temp) = c('Data', 'Method', 'FrobError')
+ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()
+```
+
+The spectral norm is
+```{r}
+norm.type='2'
+temp = matrix(0,nrow = times, ncol = 2)
+for(i in 1:times){
+  temp[i, ] = c(norm(result_wrap[[i]]$V.full - result_wrap[[i]]$V.true, type = norm.type), 
+                norm(result_wrap[[i]]$V.subset - result_wrap[[i]]$V.true, type = norm.type))
+}
+colnames(temp) = c('Full','Subset')
+temp = reshape2::melt(temp[])
+colnames(temp) = c('Data', 'Method', 'SpecError')
+ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()
+```
+
+### mash log likelihood
+
+```{r}
+temp = matrix(0,nrow = times, ncol = 3)
+for(i in 1:times){
+  temp[i, ] = c(get_loglik(result_wrap[[i]]$m.model$m.model.true), get_loglik(result_wrap[[i]]$m.model$m.model.full),
+                get_loglik(result_wrap[[i]]$m.model$m.model.subset))
+}
+colnames(temp) = c('True', 'Full','Subset')
+temp = reshape2::melt(temp)
+colnames(temp) = c('Data', 'Method', 'loglikelihood')
+ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()
+```
+
+### ROC
+
+```{r}
+ROC.table = function(data, model){
+  sign.test = data*model$result$PosteriorMean
+  thresh.seq = seq(0, 1, by=0.005)[-1]
+  m.seq = matrix(0,length(thresh.seq), 2)
+  colnames(m.seq) = c('TPR', 'FPR')
+  for(t in 1:length(thresh.seq)){
+    m.seq[t,] = c(sum(sign.test>0 & model$result$lfsr <= thresh.seq[t])/sum(data!=0),
+                  sum(data==0 & model$result$lfsr <=thresh.seq[t])/sum(data==0))
+  }
+  return(m.seq)
+}
+plotROC = function(data.true, result.model, title){
+  m.full.seq = ROC.table(data.true, result.model$m.model.full)
+  m.subset.seq = ROC.table(data.true, result.model$m.model.subset)
+  m.true.seq = ROC.table(data.true, result.model$m.model.true)
+
+  plot(m.true.seq[,'FPR'], m.true.seq[,'TPR'],type='l',xlab = 'FPR', ylab='TPR',
+       main=paste0(title, 'True Pos vs False Pos'), cex=1.5, lwd = 1.5)
+  lines(m.full.seq[,'FPR'], m.full.seq[,'TPR'], col='red', lwd = 1.5)
+  lines(m.subset.seq[,'FPR'], m.subset.seq[,'TPR'], col='darkorchid', lwd = 1.5)
+  legend('bottomright', c('True','Full', 'Subset'),col=c('black','red','darkorchid'),
+           lty=c(1,1,1), lwd=c(1.5,1.5,1.5))
+}
+```
+
+```{r}
+par(mfrow=c(1,2))
+for(i in 1:times){
+  plotROC(result[[i]]$data$B, result_wrap[[i]]$m.model, title=paste0('Data', i, ' '))
+}
+```
+
+### RRMSE
+
+```{r}
+RRMSE = function(datatrue, dataobs, model){
+  model = Filter(length, model)
+  rrmse = numeric(length(model))
+  for(k in 1:length(model)){
+    rrmse[k] = sqrt(mean((datatrue - model[[k]]$result$PosteriorMean)^2)/mean((datatrue - dataobs)^2))
+  }
+  rrmse = as.matrix(t(rrmse))
+  colnames(rrmse) = names(model)
+  return(rrmse)
+}
+```
+
+```{r}
+par(mfrow=c(1,2))
+for(i in 1:times){
+  rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result_wrap[[i]]$m.model))
+  barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main='RRMSE')
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
