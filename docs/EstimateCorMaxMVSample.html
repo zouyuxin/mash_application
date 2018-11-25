@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yuxin Zou" />
+
+<meta name="date" content="2018-11-24" />
+
+<title>Estimate V -- fewer samples</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mash_application</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zouyuxin/mash_application">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Estimate V – fewer samples</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>2018-11-24</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-11-24</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/c09cb2a028f76fb04cba6810b4bdacf34c7c5be4" target="_blank">c09cb2a</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/include/.DS_Store
+    Ignored:    code/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    docs/.DS_Store
+    Ignored:    output/.DS_Store
+
+Untracked files:
+    Untracked:  analysis/Classify.Rmd
+    Untracked:  analysis/EstimateCorMaxGD.Rmd
+    Untracked:  analysis/HierarchicalFlashSim.Rmd
+    Untracked:  analysis/MashLowSignalGTEx4.Rmd
+    Untracked:  analysis/Mash_GTEx.Rmd
+    Untracked:  analysis/MeanAsh.Rmd
+    Untracked:  analysis/OutlierDetection.Rmd
+    Untracked:  analysis/OutlierDetection2.Rmd
+    Untracked:  analysis/OutlierDetection3.Rmd
+    Untracked:  analysis/OutlierDetection4.Rmd
+    Untracked:  analysis/mash_missing_row.Rmd
+    Untracked:  code/GTExNullModel.R
+    Untracked:  code/MashClassify.R
+    Untracked:  code/MashCorResult.R
+    Untracked:  code/MashCormVResult.R
+    Untracked:  code/MashNULLCorResult.R
+    Untracked:  code/MashSource.R
+    Untracked:  code/Weight_plot.R
+    Untracked:  code/addemV.R
+    Untracked:  code/estimate_cor.R
+    Untracked:  code/generateDataV.R
+    Untracked:  code/johnprocess.R
+    Untracked:  code/mV.R
+    Untracked:  code/sim_mean_sig.R
+    Untracked:  code/summary.R
+    Untracked:  data/Blischak_et_al_2015/
+    Untracked:  data/scale_data.rds
+    Untracked:  docs/figure/Classify.Rmd/
+    Untracked:  docs/figure/OutlierDetection.Rmd/
+    Untracked:  docs/figure/OutlierDetection2.Rmd/
+    Untracked:  docs/figure/OutlierDetection3.Rmd/
+    Untracked:  docs/figure/Test.Rmd/
+    Untracked:  docs/figure/mash_missing_whole_row_5.Rmd/
+    Untracked:  docs/include/
+    Untracked:  output/AddEMV/
+    Untracked:  output/CovED_UKBio_strong.rds
+    Untracked:  output/CovED_UKBio_strong_Z.rds
+    Untracked:  output/Flash_UKBio_strong.rds
+    Untracked:  output/GTExNULLres/
+    Untracked:  output/GTEx_2.5_nullData.rds
+    Untracked:  output/GTEx_2.5_nullModel.rds
+    Untracked:  output/GTEx_2.5_nullPermData.rds
+    Untracked:  output/GTEx_2.5_nullPermModel.rds
+    Untracked:  output/GTEx_3.5_nullData.rds
+    Untracked:  output/GTEx_3.5_nullModel.rds
+    Untracked:  output/GTEx_3.5_nullPermData.rds
+    Untracked:  output/GTEx_3.5_nullPermModel.rds
+    Untracked:  output/GTEx_3_nullData.rds
+    Untracked:  output/GTEx_3_nullModel.rds
+    Untracked:  output/GTEx_3_nullPermData.rds
+    Untracked:  output/GTEx_3_nullPermModel.rds
+    Untracked:  output/GTEx_4.5_nullData.rds
+    Untracked:  output/GTEx_4.5_nullModel.rds
+    Untracked:  output/GTEx_4.5_nullPermData.rds
+    Untracked:  output/GTEx_4.5_nullPermModel.rds
+    Untracked:  output/GTEx_4_nullData.rds
+    Untracked:  output/GTEx_4_nullModel.rds
+    Untracked:  output/GTEx_4_nullPermData.rds
+    Untracked:  output/GTEx_4_nullPermModel.rds
+    Untracked:  output/MASH.10.em2.result.rds
+    Untracked:  output/MASH.10.mle.result.rds
+    Untracked:  output/MashCorSim--midway/
+    Untracked:  output/Mash_EE_Cov_0_plusR1.rds
+    Untracked:  output/UKBio_mash_model.rds
+    Untracked:  output/mVIterations/
+    Untracked:  output/mVUlist/
+    Untracked:  output/mVsubset/
+    Untracked:  output/result.em.rds
+
+Unstaged changes:
+    Modified:   analysis/EstimateCorIndex.Rmd
+    Modified:   analysis/Mash_UKBio.Rmd
+    Modified:   analysis/mash_missing_samplesize.Rmd
+    Modified:   output/Flash_T2_0.rds
+    Modified:   output/Flash_T2_0_mclust.rds
+    Modified:   output/Mash_model_0_plusR1.rds
+    Modified:   output/PresiAddVarCol.rds
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/c09cb2a028f76fb04cba6810b4bdacf34c7c5be4/analysis/EstimateCorMaxMVSample.Rmd" target="_blank">c09cb2a</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-11-24
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorMaxMVSample.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<pre class="r"><code>library(mashr)</code></pre>
+<pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>library(ggplot2)
+source(&#39;../code/generateDataV.R&#39;)</code></pre>
+<div id="data" class="section level2">
+<h2>Data</h2>
+<p>Simple simulation in <span class="math inline">\(R^2\)</span>: <span class="math display">\[
+\hat{\beta}|\beta \sim N_{2}(\hat{\beta}; \beta, \left(\begin{matrix} 1 &amp; 0.5 \\
+                                          0.5 &amp; 1 \end{matrix}\right))
+\]</span></p>
+<p><span class="math display">\[
+\beta \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 &amp; 0 \\
+                                          0 &amp; 0 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 0 &amp; 0 \\
+                                          0 &amp; 1 \end{matrix}\right)) + \frac{1}{4}N_{2}(0, \left(\begin{matrix} 1 &amp; 1 \\
+                                          1 &amp; 1 \end{matrix}\right))
+\]</span></p>
+<pre class="r"><code>set.seed(1)
+n = 4000; p = 2
+Sigma = matrix(c(1,0.5,0.5,1),p,p)
+U0 = matrix(0,2,2)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[2,2] = 1
+U3 = matrix(1,2,2)
+Utrue = list(U0=U0, U1=U1, U2=U2, U3=U3)
+data = generate_data(n, p, Sigma, Utrue)</code></pre>
+<pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
+U.c = cov_canonical(m.data)</code></pre>
+<pre class="r"><code>samples = sample(1:n, 1000)
+m.data.subset = mash_set_data(Bhat = data$Bhat[samples,], Shat = data$Shat)</code></pre>
+</div>
+<div id="full-data-vs-subset" class="section level2">
+<h2>Full data vs Subset</h2>
+<pre class="r"><code>result.mV.full &lt;- estimate_null_correlation(m.data, U.c, tol=1e-3)
+result.mV.subset &lt;- estimate_null_correlation(m.data.subset, U.c, tol=1e-3)</code></pre>
+<p>Fit full mash model using estimated V</p>
+<pre class="r"><code>m.data.subset.V = mash_update_data(m.data, V=result.mV.subset$V)
+model.subset = mash(m.data.subset.V, U.c)</code></pre>
+<pre><code> - Computing 4000 x 106 likelihood matrix.
+ - Likelihood calculations took 0.09 seconds.
+ - Fitting model with 106 mixture components.
+ - Model fitting took 0.64 seconds.
+ - Computing posterior matrices.
+ - Computation allocated took 0.05 seconds.</code></pre>
+<pre><code>          | model with V.Full | model with V.subset</code></pre>
+<p>————–|——————-|——————– loglikelihood | get_loglik(result.mV.full$loglik) | get_loglik(model.subset)</p>
+</div>
+<div id="more-simulations" class="section level2">
+<h2>More simulations</h2>
+<p>I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.</p>
+<p><span class="math display">\[
+\hat{b}_{j}|b_{j} \sim N_{5}(z, S_{j}VS_{j})
+\]</span> <span class="math display">\[
+b_{j}\sim\frac{1}{4}\delta_{0} + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 1 &amp; \mathbf{0}_{1\times 4} \\ \mathbf{0}_{4\times 1} &amp; \mathbf{0}_{4\times 4} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\left(\begin{matrix} \mathbf{1}_{2\times 2} &amp; \mathbf{0}_{1\times 3} \\ \mathbf{0}_{3\times 1} &amp; \mathbf{0}_{3\times 3} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\mathbf{1}_{5\times 5})
+\]</span></p>
+<pre class="r"><code>set.seed(20181124)
+n=4000; p = 5
+U0 = matrix(0,p,p)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[c(1:2), c(1:2)] = 1
+U3 = matrix(1, p,p)
+Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
+
+for(t in 1:10){
+  print(paste0(&#39;Data: &#39;, t))
+  Vtrue = clusterGeneration::rcorrmatrix(p)
+  data = generate_data(n, p, Vtrue, Utrue)
+  # mash cov
+  m.data = mash_set_data(Bhat = data$Bhat, Shat = data$Shat)
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+  U.c = cov_canonical(m.data)
+  
+  samples = sample(1:n, 1000)
+  m.data.subset = mash_set_data(Bhat = data$Bhat[samples,], Shat = data$Shat)
+  print(&#39;Method: mV&#39;)
+  print(&#39;Full&#39;)
+  Vhat.full &lt;- estimate_null_correlation(m.data, c(U.c, U.ed),
+                        tol=1e-3, max_iter = 5)
+  print(&#39;Subset&#39;)
+  Vhat.subset &lt;- estimate_null_correlation(m.data.subset, c(U.c, U.ed),
+                        tol=1e-3, max_iter = 5)
+  m.data.subset.V = mash_update_data(m.data, V = Vhat.subset$V)
+  model.subset = mash(m.data.subset.V, c(U.c,U.ed))
+  saveRDS(list(V.true = Vtrue, V.mV.Full = Vhat.full, V.mV.subset = Vhat.subset, 
+               model.subset = model.subset, data = data, strong=strong),
+          paste0(&#39;../output/mVsubset/MASH.mV.subset.result.&#39;,t,&#39;.rds&#39;))
+}</code></pre>
+<pre class="r"><code>files = dir(&quot;../output/mVsubset/&quot;); files = files[grep(&quot;MASH.mV.subset.result&quot;,files)]
+times = length(files)
+result = vector(mode=&quot;list&quot;,length = times)
+for(i in 1:times) {
+  result[[i]] = readRDS(paste(&quot;../output/mVsubset/&quot;, files[[i]], sep=&quot;&quot;))
+}</code></pre>
+<pre class="r"><code>result_wrap = vector(&quot;list&quot;, times) 
+for(i in 1:times){
+  m.data = mash_set_data(result[[i]]$data$Bhat, result[[i]]$data$Shat)
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+
+  U.c = cov_canonical(m.data)
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+
+  m.data.true = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.true)
+  m.model.true = mash(m.data.true, c(U.c,U.ed), verbose = FALSE)
+  
+  # mV
+  result_wrap[[i]]$V.true = result[[i]]$V.true
+  result_wrap[[i]]$V.full = result[[i]]$V.mV.Full$V
+  result_wrap[[i]]$V.subset = result[[i]]$V.mV.subset$V
+  
+  result_wrap[[i]]$m.model = list(m.model.true = m.model.true, m.model.full = result[[i]]$V.mV.Full$mash.model,
+                             m.model.subset = result[[i]]$model.subset)
+}</code></pre>
+<div id="error" class="section level3">
+<h3>Error</h3>
+<p>The Frobenius norm is</p>
+<pre class="r"><code>norm.type=&#39;F&#39;
+temp = matrix(0,nrow = times, ncol = 2)
+for(i in 1:times){
+  temp[i, ] = c(norm(result_wrap[[i]]$V.full - result_wrap[[i]]$V.true, type = norm.type), 
+                norm(result_wrap[[i]]$V.subset - result_wrap[[i]]$V.true, type = norm.type))
+}
+colnames(temp) = c(&#39;Full&#39;,&#39;Subset&#39;)
+temp = reshape2::melt(temp[])
+colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;FrobError&#39;)
+ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()</code></pre>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The spectral norm is</p>
+<pre class="r"><code>norm.type=&#39;2&#39;
+temp = matrix(0,nrow = times, ncol = 2)
+for(i in 1:times){
+  temp[i, ] = c(norm(result_wrap[[i]]$V.full - result_wrap[[i]]$V.true, type = norm.type), 
+                norm(result_wrap[[i]]$V.subset - result_wrap[[i]]$V.true, type = norm.type))
+}
+colnames(temp) = c(&#39;Full&#39;,&#39;Subset&#39;)
+temp = reshape2::melt(temp[])
+colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;SpecError&#39;)
+ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()</code></pre>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="mash-log-likelihood" class="section level3">
+<h3>mash log likelihood</h3>
+<pre class="r"><code>temp = matrix(0,nrow = times, ncol = 3)
+for(i in 1:times){
+  temp[i, ] = c(get_loglik(result_wrap[[i]]$m.model$m.model.true), get_loglik(result_wrap[[i]]$m.model$m.model.full),
+                get_loglik(result_wrap[[i]]$m.model$m.model.subset))
+}
+colnames(temp) = c(&#39;True&#39;, &#39;Full&#39;,&#39;Subset&#39;)
+temp = reshape2::melt(temp)
+colnames(temp) = c(&#39;Data&#39;, &#39;Method&#39;, &#39;loglikelihood&#39;)
+ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()</code></pre>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="roc" class="section level3">
+<h3>ROC</h3>
+<pre class="r"><code>ROC.table = function(data, model){
+  sign.test = data*model$result$PosteriorMean
+  thresh.seq = seq(0, 1, by=0.005)[-1]
+  m.seq = matrix(0,length(thresh.seq), 2)
+  colnames(m.seq) = c(&#39;TPR&#39;, &#39;FPR&#39;)
+  for(t in 1:length(thresh.seq)){
+    m.seq[t,] = c(sum(sign.test&gt;0 &amp; model$result$lfsr &lt;= thresh.seq[t])/sum(data!=0),
+                  sum(data==0 &amp; model$result$lfsr &lt;=thresh.seq[t])/sum(data==0))
+  }
+  return(m.seq)
+}
+plotROC = function(data.true, result.model, title){
+  m.full.seq = ROC.table(data.true, result.model$m.model.full)
+  m.subset.seq = ROC.table(data.true, result.model$m.model.subset)
+  m.true.seq = ROC.table(data.true, result.model$m.model.true)
+
+  plot(m.true.seq[,&#39;FPR&#39;], m.true.seq[,&#39;TPR&#39;],type=&#39;l&#39;,xlab = &#39;FPR&#39;, ylab=&#39;TPR&#39;,
+       main=paste0(title, &#39;True Pos vs False Pos&#39;), cex=1.5, lwd = 1.5)
+  lines(m.full.seq[,&#39;FPR&#39;], m.full.seq[,&#39;TPR&#39;], col=&#39;red&#39;, lwd = 1.5)
+  lines(m.subset.seq[,&#39;FPR&#39;], m.subset.seq[,&#39;TPR&#39;], col=&#39;darkorchid&#39;, lwd = 1.5)
+  legend(&#39;bottomright&#39;, c(&#39;True&#39;,&#39;Full&#39;, &#39;Subset&#39;),col=c(&#39;black&#39;,&#39;red&#39;,&#39;darkorchid&#39;),
+           lty=c(1,1,1), lwd=c(1.5,1.5,1.5))
+}</code></pre>
+<pre class="r"><code>par(mfrow=c(1,2))
+for(i in 1:times){
+  plotROC(result[[i]]$data$B, result_wrap[[i]]$m.model, title=paste0(&#39;Data&#39;, i, &#39; &#39;))
+}</code></pre>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-14-5.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="rrmse" class="section level3">
+<h3>RRMSE</h3>
+<pre class="r"><code>RRMSE = function(datatrue, dataobs, model){
+  model = Filter(length, model)
+  rrmse = numeric(length(model))
+  for(k in 1:length(model)){
+    rrmse[k] = sqrt(mean((datatrue - model[[k]]$result$PosteriorMean)^2)/mean((datatrue - dataobs)^2))
+  }
+  rrmse = as.matrix(t(rrmse))
+  colnames(rrmse) = names(model)
+  return(rrmse)
+}</code></pre>
+<pre class="r"><code>par(mfrow=c(1,2))
+for(i in 1:times){
+  rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result_wrap[[i]]$m.model))
+  barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main=&#39;RRMSE&#39;)
+}</code></pre>
+<p><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMaxMVSample.Rmd/unnamed-chunk-16-5.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS  10.14.1
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] ggplot2_3.1.0     mashr_0.2.18.0536 ashr_2.2-23      
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_0.2.5  purrr_0.2.5       reshape2_1.4.3   
+ [4] lattice_0.20-35   Rmosek_8.0.69     colorspace_1.3-2 
+ [7] htmltools_0.3.6   yaml_2.2.0        rlang_0.3.0.1    
+[10] R.oo_1.22.0       pillar_1.3.0      glue_1.3.0       
+[13] withr_2.1.2       R.utils_2.7.0     REBayes_1.3      
+[16] bindrcpp_0.2.2    foreach_1.4.4     plyr_1.8.4       
+[19] bindr_0.1.1       stringr_1.3.1     munsell_0.5.0    
+[22] gtable_0.2.0      workflowr_1.1.1   R.methodsS3_1.7.1
+[25] mvtnorm_1.0-8     codetools_0.2-15  evaluate_0.12    
+[28] labeling_0.3      knitr_1.20        pscl_1.5.2       
+[31] doParallel_1.0.14 parallel_3.5.1    Rcpp_1.0.0       
+[34] scales_1.0.0      backports_1.1.2   rmeta_3.0        
+[37] truncnorm_1.0-8   abind_1.4-5       digest_0.6.18    
+[40] stringi_1.2.4     dplyr_0.7.6       grid_3.5.1       
+[43] rprojroot_1.3-2   tools_3.5.1       magrittr_1.5     
+[46] lazyeval_0.2.1    tibble_1.4.2      crayon_1.3.4     
+[49] whisker_0.3-2     pkgconfig_2.0.2   MASS_7.3-50      
+[52] Matrix_1.2-14     SQUAREM_2017.10-1 assertthat_0.2.0 
+[55] rmarkdown_1.10    iterators_1.0.10  R6_2.3.0         
+[58] git2r_0.23.0      compiler_3.5.1   </code></pre>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
