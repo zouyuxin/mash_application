@@ -221,7 +221,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-11-24</p>
+<p><strong>Last updated:</strong> 2018-11-29</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -230,7 +230,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/da8cb5b8edebd999aaeef155dad9f288b2d331e0" target="_blank">da8cb5b</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/dde29db5e0b18cdfffcff403729ee1fd0173bd4c" target="_blank">dde29db</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -247,7 +247,10 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/Classify.Rmd
+    Untracked:  analysis/EstimateCorMLECompare.Rmd
+    Untracked:  analysis/EstimateCorMash.Rmd
     Untracked:  analysis/EstimateCorMaxGD.Rmd
+    Untracked:  analysis/EstimateCorMaxMCMash.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
     Untracked:  analysis/MashLowSignalGTEx4.Rmd
     Untracked:  analysis/Mash_GTEx.Rmd
@@ -283,6 +286,7 @@ Untracked files:
     Untracked:  output/AddEMV/
     Untracked:  output/CovED_UKBio_strong.rds
     Untracked:  output/CovED_UKBio_strong_Z.rds
+    Untracked:  output/EstCorMLECompare/
     Untracked:  output/Flash_UKBio_strong.rds
     Untracked:  output/GTExNULLres/
     Untracked:  output/GTEx_2.5_nullData.rds
@@ -311,11 +315,12 @@ Untracked files:
     Untracked:  output/Mash_EE_Cov_0_plusR1.rds
     Untracked:  output/UKBio_mash_model.rds
     Untracked:  output/mVIterations/
+    Untracked:  output/mVMLEsubset/
     Untracked:  output/mVUlist/
-    Untracked:  output/mVsubset/
     Untracked:  output/result.em.rds
 
 Unstaged changes:
+    Modified:   analysis/EstimateCorMaxMVSample.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
     Modified:   output/Flash_T2_0.rds
@@ -350,6 +355,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/dde29db5e0b18cdfffcff403729ee1fd0173bd4c/analysis/EstimateCorIndex.Rmd" target="_blank">dde29db</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-11-29
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorIndex.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/159f8390a83615f94d19bfd49f42178ab19fd787/docs/EstimateCorIndex.html" target="_blank">159f839</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-11-24
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -723,6 +762,7 @@ wflow_publish(c(“analysis/EstimateCorIndex.Rmd”, “analysis/index.Rmd”))
 <li><p>Fewer iteration: <a href="EstimateCorMaxMVIter.html">Estimate cor EM V fewer iteration</a> (niter = 3)</p></li>
 <li><p>Shorter Ulist: <a href="EstimateCorMaxMVUlist.html">Estimate cor EM V shorter Ulist</a></p></li>
 <li><p>Smaller samples: <a href="EstimateCorMaxMVSample.html">Estimate cor EM V subset data</a></p></li>
+<li><p>Problem: <a href="EstimateCorMaxMVProblem.html">mV problem</a></p></li>
 </ul>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
