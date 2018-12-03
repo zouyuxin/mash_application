@@ -1,0 +1,256 @@
+---
+title: "Estiamte null correlation"
+author: "Yuxin Zou"
+date: "11/28/2018"
+output: html_document
+---
+
+I randomly generate 10 positive definite correlation matrices, V. The sample size is 4000.
+
+$$
+\hat{z}|z \sim N_{5}(z, V)
+$$
+$$
+z\sim\frac{1}{4}\delta_{0} + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 1 & \mathbf{0}_{1\times 4} \\ \mathbf{0}_{4\times 1} & \mathbf{0}_{4\times 4} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\left(\begin{matrix} \mathbf{1}_{2\times 2} & \mathbf{0}_{1\times 3} \\ \mathbf{0}_{3\times 1} & \mathbf{0}_{3\times 3} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\mathbf{1}_{5\times 5})
+$$
+```{r}
+devtools::load_all('~/Documents/GitHub/mashr-zou/')
+generate_data = function(n, p, V, Utrue, pi=NULL){
+  if (is.null(pi)) {
+    pi = rep(1, length(Utrue)) # default to uniform distribution
+  }
+  assertthat::are_equal(length(pi), length(Utrue))
+  
+  for (j in 1:length(Utrue)) {
+    assertthat::are_equal(dim(Utrue[j]), c(p, p))
+  }
+  
+  pi <- pi / sum(pi) # normalize pi to sum to one
+  which_U <- sample(1:length(pi), n, replace=TRUE, prob=pi)
+  
+  Beta = matrix(0, nrow=n, ncol=p)
+  for(i in 1:n){
+    Beta[i,] = MASS::mvrnorm(1, rep(0, p), Utrue[[which_U[i]]])
+  }
+  
+  E = MASS::mvrnorm(n, rep(0, p), V)
+  Bhat = Beta + E
+  Shat = 1
+  return(list(B = Beta, Bhat=Bhat, Shat = Shat))
+}
+```
+
+```{r, warning=FALSE, eval=FALSE}
+set.seed(100)
+n=4000; p = 5
+U0 = matrix(0,p,p)
+U1 = U0; U1[1,1] = 1
+U2 = U0; U2[c(1:2), c(1:2)] = 1
+U3 = matrix(1, p,p)
+Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
+for(t in 1:5){
+  print(paste0('Data ', t))
+  Vtrue = clusterGeneration::rcorrmatrix(p)
+  data = generate_data(n, p, Vtrue, Utrue)
+  # mash cov
+  m.data = mash_set_data(Bhat = data$Bhat, Shat = data$Shat)
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+  U.c = cov_canonical(m.data)
+  Ulist = c(U.c, U.ed)
+  
+  V.true = vector('list', 3)
+  m.data.true = mash_update_data(m.data, V = Vtrue)
+  V.true$V = Vtrue
+  V.true$m.model = mash(m.data.true, Ulist, verbose = FALSE)
+  V.true$time = 0
+  
+  V.simple = vector('list', 3)
+  outtime.simple = system.time(V.simple$V <- estimate_null_correlation_simple(m.data))
+  V.simple$time = outtime.simple["elapsed"]
+  m.data.simple = mash_update_data(m.data, V = V.simple$V)
+  V.simple$mash.model = mash(m.data.simple, Ulist, verbose = FALSE)
+
+  print('Current')
+  outtime.current = system.time(V.current <- estimate_null_correlation(m.data, Ulist, max_iter = 100, tol = 1e-2))
+  V.current$time = outtime.current["elapsed"]
+  
+  print('New mle')
+  outtime.mle = system.time(V.mle <- estimate_null_correlation_mle(m.data, Ulist, max_iter = 100, tol=1e-2))
+  V.mle$time = outtime.mle["elapsed"]
+  
+  print('New mle em')
+  outtime.mle.em = system.time(V.mle.em <- estimate_null_correlation_mle_em(m.data, Ulist, max_iter = 100, tol=1e-2))
+  V.mle.em$time = outtime.mle.em["elapsed"]
+  
+  saveRDS(list(V.true = V.true, V.simple = V.simple, V.current = V.current, V.mle = V.mle, V.mle.em = V.mle.em, data = data),
+          paste0('../output/EstCorMLECompare/MASH.result.',t,'.rds'))
+}
+
+```
+
+```{r}
+files = dir("../output/EstCorMLECompare/"); files = files[grep("MASH.result",files)]
+times = length(files)
+result = vector(mode="list",length = times)
+for(i in 1:times) {
+  result[[i]] = readRDS(paste("../output/EstCorMLECompare/", files[[i]], sep=""))
+}
+```
+
+```{r warning=FALSE}
+for(i in 1:times){
+  m.data = mash_set_data(result[[i]]$data$Bhat, result[[i]]$data$Shat)
+  
+  m.1by1 = mash_1by1(m.data)
+  strong = get_significant_results(m.1by1)
+  U.c = cov_canonical(m.data)
+  U.pca = cov_pca(m.data, 3, subset = strong)
+  U.ed = cov_ed(m.data, U.pca, subset = strong)
+  Ulist = c(U.c, U.ed)
+  
+  m.data.mle = mash_update_data(m.data, V = result[[i]]$V.mle$V)
+  result[[i]]$V.mle$mash.model$result = mash_compute_posterior_matrices(result[[i]]$V.mle$mash.model, m.data.mle)$result
+}
+```
+
+### Convergence
+
+```{r}
+library(ggplot2)
+for(i in 1:times){
+  tmp = data.frame(loglik = c(result[[i]]$V.current$loglik, result[[i]]$V.mle$loglik, result[[i]]$V.mle.em$loglik), method = c(rep('current', length(result[[i]]$V.current$loglik)),rep('mle', length(result[[i]]$V.mle$loglik)), rep('mle_em', length(result[[i]]$V.mle.em$loglik))),
+              iter = c(1:length(result[[i]]$V.current$loglik), 1:length(result[[i]]$V.mle$loglik), 1:length(result[[i]]$V.mle.em$loglik)))
+  # plot(tmp$iter, tmp$loglik)
+  print(ggplot(tmp, aes(x = iter, y=loglik, color = method)) + geom_line())
+}
+```
+
+### Error
+
+The Frobenius norm is
+```{r}
+temp = matrix(0,nrow = times, ncol = 4)
+for(i in 1:times){
+  temp[i, ] = c(norm(result[[i]]$V.simple$V - result[[i]]$V.true$V, type = 'F'), 
+                norm(result[[i]]$V.current$V - result[[i]]$V.true$V, type = 'F'), 
+                norm(result[[i]]$V.mle$V - result[[i]]$V.true$V, type = 'F'),
+                norm(result[[i]]$V.mle.em$V - result[[i]]$V.true$V, type = 'F'))
+}
+colnames(temp) = c('Simple','Current', 'MLE', 'MLE_eM')
+temp = reshape2::melt(temp)
+colnames(temp) = c('Data', 'Method', 'FrobError')
+ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()
+```
+
+The spectral norm is
+```{r}
+temp = matrix(0,nrow = times, ncol = 4)
+for(i in 1:times){
+  temp[i, ] = c(norm(result[[i]]$V.simple$V - result[[i]]$V.true$V, type = '2'), 
+                norm(result[[i]]$V.current$V - result[[i]]$V.true$V, type = '2'), 
+                norm(result[[i]]$V.mle$V - result[[i]]$V.true$V, type = '2'),
+                norm(result[[i]]$V.mle.em$V - result[[i]]$V.true$V, type = '2'))
+}
+colnames(temp) = c('Simple','Current', 'MLE', 'MLE_EM')
+temp = reshape2::melt(temp)
+colnames(temp) = c('Data', 'Method', 'SpecError')
+ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()
+```
+
+### Time
+
+The total running time for each matrix is
+```{r}
+current.time = mle.time = mle.em.time = numeric(times)
+for(i in 1:times){
+  current.time[i] = result[[i]]$V.current$time
+  mle.time[i] = result[[i]]$V.mle$time
+  mle.em.time[i] = result[[i]]$V.mle.em$time
+}
+temp = cbind(current.time, mle.time, mle.em.time)
+colnames(temp) = c('current', 'mle', 'mle_em')
+row.names(temp) = 1:5
+
+temp = reshape2::melt(temp)
+colnames(temp) = c('Data', 'Method', 'Time')
+ggplot(temp, aes(x = Data, y=Time, group = Method, color = Method)) + geom_line()
+```
+
+### mash log likelihood
+
+```{r}
+temp = matrix(0,nrow = times, ncol = 5)
+for(i in 1:times){
+  temp[i, ] = c(get_loglik(result[[i]]$V.true$m.model), get_loglik(result[[i]]$V.simple$mash.model), get_loglik(result[[i]]$V.current$mash.model),
+                get_loglik(result[[i]]$V.mle$mash.model), get_loglik(result[[i]]$V.mle.em$mash.model))
+}
+colnames(temp) = c('True', 'Simple','Current', 'MLE', 'MLE_EM')
+temp = reshape2::melt(temp)
+colnames(temp) = c('Data', 'Method', 'loglikelihood')
+ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()
+```
+
+### ROC
+
+```{r}
+ROC.table = function(data, model){
+  sign.test = data*model$result$PosteriorMean
+  thresh.seq = seq(0, 1, by=0.005)[-1]
+  m.seq = matrix(0,length(thresh.seq), 2)
+  colnames(m.seq) = c('TPR', 'FPR')
+  for(t in 1:length(thresh.seq)){
+    m.seq[t,] = c(sum(sign.test>0 & model$result$lfsr <= thresh.seq[t])/sum(data!=0),
+                  sum(data==0 & model$result$lfsr <=thresh.seq[t])/sum(data==0))
+  }
+  return(m.seq)
+}
+
+plotROC = function(data.true, resulti, title){
+  m.simple.seq = ROC.table(data.true, resulti$V.simple$mash.model)
+  m.current.seq = ROC.table(data.true, resulti$V.current$mash.model)
+  m.mle.seq = ROC.table(data.true, resulti$V.mle$mash.model)
+  m.mle.em.seq = ROC.table(data.true, resulti$V.mle.em$mash.model)
+  m.true.seq = ROC.table(data.true, resulti$V.true$m.model)
+
+  plot(m.true.seq[,'FPR'], m.true.seq[,'TPR'],type='l',xlab = 'FPR', ylab='TPR',
+       main=paste0(title, 'True Pos vs False Pos'), cex=1.5, lwd = 1.5)
+  lines(m.simple.seq[,'FPR'], m.simple.seq[,'TPR'], col='red', lwd = 1.5)
+  lines(m.current.seq[,'FPR'], m.current.seq[,'TPR'], col='darkorchid', lwd = 1.5)
+  lines(m.mle.seq[,'FPR'], m.mle.seq[,'TPR'], col='darkgoldenrod', lwd = 1.5)
+  lines(m.mle.em.seq[,'FPR'], m.mle.em.seq[,'TPR'], col='cyan', lwd = 1.5)
+  
+  legend('bottomright', c('True','Simple', 'Current', 'MLE', 'MLE_EM'),col=c('black','red','darkorchid','darkgoldenrod', 'cyan'),
+           lty=c(1,1,1,1,1), lwd=c(1.5,1.5,1.5,1.5,1.5))
+}
+```
+
+```{r}
+par(mfrow=c(1,2))
+for(i in 1:times){
+  plotROC(result[[i]]$data$B, result[[i]], title=paste0('Data', i, ' '))
+}
+```
+
+### RRMSE
+
+```{r}
+RRMSE = function(datatrue, dataobs, resulti){
+  rrmse = c(sqrt(mean((datatrue - result[[i]]$V.true$m.model$result$PosteriorMean)^2)/mean((datatrue - dataobs)^2)),
+            sqrt(mean((datatrue - result[[i]]$V.simple$mash.model$result$PosteriorMean)^2)/mean((datatrue - dataobs)^2)),
+            sqrt(mean((datatrue - result[[i]]$V.current$mash.model$result$PosteriorMean)^2)/mean((datatrue - dataobs)^2)),
+            sqrt(mean((datatrue - result[[i]]$V.mle$mash.model$result$PosteriorMean)^2)/mean((datatrue - dataobs)^2)),
+            sqrt(mean((datatrue - result[[i]]$V.mle.em$mash.model$result$PosteriorMean)^2)/mean((datatrue - dataobs)^2)))
+  
+  return(rrmse)
+}
+
+par(mfrow=c(1,2))
+for(i in 1:times){
+  rrmse = rbind(RRMSE(result[[i]]$data$B, result[[i]]$data$Bhat, result[[i]]))
+  barplot(rrmse, ylim=c(0,(1+max(rrmse))/2), las=2, cex.names = 0.7, main='RRMSE', names.arg = c('True','Simple', 'Current', 'MLE', 'MLE_EM'))
+}
+```
