@@ -1,0 +1,88 @@
+---
+title: "Estiamte null correlation DSC"
+author: "Yuxin Zou"
+date: 2018-12-6
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+I randomly generate 20 positive definite correlation matrices, V. The sample size is 4000.
+
+$$
+\hat{z}_j|z_j \sim N_{5}(z_j, V)
+$$
+$$
+z_j \sim \frac{1}{4}\delta_{0} + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 1 & \mathbf{0}_{1\times 4} \\ \mathbf{0}_{4\times 1} & \mathbf{0}_{4\times 4} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 0 & \mathbf{0}_{1\times 2} & \mathbf{0}_{1\times 2} \\
+\mathbf{0}_{2\times 1} & \mathbf{1}_{2\times 2} & \mathbf{0}_{1\times 2} \\ 0 & \mathbf{0}_{1\times 2} & \mathbf{0}_{1\times 2} \end{matrix}\right)) + \frac{1}{4}N_{5}(0,I)
+$$
+
+```{r eval=FALSE, echo=FALSE}
+for(i in 1:20){
+  cur = readRDS(paste0('../output/dsc-mashr-est_v/current/simulate_simple_',i,'_current_1.rds'))
+  mle = readRDS(paste0('../output/dsc-mashr-est_v/mle/simulate_simple_',i,'_mle_1.rds'))
+  tmp = data.frame(loglik = c(cur$V$loglik, mle$V$loglik), estimate = c(rep('current', length(cur$V$loglik)), rep('mle', length(mle$V$loglik))), iter = c(1:length(cur$V$loglik), 1:length(mle$V$loglik)))
+  
+  ggplot(tmp, aes(x = iter, y = loglik, group = estimate, color = estimate)) + geom_line() + ggtitle(paste0("Data ", i)) +
+    xlab("iteration") + ylab("log likelihood")
+  ggsave(paste0('../output/dsc-mashr-est_v/DataConverge/Data', i, '.pdf'))
+}
+```
+
+```{r}
+library(ggplot2)
+Summary = readRDS('../output/dsc-mashr-est_v/Summary.rds')
+```
+
+### Time
+
+The total running time for each matrix is
+```{r}
+Time = Summary[,c('DSC','estimate', 'estimate.DSC_TIME')]
+ggplot(Time, aes(x = DSC, y=estimate.DSC_TIME, group = estimate, color = estimate)) + geom_line()
+```
+
+### Error
+
+The Frobenius norm is
+```{r}
+library(ggplot2)
+Error = Summary[Summary$summary == 'FrobeniusNorm', c('DSC','estimate', 'summary.score', 'summary')]
+ggplot(Error, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+```
+
+### mash log likelihood
+
+```{r}
+loglike = Summary[Summary$summary == 'mashloglik', c('DSC','estimate', 'summary.score', 'summary')]
+ggplot(loglike, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+```
+
+### RRMSE
+
+```{r}
+RRMSE = Summary[Summary$summary == 'RRMSE', c('DSC','estimate', 'summary.score', 'summary')]
+ggplot(RRMSE, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+```
+
+### ROC
+
+```{r}
+ROCdir = readRDS('../output/dsc-mashr-est_v/ROCdir.rds')
+par(mfrow=c(1,2))
+for(i in 1:20){
+  ind = which(ROCdir$DSC == i)
+  ROC.seq = readRDS(paste("../output/dsc-mashr-est_v/", ROCdir$ROC.output.file[ind[1]], '.rds', sep=""))
+  plot(ROC.seq$data[,'FPR'], ROC.seq$data[,'TPR'], type='l', xlab = 'FPR', ylab='TPR',
+       main=paste0('Data ', i, ' True Pos vs False Pos'), cex=1.5, lwd = 1.5, col = 'cyan')
+  ROC.seq = readRDS(paste("../output/dsc-mashr-est_v/", ROCdir$ROC.output.file[ind[2]], '.rds', sep=""))
+  lines(ROC.seq$data[,'FPR'], ROC.seq$data[,'TPR'], col='purple', lwd = 1.5)
+  ROC.seq = readRDS(paste("../output/dsc-mashr-est_v/", ROCdir$ROC.output.file[ind[3]], '.rds', sep=""))
+  lines(ROC.seq$data[,'FPR'], ROC.seq$data[,'TPR'], col='red', lwd = 1.5)
+  ROC.seq = readRDS(paste("../output/dsc-mashr-est_v/", ROCdir$ROC.output.file[ind[4]], '.rds', sep=""))
+  lines(ROC.seq$data[,'FPR'], ROC.seq$data[,'TPR'], col='darkolivegreen4', lwd = 1.5)
+  legend('bottomright', c('oracle','simple', 'current', 'mle'),col=c('cyan','purple','red','darkolivegreen4'),
+           lty=c(1,1,1,1), lwd=c(1.5,1.5,1.5,1.5))
+}
+```
+
