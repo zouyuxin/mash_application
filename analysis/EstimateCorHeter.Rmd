@@ -34,7 +34,7 @@ We simulate null data which has common noise correlation structure. We fit mash 
 
 ```{r}
 library(mvtnorm)
-devtools::load_all('~/Documents/GitHub/mashr-zou/')
+library(mashr)
 set.seed(1)
 n = 1000; p = 5
 B = matrix(0,n,p)
@@ -126,7 +126,7 @@ tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.current), rrm
 barplot(tmp, names.arg = c('I only', 'V only', 'current', 'true'))
 ```
 
-Next, we simulate data with some signals.
+## Data with signals
 
 ```{r}
 set.seed(2018)
