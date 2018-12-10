@@ -26,3 +26,12 @@ output:
 * Smaller samples: [Estimate cor EM V subset data](EstimateCorMaxMVSample.html)
 
 * Problem: [mV problem](EstimateCorMaxMVProblem.html)
+
+* MLE using reparametrization: [MLE compare](EstimateCorMLECompareDSC.html)
+
+* Null Correlation Heterogeneity: [Cor Heterogeneity](EstimateCorHeter.html)
+
+* Null Correlation Heterogeneity DSC: [Cor Heterogeneity DSC](DiffCorCompareDSC.html)
+
+* Null Correlation Heterogeneity (with signals) DSC: [Cor Heterogeneity Signals DSC](DiffCorSignalCompareDSC.Rmd)
+
