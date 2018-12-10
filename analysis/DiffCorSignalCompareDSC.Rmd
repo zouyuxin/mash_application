@@ -47,6 +47,8 @@ ggplot(Time, aes(x = DSC, y=estimate.DSC_TIME, group = estimate, color = estimat
 ```{r}
 loglike = Summary[Summary$summary == 'mashloglik', c('DSC','estimate', 'summary.score', 'summary')]
 ggplot(loglike, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+loglike_ora = loglike[-which(loglike$estimate == 'oracle'), ]
+ggplot(loglike_ora, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
 ```
 
 ### RRMSE
@@ -54,6 +56,8 @@ ggplot(loglike, aes(x = DSC, y=summary.score, group = estimate, color = estimate
 ```{r}
 RRMSE = Summary[Summary$summary == 'RRMSE', c('DSC','estimate', 'summary.score', 'summary')]
 ggplot(RRMSE, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+RRMSE_ora = RRMSE[-which(RRMSE$estimate == 'oracle'), ]
+ggplot(RRMSE_ora, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
 ```
 
 ### ROC
