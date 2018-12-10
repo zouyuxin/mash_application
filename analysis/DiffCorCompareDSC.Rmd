@@ -1,0 +1,65 @@
+---
+title: "Different Null Correlation DSC"
+author: "Yuxin Zou"
+date: 2018-12-9
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+I randomly generate 20 data. The sample size is 4000.
+
+$$
+\hat{z}_j|z_j \sim N_{5}(z_j, V_j)
+$$
+$$
+z_j \sim \delta_{0}
+$$
+
+```{r eval=FALSE, echo=FALSE}
+for(i in 1:20){
+  cur = readRDS(paste0('../output/diff_v/current/simulate_simple_',i,'_current_1.rds'))
+  mle = readRDS(paste0('../output/diff_v/mle/simulate_simple_',i,'_mle_1.rds'))
+  tmp = data.frame(loglik = c(cur$V$loglik, mle$V$loglik), estimate = c(rep('current', length(cur$V$loglik)), rep('mle', length(mle$V$loglik))), iter = c(1:length(cur$V$loglik), 1:length(mle$V$loglik)))
+  
+  ggplot(tmp, aes(x = iter, y = loglik, group = estimate, color = estimate)) + geom_line() + ggtitle(paste0("Data ", i)) +
+    xlab("iteration") + ylab("log likelihood")
+  ggsave(paste0('../output/diff_v/DataConverge/Data', i, '.pdf'))
+}
+```
+
+```{r}
+library(ggplot2)
+Summary = readRDS('../output/diff_v/summary.rds')
+```
+
+### Time
+
+The total running time for each matrix is
+```{r}
+Time = Summary[,c('DSC','estimate', 'estimate.DSC_TIME')]
+ggplot(Time, aes(x = DSC, y=estimate.DSC_TIME, group = estimate, color = estimate)) + geom_line()
+```
+
+
+### mash log likelihood
+
+```{r}
+loglike = Summary[Summary$summary == 'mashloglik', c('DSC','estimate', 'summary.score', 'summary')]
+ggplot(loglike, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+```
+
+### RRMSE
+
+```{r}
+RRMSE = Summary[Summary$summary == 'RRMSE', c('DSC','estimate', 'summary.score', 'summary')]
+ggplot(RRMSE, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+```
+
+### False Discovery
+
+```{r}
+fd = Summary[Summary$summary == 'FalseDiscovery', c('DSC','estimate', 'summary.score', 'summary')]
+ggplot(fd, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+```
+
