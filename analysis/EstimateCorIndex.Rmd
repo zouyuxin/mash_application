@@ -33,5 +33,5 @@ output:
 
 * Null Correlation Heterogeneity DSC: [Cor Heterogeneity DSC](DiffCorCompareDSC.html)
 
-* Null Correlation Heterogeneity (with signals) DSC: [Cor Heterogeneity Signals DSC](DiffCorSignalCompareDSC.Rmd)
+* Null Correlation Heterogeneity (with signals) DSC: [Cor Heterogeneity Signals DSC](DiffCorSignalCompareDSC.html)
 
