@@ -12,7 +12,7 @@
 <meta name="author" content="Yuxin Zou" />
 
 
-<title>Different Null Correlation DSC</title>
+<title>Different Null Correlation (with signal) DSC</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -332,14 +332,14 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Different Null Correlation DSC</h1>
+<h1 class="title toc-ignore">Different Null Correlation (with signal) DSC</h1>
 <h4 class="author"><em>Yuxin Zou</em></h4>
 <h4 class="date"><em>2018-12-9</em></h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-12-10</p>
+<p><strong>Last updated:</strong> 2018-12-11</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -363,7 +363,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/c2fc2cafdf24547b8f132e54aec435fea057f6fb" target="_blank">c2fc2ca</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/90dd3e11317ab8aee643e2b9804aa6103386825b" target="_blank">90dd3e1</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -498,6 +498,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/90dd3e11317ab8aee643e2b9804aa6103386825b/analysis/DiffCorSignalCompareDSC.Rmd" target="_blank">90dd3e1</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-11
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/DiffCorSignalCompareDSC.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/f244c97795530a4b58d0d666bd15f16213f7430c/docs/DiffCorSignalCompareDSC.html" target="_blank">f244c97</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-10
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/c2fc2cafdf24547b8f132e54aec435fea057f6fb/analysis/DiffCorSignalCompareDSC.Rmd" target="_blank">c2fc2ca</a>
 </td>
 <td style="text-align:left;">
@@ -553,7 +587,8 @@ wflow_publish(“analysis/DiffCorSignalCompareDSC.Rmd”)
 <p><span class="math display">\[
 \hat{z}_j|z_j \sim N_{5}(z_j, V_j)
 \]</span> <span class="math display">\[
-z_j \sim \delta_{0}
+z_j \sim \frac{1}{2}\delta_{0} + \frac{1}{2}N(0, \left(\begin{matrix} 1 &amp; 0_{1\times 4} \\
+                                                                      0_{4\times 1} &amp; 0_{4\times 4} \end{matrix}\right))
 \]</span></p>
 <pre class="r"><code>library(ggplot2)
 Summary = readRDS(&#39;../output/diff_v_signal/summary.rds&#39;)</code></pre>
@@ -632,6 +667,36 @@ zouyuxin
 <pre class="r"><code>loglike_ora = loglike[-which(loglike$estimate == &#39;oracle&#39;), ]
 ggplot(loglike_ora, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()</code></pre>
 <p><img src="figure/DiffCorSignalCompareDSC.Rmd/unnamed-chunk-4-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-4-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/f244c97795530a4b58d0d666bd15f16213f7430c/docs/figure/DiffCorSignalCompareDSC.Rmd/unnamed-chunk-4-2.png" target="_blank">f244c97</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-10
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="rrmse" class="section level3">
 <h3>RRMSE</h3>
@@ -671,6 +736,36 @@ zouyuxin
 <pre class="r"><code>RRMSE_ora = RRMSE[-which(RRMSE$estimate == &#39;oracle&#39;), ]
 ggplot(RRMSE_ora, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()</code></pre>
 <p><img src="figure/DiffCorSignalCompareDSC.Rmd/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-2.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/f244c97795530a4b58d0d666bd15f16213f7430c/docs/figure/DiffCorSignalCompareDSC.Rmd/unnamed-chunk-5-2.png" target="_blank">f244c97</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-10
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="roc" class="section level3">
 <h3>ROC</h3>
