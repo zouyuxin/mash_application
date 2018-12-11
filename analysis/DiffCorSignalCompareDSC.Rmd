@@ -1,5 +1,5 @@
 ---
-title: "Different Null Correlation DSC"
+title: "Different Null Correlation (with signal) DSC"
 author: "Yuxin Zou"
 date: 2018-12-9
 output: 
@@ -13,7 +13,8 @@ $$
 \hat{z}_j|z_j \sim N_{5}(z_j, V_j)
 $$
 $$
-z_j \sim \delta_{0}
+z_j \sim \frac{1}{2}\delta_{0} + \frac{1}{2}N(0, \left(\begin{matrix} 1 & 0_{1\times 4} \\
+                                                                      0_{4\times 1} & 0_{4\times 4} \end{matrix}\right))
 $$
 
 ```{r eval=FALSE, echo=FALSE}
