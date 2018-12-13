@@ -1,0 +1,205 @@
+---
+title: "Estimate Cor heter R = 50"
+author: "Yuxin Zou"
+date: 2018-12-13
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+```{r}
+rrmse = function(data, model){
+  sqrt(mean((data$B - model$result$PosteriorMean)^2)/mean((data$B - data$Bhat)^2))
+}
+
+ROC.table = function(data, model){
+  sign.test = data*model$result$PosteriorMean
+  thresh.seq = seq(0, 1, by=0.005)[-1]
+  m.seq = matrix(0,length(thresh.seq), 2)
+  colnames(m.seq) = c('TPR', 'FPR')
+  for(t in 1:length(thresh.seq)){
+    m.seq[t,] = c(sum(sign.test>0 & model$result$lfsr <= thresh.seq[t])/sum(data!=0),
+                  sum(data==0 & model$result$lfsr <=thresh.seq[t])/sum(data==0))
+  }
+  return(m.seq)
+}
+
+library(knitr)
+library(kableExtra)
+```
+
+## Common noise correlation
+
+We simulate null data which has common noise correlation structure. We fit mash model without and with the estimated correlation structure. There are lots of false positives in the model without the correlation structure. The posterior mean is far from the truth.
+
+```{r}
+library(mvtnorm)
+library(mashr)
+set.seed(1)
+n = 10000; p = 50
+B = matrix(0,n,p)
+V = matrix(0.75, p, p); diag(V) = 1
+Bhat = rmvnorm(n, sigma = V)
+simdata = list(B = B, Bhat = Bhat, Shat = 1)
+```
+
+```{r}
+data = mash_set_data(Bhat, Shat=1)
+U.c = cov_canonical(data)
+m.ignore = mash(data, U.c, verbose = FALSE)
+
+V.current = estimate_null_correlation(data, U.c)
+m.current = V.current$mash.model
+
+data.true = mash_update_data(data, V = V)
+m.true = mash(data.true, U.c, verbose = FALSE)
+```
+
+```{r}
+ign = c(get_loglik(m.ignore), length(get_significant_results(m.ignore)))
+
+current = c(get_loglik(m.current), length(get_significant_results(m.current)))
+
+true = c(get_loglik(m.true), length(get_significant_results(m.true)))
+
+tmp = rbind(ign, current, true)
+row.names(tmp) = c('ignore', 'current', 'true')
+colnames(tmp) = c('loglik', '# signif')
+tmp %>% kable() %>% kable_styling()
+```
+
+RRMSE:
+```{r}
+tmp = c(rrmse(simdata, m.ignore), rrmse(simdata, m.current), rrmse(simdata, m.true))
+barplot(tmp, names.arg = c('ignore', 'current', 'true'))
+```
+
+## Two different noise correlations
+
+Now, we simulate data with 2 noise correlation structures. Half of the null data have no noise correlation, the other half have noise correlation.
+```{r}
+Bhat1 = rmvnorm(n/2, sigma = diag(p))
+Bhat2 = rmvnorm(n/2, sigma = V)
+Bhat = rbind(Bhat1, Bhat2)
+simdata = list(B = B, Bhat = Bhat, Shat = 1)
+
+data = mash_set_data(Bhat, Shat=1)
+U.c = cov_canonical(data)
+m.I = mash(data, U.c, verbose = FALSE)
+
+data.V = mash_update_data(data, V = V)
+m.V = mash(data.V, U.c, verbose = FALSE)
+
+V.current = estimate_null_correlation(data, U.c)
+m.current = V.current$mash.model
+
+Vtrue = array(0,dim=c(p,p,n))
+Vtrue[,,1:(n/2)] = diag(p)
+Vtrue[,,(n/2+1): n] = V
+data.true = mash_update_data(data, V = Vtrue)
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R')
+```
+
+```{r}
+Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)))
+
+Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)))
+
+current = c(get_loglik(m.current), length(get_significant_results(m.current)))
+
+true = c(get_loglik(m.true), length(get_significant_results(m.true)))
+
+tmp = rbind(Ionly, Vonly, current, true)
+row.names(tmp) = c('I only', 'V only', 'current', 'true')
+colnames(tmp) = c('loglik', '# signif')
+tmp %>% kable() %>% kable_styling()
+```
+
+RRMSE:
+```{r}
+tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.current), rrmse(simdata, m.true))
+barplot(tmp, names.arg = c('I only', 'V only', 'current', 'true'))
+```
+
+The estimated weights using current method is 
+```{r}
+barplot(get_estimated_pi(m.current), las=2, cex.names = 0.7)
+```
+
+## Data with signals
+
+```{r}
+set.seed(2018)
+B1 = matrix(0, n/2, p)
+V.1 = matrix(0,p,p); V.1[1,1] = 1
+B2 = rmvnorm(n/2, sigma = V.1)
+B = rbind(B1, B2)
+
+V.random = array(0, dim=c(p,p,n))
+ind = sample(1:n, n/2)
+V.random[,,ind] = V
+V.random[,,-ind] = diag(p)
+
+Ehat = matrix(0, n, p)
+Ehat[ind,] = rmvnorm(n/2, sigma = V)
+Ehat[-ind,] = rmvnorm(n/2, sigma = diag(p))
+
+Bhat = B + Ehat
+simdata = list(B = B, Bhat=Bhat, Shat = 1)
+```
+
+```{r}
+data = mash_set_data(Bhat, Shat=1)
+U.c = cov_canonical(data)
+m.I = mash(data, U.c, verbose = FALSE)
+
+data.V = mash_update_data(data, V = V)
+m.V = mash(data.V, U.c, verbose = FALSE)
+
+V.current = estimate_null_correlation(data, U.c)
+m.current = V.current$mash.model
+
+data.true = mash_update_data(data, V = V.random)
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R')
+```
+
+```{r}
+Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)), sum(get_significant_results(m.I) <= n/2))
+
+Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)), sum(get_significant_results(m.V) <= n/2))
+
+current = c(get_loglik(m.current), length(get_significant_results(m.current)), sum(get_significant_results(m.current) <= n/2))
+
+true = c(get_loglik(m.true), length(get_significant_results(m.true)), sum(get_significant_results(m.true) <= n/2))
+
+tmp = rbind(Ionly, Vonly, current, true)
+row.names(tmp) = c('I only', 'V only', 'current', 'true')
+colnames(tmp) = c('loglik', '# signif', 'false positive')
+tmp %>% kable() %>% kable_styling()
+```
+
+RRMSE:
+```{r}
+tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.current), rrmse(simdata, m.true))
+barplot(tmp, names.arg = c('I only', 'V only', 'current', 'true'))
+```
+
+The estimated weights using current method is 
+```{r}
+barplot(get_estimated_pi(m.current), las=2, cex.names = 0.7)
+```
+
+ROC:
+```{r}
+roc.seq = ROC.table(simdata$B, m.true)
+plot(roc.seq[,'FPR'], roc.seq[,'TPR'], type='l', xlab = 'FPR', ylab='TPR',
+       main=paste0(' True Pos vs False Pos'), cex=1.5, lwd = 1.5, col = 'cyan')
+roc.seq = ROC.table(simdata$B, m.current)
+lines(roc.seq[,'FPR'], roc.seq[,'TPR'], col='purple', lwd = 1.5)
+roc.seq = ROC.table(simdata$B, m.I)
+lines(roc.seq[,'FPR'], roc.seq[,'TPR'], col='red', lwd = 1.5)
+roc.seq = ROC.table(simdata$B, m.V)
+lines(roc.seq[,'FPR'], roc.seq[,'TPR'], col='darkolivegreen4', lwd = 1.5)
+legend('bottomright', c('oracle','current', 'I only', 'V only'), col=c('cyan','purple','red','darkolivegreen4'),
+           lty=c(1,1,1,1), lwd=c(1.5,1.5,1.5,1.5))
+```
