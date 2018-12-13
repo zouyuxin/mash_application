@@ -340,7 +340,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-12-09</p>
+<p><strong>Last updated:</strong> 2018-12-13</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -364,7 +364,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/f33b26fd0f45f82b2efe5927b2d33977da3aa494" target="_blank">f33b26f</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/fe6e6f890d0b2cdf685af272e41b8f975bc8371e" target="_blank">fe6e6f8</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -382,6 +382,7 @@ Ignored files:
 
 Untracked files:
     Untracked:  analysis/Classify.Rmd
+    Untracked:  analysis/EstimateCorHeterR50.Rmd
     Untracked:  analysis/EstimateCorMash.Rmd
     Untracked:  analysis/EstimateCorMaxGD.Rmd
     Untracked:  analysis/EstimateCorMaxMCMash.Rmd
@@ -459,7 +460,6 @@ Untracked files:
     Untracked:  output/result.em.rds
 
 Unstaged changes:
-    Modified:   analysis/EstimateCorIndex.Rmd
     Modified:   analysis/EstimateCorMaxMVSample.Rmd
     Modified:   analysis/Mash_UKBio.Rmd
     Modified:   analysis/mash_missing_samplesize.Rmd
@@ -495,6 +495,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/fe6e6f890d0b2cdf685af272e41b8f975bc8371e/analysis/EstimateCorHeter.Rmd" target="_blank">fe6e6f8</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorHeter.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/27b0d6ddbda105c2c23400f19db2aa8f2ab69c55/docs/EstimateCorHeter.html" target="_blank">27b0d6d</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-09
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 Rmd
@@ -576,7 +610,7 @@ library(kableExtra)</code></pre>
 library(mashr)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>set.seed(1)
-n = 1000; p = 5
+n = 10000; p = 5
 B = matrix(0,n,p)
 V = matrix(0.75, p, p); diag(V) = 1
 Bhat = rmvnorm(n, sigma = V)
@@ -619,10 +653,10 @@ loglik
 ignore
 </td>
 <td style="text-align:right;">
--6354.647
+-62970.94
 </td>
 <td style="text-align:right;">
-234
+2930
 </td>
 </tr>
 <tr>
@@ -630,7 +664,7 @@ ignore
 current
 </td>
 <td style="text-align:right;">
--5144.464
+-50426.33
 </td>
 <td style="text-align:right;">
 0
@@ -641,7 +675,7 @@ current
 true
 </td>
 <td style="text-align:right;">
--5148.059
+-50432.44
 </td>
 <td style="text-align:right;">
 0
@@ -710,11 +744,11 @@ m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = &#39;R&#39;)<
 <p>The estimated V is</p>
 <pre class="r"><code>V.current$V</code></pre>
 <pre><code>          [,1]      [,2]      [,3]      [,4]      [,5]
-[1,] 1.0000000 0.4035613 0.4284902 0.3456594 0.3862639
-[2,] 0.4035613 1.0000000 0.3750880 0.3750139 0.3995121
-[3,] 0.4284902 0.3750880 1.0000000 0.4354905 0.4390817
-[4,] 0.3456594 0.3750139 0.4354905 1.0000000 0.4513623
-[5,] 0.3862639 0.3995121 0.4390817 0.4513623 1.0000000</code></pre>
+[1,] 1.0000000 0.3866502 0.4018458 0.3783971 0.3990991
+[2,] 0.3866502 1.0000000 0.3913344 0.3688566 0.3936946
+[3,] 0.4018458 0.3913344 1.0000000 0.4172119 0.3878397
+[4,] 0.3783971 0.3688566 0.4172119 1.0000000 0.3830625
+[5,] 0.3990991 0.3936946 0.3878397 0.3830625 1.0000000</code></pre>
 <pre class="r"><code>Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)))
 
 Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)))
@@ -746,10 +780,10 @@ loglik
 I only
 </td>
 <td style="text-align:right;">
--6790.814
+-67844.31
 </td>
 <td style="text-align:right;">
-65
+597
 </td>
 </tr>
 <tr>
@@ -757,10 +791,10 @@ I only
 V only
 </td>
 <td style="text-align:right;">
--6531.185
+-65457.36
 </td>
 <td style="text-align:right;">
-183
+1904
 </td>
 </tr>
 <tr>
@@ -768,10 +802,10 @@ V only
 current
 </td>
 <td style="text-align:right;">
--6564.140
+-65793.59
 </td>
 <td style="text-align:right;">
-2
+28
 </td>
 </tr>
 <tr>
@@ -779,7 +813,7 @@ current
 true
 </td>
 <td style="text-align:right;">
--6043.670
+-60618.07
 </td>
 <td style="text-align:right;">
 0
@@ -846,9 +880,14 @@ U.c = cov_canonical(data)
 m.I = mash(data, U.c, verbose = FALSE)
 
 data.V = mash_update_data(data, V = V)
-m.V = mash(data.V, U.c, verbose = FALSE)
-
-V.current = estimate_null_correlation(data, U.c)
+m.V = mash(data.V, U.c, verbose = FALSE)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.110553314193142,
+0.153957533037059, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>V.current = estimate_null_correlation(data, U.c)
 m.current = V.current$mash.model
 
 data.true = mash_update_data(data, V = V.random)
@@ -856,11 +895,11 @@ m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = &#39;R&#39;)<
 <p>The estimated V is</p>
 <pre class="r"><code>V.current$V</code></pre>
 <pre><code>          [,1]      [,2]      [,3]      [,4]      [,5]
-[1,] 1.0000000 0.3049484 0.3354571 0.3050442 0.4034261
-[2,] 0.3049484 1.0000000 0.3300064 0.3628014 0.3568255
-[3,] 0.3354571 0.3300064 1.0000000 0.3698771 0.3914646
-[4,] 0.3050442 0.3628014 0.3698771 1.0000000 0.3693130
-[5,] 0.4034261 0.3568255 0.3914646 0.3693130 1.0000000</code></pre>
+[1,] 1.0000000 0.3546903 0.3429767 0.3490963 0.3441630
+[2,] 0.3546903 1.0000000 0.3990047 0.3829697 0.3814803
+[3,] 0.3429767 0.3990047 1.0000000 0.3706125 0.3784724
+[4,] 0.3490963 0.3829697 0.3706125 1.0000000 0.3832408
+[5,] 0.3441630 0.3814803 0.3784724 0.3832408 1.0000000</code></pre>
 <pre class="r"><code>Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)), sum(get_significant_results(m.I) &lt;= n/2))
 
 Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)), sum(get_significant_results(m.V) &lt;= n/2))
@@ -895,13 +934,13 @@ false positive
 I only
 </td>
 <td style="text-align:right;">
--7013.984
+-70068.62
 </td>
 <td style="text-align:right;">
-69
+741
 </td>
 <td style="text-align:right;">
-32
+344
 </td>
 </tr>
 <tr>
@@ -909,13 +948,13 @@ I only
 V only
 </td>
 <td style="text-align:right;">
--6826.771
+-68333.69
 </td>
 <td style="text-align:right;">
-260
+2588
 </td>
 <td style="text-align:right;">
-99
+999
 </td>
 </tr>
 <tr>
@@ -923,13 +962,13 @@ V only
 current
 </td>
 <td style="text-align:right;">
--6848.527
+-68468.46
 </td>
 <td style="text-align:right;">
-11
+114
 </td>
 <td style="text-align:right;">
-2
+16
 </td>
 </tr>
 <tr>
@@ -937,13 +976,13 @@ current
 true
 </td>
 <td style="text-align:right;">
--6371.732
+-63908.31
 </td>
 <td style="text-align:right;">
-33
+340
 </td>
 <td style="text-align:right;">
-1
+5
 </td>
 </tr>
 </tbody>
