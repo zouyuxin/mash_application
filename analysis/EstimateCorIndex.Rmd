@@ -31,6 +31,8 @@ output:
 
 * Null Correlation Heterogeneity: [Cor Heterogeneity](EstimateCorHeter.html)
 
+* Null Correlation Heterogeneity R = 50: [Cor Heterogeneity R = 50](EstimateCorHeterR50.html)
+
 * Null Correlation Heterogeneity DSC: [Cor Heterogeneity DSC](DiffCorCompareDSC.html)
 
 * Null Correlation Heterogeneity (with signals) DSC: [Cor Heterogeneity Signals DSC](DiffCorSignalCompareDSC.html)
