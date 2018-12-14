@@ -365,7 +365,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/77b8312f62784c1a2a9f5ce135bdd60f45caa4ce" target="_blank">77b8312</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/2c0de616acce791616c41740f2707b74d75b8e20" target="_blank">2c0de61</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -500,6 +500,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/2c0de616acce791616c41740f2707b74d75b8e20/analysis/EstimateCorHeterR50.Rmd" target="_blank">2c0de61</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorHeterR50.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/zouyuxin/mash_application/6b96908a53058f2ff364afc1a6b37acab7bdd25e/docs/EstimateCorHeterR50.html" target="_blank">6b96908</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/zouyuxin/mash_application/blob/77b8312f62784c1a2a9f5ce135bdd60f45caa4ce/analysis/EstimateCorHeterR50.Rmd" target="_blank">77b8312</a>
 </td>
 <td style="text-align:left;">
@@ -549,43 +583,13 @@ Bhat = rmvnorm(n, sigma = V)
 simdata = list(B = B, Bhat = Bhat, Shat = 1)</code></pre>
 <pre class="r"><code>data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
-m.ignore = mash(data, U.c, verbose = FALSE)
+m.ignore = mash(data, U.c, verbose = FALSE, optmethod = &#39;mixSQP&#39;)
 
-V.current = estimate_null_correlation(data, U.c)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.683831515481112,
-0.722019936752874, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.366830321465555,
-0.431739783022358, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.257653331920547,
-0.318902276737782, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.2228623767927,
-0.263400313066655, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre class="r"><code>m.current = V.current$mash.model
+V.current = estimate_null_correlation(data, U.c, optmethod = &#39;mixSQP&#39;)
+m.current = V.current$mash.model
 
 data.true = mash_update_data(data, V = V)
-m.true = mash(data.true, U.c, verbose = FALSE)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.256938810491019,
-0.263764043323012, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
+m.true = mash(data.true, U.c, verbose = FALSE, optmethod = &#39;mixSQP&#39;)</code></pre>
 <pre class="r"><code>ign = c(get_loglik(m.ignore), length(get_significant_results(m.ignore)))
 
 current = c(get_loglik(m.current), length(get_significant_results(m.current)))
@@ -626,10 +630,10 @@ ignore
 current
 </td>
 <td style="text-align:right;">
--387365.3
+-388072.0
 </td>
 <td style="text-align:right;">
-0
+4
 </td>
 </tr>
 <tr>
@@ -637,10 +641,10 @@ current
 true
 </td>
 <td style="text-align:right;">
--387975.6
+-388713.9
 </td>
 <td style="text-align:right;">
-0
+4
 </td>
 </tr>
 </tbody>
@@ -649,6 +653,36 @@ true
 <pre class="r"><code>tmp = c(rrmse(simdata, m.ignore), rrmse(simdata, m.current), rrmse(simdata, m.true))
 barplot(tmp, names.arg = c(&#39;ignore&#39;, &#39;current&#39;, &#39;true&#39;))</code></pre>
 <p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-5-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/6b96908a53058f2ff364afc1a6b37acab7bdd25e/docs/figure/EstimateCorHeterR50.Rmd/unnamed-chunk-5-1.png" target="_blank">6b96908</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="two-different-noise-correlations" class="section level2">
 <h2>Two different noise correlations</h2>
@@ -660,35 +694,19 @@ simdata = list(B = B, Bhat = Bhat, Shat = 1)
 
 data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
-m.I = mash(data, U.c, verbose = FALSE)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.0842148939965657,
-0.108238075780434, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre class="r"><code>data.V = mash_update_data(data, V = V)
-m.V = mash(data.V, U.c, verbose = FALSE)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(8.34122179303798e-19,
-4.5044665674793e-18, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre class="r"><code>V.current = estimate_null_correlation(data, U.c)
+m.I = mash(data, U.c, verbose = FALSE, optmethod = &#39;mixSQP&#39;)
+
+data.V = mash_update_data(data, V = V)
+m.V = mash(data.V, U.c, verbose = FALSE, optmethod = &#39;mixSQP&#39;)
+
+V.current = estimate_null_correlation(data, U.c, optmethod = &#39;mixSQP&#39;)
 m.current = V.current$mash.model
 
 Vtrue = array(0,dim=c(p,p,n))
 Vtrue[,,1:(n/2)] = diag(p)
 Vtrue[,,(n/2+1): n] = V
 data.true = mash_update_data(data, V = Vtrue)
-m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = &#39;R&#39;)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.0842148939965657,
-0.108238075780432, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = &#39;R&#39;, optmethod = &#39;mixSQP&#39;)</code></pre>
 <pre class="r"><code>Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)))
 
 Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)))
@@ -753,10 +771,10 @@ current
 true
 </td>
 <td style="text-align:right;">
--548883.6
+-549877.5
 </td>
 <td style="text-align:right;">
-0
+5
 </td>
 </tr>
 </tbody>
@@ -765,9 +783,69 @@ true
 <pre class="r"><code>tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.current), rrmse(simdata, m.true))
 barplot(tmp, names.arg = c(&#39;I only&#39;, &#39;V only&#39;, &#39;current&#39;, &#39;true&#39;))</code></pre>
 <p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-8-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/6b96908a53058f2ff364afc1a6b37acab7bdd25e/docs/figure/EstimateCorHeterR50.Rmd/unnamed-chunk-8-1.png" target="_blank">6b96908</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The estimated weights using current method is</p>
 <pre class="r"><code>barplot(get_estimated_pi(m.current), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-9-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/6b96908a53058f2ff364afc1a6b37acab7bdd25e/docs/figure/EstimateCorHeterR50.Rmd/unnamed-chunk-9-1.png" target="_blank">6b96908</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="data-with-signals" class="section level2">
 <h2>Data with signals</h2>
@@ -790,44 +868,16 @@ Bhat = B + Ehat
 simdata = list(B = B, Bhat=Bhat, Shat = 1)</code></pre>
 <pre class="r"><code>data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
-m.I = mash(data, U.c, verbose = FALSE)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(1.05186092654218e-27,
-0.420144751666145, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre class="r"><code>data.V = mash_update_data(data, V = V)
-m.V = mash(data.V, U.c, verbose = FALSE)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.436240713095732,
-0.000212981465909494, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre class="r"><code>V.current = estimate_null_correlation(data, U.c)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.179187055206072,
-0.229340379901397, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.122237754455469,
-0.278680409435745, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
-<pre class="r"><code>m.current = V.current$mash.model
+m.I = mash(data, U.c, verbose = FALSE, optmethod = &#39;mixSQP&#39;)
+
+data.V = mash_update_data(data, V = V)
+m.V = mash(data.V, U.c, verbose = FALSE, optmethod = &#39;mixSQP&#39;)
+
+V.current = estimate_null_correlation(data, U.c, optmethod = &#39;mixSQP&#39;)
+m.current = V.current$mash.model
 
 data.true = mash_update_data(data, V = V.random)
-m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = &#39;R&#39;)</code></pre>
-<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
-               consider reducing rtol</code></pre>
-<pre><code>Warning in mixIP(matrix_lik = structure(c(0.436240713095732,
-0.420144751666145, : Optimization step yields mixture weights that are
-either too small, or negative; weights have been corrected and renormalized
-after the optimization.</code></pre>
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = &#39;R&#39;, optmethod = &#39;mixSQP&#39;)</code></pre>
 <pre class="r"><code>Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)), sum(get_significant_results(m.I) &lt;= n/2))
 
 Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)), sum(get_significant_results(m.V) &lt;= n/2))
@@ -904,13 +954,13 @@ current
 true
 </td>
 <td style="text-align:right;">
--553436.5
+-555850.9
 </td>
 <td style="text-align:right;">
-457
+144
 </td>
 <td style="text-align:right;">
-7
+1
 </td>
 </tr>
 </tbody>
@@ -919,9 +969,69 @@ true
 <pre class="r"><code>tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.current), rrmse(simdata, m.true))
 barplot(tmp, names.arg = c(&#39;I only&#39;, &#39;V only&#39;, &#39;current&#39;, &#39;true&#39;))</code></pre>
 <p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-13-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/6b96908a53058f2ff364afc1a6b37acab7bdd25e/docs/figure/EstimateCorHeterR50.Rmd/unnamed-chunk-13-1.png" target="_blank">6b96908</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>The estimated weights using current method is</p>
 <pre class="r"><code>barplot(get_estimated_pi(m.current), las=2, cex.names = 0.7)</code></pre>
 <p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-14-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/6b96908a53058f2ff364afc1a6b37acab7bdd25e/docs/figure/EstimateCorHeterR50.Rmd/unnamed-chunk-14-1.png" target="_blank">6b96908</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <p>ROC:</p>
 <pre class="r"><code>roc.seq = ROC.table(simdata$B, m.true)
 plot(roc.seq[,&#39;FPR&#39;], roc.seq[,&#39;TPR&#39;], type=&#39;l&#39;, xlab = &#39;FPR&#39;, ylab=&#39;TPR&#39;,
@@ -935,6 +1045,36 @@ lines(roc.seq[,&#39;FPR&#39;], roc.seq[,&#39;TPR&#39;], col=&#39;darkolivegreen4
 legend(&#39;bottomright&#39;, c(&#39;oracle&#39;,&#39;current&#39;, &#39;I only&#39;, &#39;V only&#39;), col=c(&#39;cyan&#39;,&#39;purple&#39;,&#39;red&#39;,&#39;darkolivegreen4&#39;),
            lty=c(1,1,1,1), lwd=c(1.5,1.5,1.5,1.5))</code></pre>
 <p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-15-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/6b96908a53058f2ff364afc1a6b37acab7bdd25e/docs/figure/EstimateCorHeterR50.Rmd/unnamed-chunk-15-1.png" target="_blank">6b96908</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
@@ -958,24 +1098,24 @@ other attached packages:
 [5] knitr_1.20       
 
 loaded via a namespace (and not attached):
- [1] lattice_0.20-35   Rmosek_8.0.69     colorspace_1.3-2 
- [4] htmltools_0.3.6   viridisLite_0.3.0 yaml_2.2.0       
- [7] rlang_0.3.0.1     R.oo_1.22.0       pillar_1.3.0     
-[10] R.utils_2.7.0     REBayes_1.3       foreach_1.4.4    
-[13] plyr_1.8.4        stringr_1.3.1     munsell_0.5.0    
-[16] workflowr_1.1.1   rvest_0.3.2       R.methodsS3_1.7.1
-[19] codetools_0.2-15  evaluate_0.12     doParallel_1.0.14
-[22] pscl_1.5.2        parallel_3.5.1    highr_0.7        
-[25] Rcpp_1.0.0        readr_1.1.1       scales_1.0.0     
-[28] backports_1.1.2   rmeta_3.0         truncnorm_1.0-8  
-[31] abind_1.4-5       hms_0.4.2         digest_0.6.18    
-[34] stringi_1.2.4     grid_3.5.1        rprojroot_1.3-2  
-[37] tools_3.5.1       magrittr_1.5      tibble_1.4.2     
-[40] crayon_1.3.4      whisker_0.3-2     pkgconfig_2.0.2  
-[43] MASS_7.3-50       Matrix_1.2-14     SQUAREM_2017.10-1
-[46] xml2_1.2.0        assertthat_0.2.0  rmarkdown_1.10   
-[49] httr_1.3.1        rstudioapi_0.8    iterators_1.0.10 
-[52] R6_2.3.0          git2r_0.23.0      compiler_3.5.1   </code></pre>
+ [1] lattice_0.20-35   colorspace_1.3-2  htmltools_0.3.6  
+ [4] viridisLite_0.3.0 yaml_2.2.0        rlang_0.3.0.1    
+ [7] R.oo_1.22.0       mixsqp_0.1-92     pillar_1.3.0     
+[10] R.utils_2.7.0     foreach_1.4.4     plyr_1.8.4       
+[13] stringr_1.3.1     munsell_0.5.0     workflowr_1.1.1  
+[16] rvest_0.3.2       R.methodsS3_1.7.1 codetools_0.2-15 
+[19] evaluate_0.12     doParallel_1.0.14 pscl_1.5.2       
+[22] parallel_3.5.1    highr_0.7         Rcpp_1.0.0       
+[25] readr_1.1.1       scales_1.0.0      backports_1.1.2  
+[28] rmeta_3.0         truncnorm_1.0-8   abind_1.4-5      
+[31] hms_0.4.2         digest_0.6.18     stringi_1.2.4    
+[34] grid_3.5.1        rprojroot_1.3-2   tools_3.5.1      
+[37] magrittr_1.5      tibble_1.4.2      crayon_1.3.4     
+[40] whisker_0.3-2     pkgconfig_2.0.2   MASS_7.3-50      
+[43] Matrix_1.2-14     SQUAREM_2017.10-1 xml2_1.2.0       
+[46] assertthat_0.2.0  rmarkdown_1.10    httr_1.3.1       
+[49] rstudioapi_0.8    iterators_1.0.10  R6_2.3.0         
+[52] git2r_0.23.0      compiler_3.5.1   </code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
