@@ -46,13 +46,13 @@ simdata = list(B = B, Bhat = Bhat, Shat = 1)
 ```{r}
 data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
-m.ignore = mash(data, U.c, verbose = FALSE)
+m.ignore = mash(data, U.c, verbose = FALSE, optmethod = 'mixSQP')
 
-V.current = estimate_null_correlation(data, U.c)
+V.current = estimate_null_correlation(data, U.c, optmethod = 'mixSQP')
 m.current = V.current$mash.model
 
 data.true = mash_update_data(data, V = V)
-m.true = mash(data.true, U.c, verbose = FALSE)
+m.true = mash(data.true, U.c, verbose = FALSE, optmethod = 'mixSQP')
 ```
 
 ```{r}
@@ -85,19 +85,19 @@ simdata = list(B = B, Bhat = Bhat, Shat = 1)
 
 data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
-m.I = mash(data, U.c, verbose = FALSE)
+m.I = mash(data, U.c, verbose = FALSE, optmethod = 'mixSQP')
 
 data.V = mash_update_data(data, V = V)
-m.V = mash(data.V, U.c, verbose = FALSE)
+m.V = mash(data.V, U.c, verbose = FALSE, optmethod = 'mixSQP')
 
-V.current = estimate_null_correlation(data, U.c)
+V.current = estimate_null_correlation(data, U.c, optmethod = 'mixSQP')
 m.current = V.current$mash.model
 
 Vtrue = array(0,dim=c(p,p,n))
 Vtrue[,,1:(n/2)] = diag(p)
 Vtrue[,,(n/2+1): n] = V
 data.true = mash_update_data(data, V = Vtrue)
-m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R')
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R', optmethod = 'mixSQP')
 ```
 
 ```{r}
@@ -151,16 +151,16 @@ simdata = list(B = B, Bhat=Bhat, Shat = 1)
 ```{r}
 data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
-m.I = mash(data, U.c, verbose = FALSE)
+m.I = mash(data, U.c, verbose = FALSE, optmethod = 'mixSQP')
 
 data.V = mash_update_data(data, V = V)
-m.V = mash(data.V, U.c, verbose = FALSE)
+m.V = mash(data.V, U.c, verbose = FALSE, optmethod = 'mixSQP')
 
-V.current = estimate_null_correlation(data, U.c)
+V.current = estimate_null_correlation(data, U.c, optmethod = 'mixSQP')
 m.current = V.current$mash.model
 
 data.true = mash_update_data(data, V = V.random)
-m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R')
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R', optmethod = 'mixSQP')
 ```
 
 ```{r}
