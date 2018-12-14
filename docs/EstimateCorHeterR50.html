@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yuxin Zou" />
+
+<meta name="date" content="2018-12-13" />
+
+<title>Estimate Cor heter R = 50</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">mash_application</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/zouyuxin/mash_application">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">Estimate Cor heter R = 50</h1>
+<h4 class="author"><em>Yuxin Zou</em></h4>
+<h4 class="date"><em>2018-12-13</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-12-13</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/77b8312f62784c1a2a9f5ce135bdd60f45caa4ce" target="_blank">77b8312</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/.DS_Store
+    Ignored:    analysis/.Rhistory
+    Ignored:    analysis/include/.DS_Store
+    Ignored:    code/.DS_Store
+    Ignored:    data/.DS_Store
+    Ignored:    docs/.DS_Store
+    Ignored:    output/.DS_Store
+    Ignored:    output/.sos/
+
+Untracked files:
+    Untracked:  analysis/Classify.Rmd
+    Untracked:  analysis/EstimateCorMash.Rmd
+    Untracked:  analysis/EstimateCorMaxGD.Rmd
+    Untracked:  analysis/EstimateCorMaxMCMash.Rmd
+    Untracked:  analysis/HierarchicalFlashSim.Rmd
+    Untracked:  analysis/MashLowSignalGTEx4.Rmd
+    Untracked:  analysis/Mash_GTEx.Rmd
+    Untracked:  analysis/MeanAsh.Rmd
+    Untracked:  analysis/OutlierDetection.Rmd
+    Untracked:  analysis/OutlierDetection2.Rmd
+    Untracked:  analysis/OutlierDetection3.Rmd
+    Untracked:  analysis/OutlierDetection4.Rmd
+    Untracked:  analysis/mash_missing_row.Rmd
+    Untracked:  code/GTExNullModel.R
+    Untracked:  code/MashClassify.R
+    Untracked:  code/MashCorResult.R
+    Untracked:  code/MashCormVResult.R
+    Untracked:  code/MashNULLCorResult.R
+    Untracked:  code/MashSource.R
+    Untracked:  code/Weight_plot.R
+    Untracked:  code/addemV.R
+    Untracked:  code/dsc-differentV/
+    Untracked:  code/dsc-differentV_signal/
+    Untracked:  code/estimate_cor.R
+    Untracked:  code/generateDataV.R
+    Untracked:  code/johnprocess.R
+    Untracked:  code/mV.R
+    Untracked:  code/sim_mean_sig.R
+    Untracked:  code/summary.R
+    Untracked:  data/Blischak_et_al_2015/
+    Untracked:  data/scale_data.rds
+    Untracked:  docs/figure/Classify.Rmd/
+    Untracked:  docs/figure/OutlierDetection.Rmd/
+    Untracked:  docs/figure/OutlierDetection2.Rmd/
+    Untracked:  docs/figure/OutlierDetection3.Rmd/
+    Untracked:  docs/figure/Test.Rmd/
+    Untracked:  docs/figure/mash_missing_whole_row_5.Rmd/
+    Untracked:  docs/include/
+    Untracked:  output/AddEMV/
+    Untracked:  output/CovED_UKBio_strong.rds
+    Untracked:  output/CovED_UKBio_strong_Z.rds
+    Untracked:  output/EstCorMLECompare/
+    Untracked:  output/Flash_UKBio_strong.rds
+    Untracked:  output/GTExNULLres/
+    Untracked:  output/GTEx_2.5_nullData.rds
+    Untracked:  output/GTEx_2.5_nullModel.rds
+    Untracked:  output/GTEx_2.5_nullPermData.rds
+    Untracked:  output/GTEx_2.5_nullPermModel.rds
+    Untracked:  output/GTEx_3.5_nullData.rds
+    Untracked:  output/GTEx_3.5_nullModel.rds
+    Untracked:  output/GTEx_3.5_nullPermData.rds
+    Untracked:  output/GTEx_3.5_nullPermModel.rds
+    Untracked:  output/GTEx_3_nullData.rds
+    Untracked:  output/GTEx_3_nullModel.rds
+    Untracked:  output/GTEx_3_nullPermData.rds
+    Untracked:  output/GTEx_3_nullPermModel.rds
+    Untracked:  output/GTEx_4.5_nullData.rds
+    Untracked:  output/GTEx_4.5_nullModel.rds
+    Untracked:  output/GTEx_4.5_nullPermData.rds
+    Untracked:  output/GTEx_4.5_nullPermModel.rds
+    Untracked:  output/GTEx_4_nullData.rds
+    Untracked:  output/GTEx_4_nullModel.rds
+    Untracked:  output/GTEx_4_nullPermData.rds
+    Untracked:  output/GTEx_4_nullPermModel.rds
+    Untracked:  output/MASH.10.em2.result.rds
+    Untracked:  output/MASH.10.mle.result.rds
+    Untracked:  output/MashCorSim--midway/
+    Untracked:  output/Mash_EE_Cov_0_plusR1.rds
+    Untracked:  output/UKBio_mash_model.rds
+    Untracked:  output/diff_v/
+    Untracked:  output/diff_v_signal/
+    Untracked:  output/dsc-mashr-est_v/
+    Untracked:  output/mVIterations/
+    Untracked:  output/mVMLEsubset/
+    Untracked:  output/mVUlist/
+    Untracked:  output/result.em.rds
+
+Unstaged changes:
+    Modified:   analysis/EstimateCorMaxMVSample.Rmd
+    Modified:   analysis/Mash_UKBio.Rmd
+    Modified:   analysis/mash_missing_samplesize.Rmd
+    Modified:   output/Flash_T2_0.rds
+    Modified:   output/Flash_T2_0_mclust.rds
+    Modified:   output/Mash_model_0_plusR1.rds
+    Modified:   output/PresiAddVarCol.rds
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/zouyuxin/mash_application/blob/77b8312f62784c1a2a9f5ce135bdd60f45caa4ce/analysis/EstimateCorHeterR50.Rmd" target="_blank">77b8312</a>
+</td>
+<td style="text-align:left;">
+zouyuxin
+</td>
+<td style="text-align:left;">
+2018-12-13
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/EstimateCorHeterR50.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<pre class="r"><code>rrmse = function(data, model){
+  sqrt(mean((data$B - model$result$PosteriorMean)^2)/mean((data$B - data$Bhat)^2))
+}
+
+ROC.table = function(data, model){
+  sign.test = data*model$result$PosteriorMean
+  thresh.seq = seq(0, 1, by=0.005)[-1]
+  m.seq = matrix(0,length(thresh.seq), 2)
+  colnames(m.seq) = c(&#39;TPR&#39;, &#39;FPR&#39;)
+  for(t in 1:length(thresh.seq)){
+    m.seq[t,] = c(sum(sign.test&gt;0 &amp; model$result$lfsr &lt;= thresh.seq[t])/sum(data!=0),
+                  sum(data==0 &amp; model$result$lfsr &lt;=thresh.seq[t])/sum(data==0))
+  }
+  return(m.seq)
+}
+
+library(knitr)
+library(kableExtra)</code></pre>
+<div id="common-noise-correlation" class="section level2">
+<h2>Common noise correlation</h2>
+<p>We simulate null data which has common noise correlation structure. We fit mash model without and with the estimated correlation structure. There are lots of false positives in the model without the correlation structure. The posterior mean is far from the truth.</p>
+<pre class="r"><code>library(mvtnorm)
+library(mashr)</code></pre>
+<pre><code>Loading required package: ashr</code></pre>
+<pre class="r"><code>set.seed(1)
+n = 10000; p = 50
+B = matrix(0,n,p)
+V = matrix(0.75, p, p); diag(V) = 1
+Bhat = rmvnorm(n, sigma = V)
+simdata = list(B = B, Bhat = Bhat, Shat = 1)</code></pre>
+<pre class="r"><code>data = mash_set_data(Bhat, Shat=1)
+U.c = cov_canonical(data)
+m.ignore = mash(data, U.c, verbose = FALSE)
+
+V.current = estimate_null_correlation(data, U.c)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.683831515481112,
+0.722019936752874, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.366830321465555,
+0.431739783022358, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.257653331920547,
+0.318902276737782, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.2228623767927,
+0.263400313066655, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>m.current = V.current$mash.model
+
+data.true = mash_update_data(data, V = V)
+m.true = mash(data.true, U.c, verbose = FALSE)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.256938810491019,
+0.263764043323012, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>ign = c(get_loglik(m.ignore), length(get_significant_results(m.ignore)))
+
+current = c(get_loglik(m.current), length(get_significant_results(m.current)))
+
+true = c(get_loglik(m.true), length(get_significant_results(m.true)))
+
+tmp = rbind(ign, current, true)
+row.names(tmp) = c(&#39;ignore&#39;, &#39;current&#39;, &#39;true&#39;)
+colnames(tmp) = c(&#39;loglik&#39;, &#39;# signif&#39;)
+tmp %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+loglik
+</th>
+<th style="text-align:right;">
+# signif
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+ignore
+</td>
+<td style="text-align:right;">
+-543911.7
+</td>
+<td style="text-align:right;">
+7712
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+current
+</td>
+<td style="text-align:right;">
+-387365.3
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+true
+</td>
+<td style="text-align:right;">
+-387975.6
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p>RRMSE:</p>
+<pre class="r"><code>tmp = c(rrmse(simdata, m.ignore), rrmse(simdata, m.current), rrmse(simdata, m.true))
+barplot(tmp, names.arg = c(&#39;ignore&#39;, &#39;current&#39;, &#39;true&#39;))</code></pre>
+<p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="two-different-noise-correlations" class="section level2">
+<h2>Two different noise correlations</h2>
+<p>Now, we simulate data with 2 noise correlation structures. Half of the null data have no noise correlation, the other half have noise correlation.</p>
+<pre class="r"><code>Bhat1 = rmvnorm(n/2, sigma = diag(p))
+Bhat2 = rmvnorm(n/2, sigma = V)
+Bhat = rbind(Bhat1, Bhat2)
+simdata = list(B = B, Bhat = Bhat, Shat = 1)
+
+data = mash_set_data(Bhat, Shat=1)
+U.c = cov_canonical(data)
+m.I = mash(data, U.c, verbose = FALSE)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.0842148939965657,
+0.108238075780434, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>data.V = mash_update_data(data, V = V)
+m.V = mash(data.V, U.c, verbose = FALSE)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(8.34122179303798e-19,
+4.5044665674793e-18, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>V.current = estimate_null_correlation(data, U.c)
+m.current = V.current$mash.model
+
+Vtrue = array(0,dim=c(p,p,n))
+Vtrue[,,1:(n/2)] = diag(p)
+Vtrue[,,(n/2+1): n] = V
+data.true = mash_update_data(data, V = Vtrue)
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = &#39;R&#39;)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.0842148939965657,
+0.108238075780432, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)))
+
+Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)))
+
+current = c(get_loglik(m.current), length(get_significant_results(m.current)))
+
+true = c(get_loglik(m.true), length(get_significant_results(m.true)))
+
+tmp = rbind(Ionly, Vonly, current, true)
+row.names(tmp) = c(&#39;I only&#39;, &#39;V only&#39;, &#39;current&#39;, &#39;true&#39;)
+colnames(tmp) = c(&#39;loglik&#39;, &#39;# signif&#39;)
+tmp %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+loglik
+</th>
+<th style="text-align:right;">
+# signif
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+I only
+</td>
+<td style="text-align:right;">
+-630201.8
+</td>
+<td style="text-align:right;">
+3092
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+V only
+</td>
+<td style="text-align:right;">
+-563001.6
+</td>
+<td style="text-align:right;">
+4995
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+current
+</td>
+<td style="text-align:right;">
+-594555.6
+</td>
+<td style="text-align:right;">
+2657
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+true
+</td>
+<td style="text-align:right;">
+-548883.6
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+<p>RRMSE:</p>
+<pre class="r"><code>tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.current), rrmse(simdata, m.true))
+barplot(tmp, names.arg = c(&#39;I only&#39;, &#39;V only&#39;, &#39;current&#39;, &#39;true&#39;))</code></pre>
+<p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The estimated weights using current method is</p>
+<pre class="r"><code>barplot(get_estimated_pi(m.current), las=2, cex.names = 0.7)</code></pre>
+<p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="data-with-signals" class="section level2">
+<h2>Data with signals</h2>
+<pre class="r"><code>set.seed(2018)
+B1 = matrix(0, n/2, p)
+V.1 = matrix(0,p,p); V.1[1,1] = 1
+B2 = rmvnorm(n/2, sigma = V.1)
+B = rbind(B1, B2)
+
+V.random = array(0, dim=c(p,p,n))
+ind = sample(1:n, n/2)
+V.random[,,ind] = V
+V.random[,,-ind] = diag(p)
+
+Ehat = matrix(0, n, p)
+Ehat[ind,] = rmvnorm(n/2, sigma = V)
+Ehat[-ind,] = rmvnorm(n/2, sigma = diag(p))
+
+Bhat = B + Ehat
+simdata = list(B = B, Bhat=Bhat, Shat = 1)</code></pre>
+<pre class="r"><code>data = mash_set_data(Bhat, Shat=1)
+U.c = cov_canonical(data)
+m.I = mash(data, U.c, verbose = FALSE)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(1.05186092654218e-27,
+0.420144751666145, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>data.V = mash_update_data(data, V = V)
+m.V = mash(data.V, U.c, verbose = FALSE)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.436240713095732,
+0.000212981465909494, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>V.current = estimate_null_correlation(data, U.c)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.179187055206072,
+0.229340379901397, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.122237754455469,
+0.278680409435745, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>m.current = V.current$mash.model
+
+data.true = mash_update_data(data, V = V.random)
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = &#39;R&#39;)</code></pre>
+<pre><code>Warning in REBayes::KWDual(A, rep(1, k), normalize(w), control = control): estimated mixing distribution has some negative values:
+               consider reducing rtol</code></pre>
+<pre><code>Warning in mixIP(matrix_lik = structure(c(0.436240713095732,
+0.420144751666145, : Optimization step yields mixture weights that are
+either too small, or negative; weights have been corrected and renormalized
+after the optimization.</code></pre>
+<pre class="r"><code>Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)), sum(get_significant_results(m.I) &lt;= n/2))
+
+Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)), sum(get_significant_results(m.V) &lt;= n/2))
+
+current = c(get_loglik(m.current), length(get_significant_results(m.current)), sum(get_significant_results(m.current) &lt;= n/2))
+
+true = c(get_loglik(m.true), length(get_significant_results(m.true)), sum(get_significant_results(m.true) &lt;= n/2))
+
+tmp = rbind(Ionly, Vonly, current, true)
+row.names(tmp) = c(&#39;I only&#39;, &#39;V only&#39;, &#39;current&#39;, &#39;true&#39;)
+colnames(tmp) = c(&#39;loglik&#39;, &#39;# signif&#39;, &#39;false positive&#39;)
+tmp %&gt;% kable() %&gt;% kable_styling()</code></pre>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+loglik
+</th>
+<th style="text-align:right;">
+# signif
+</th>
+<th style="text-align:right;">
+false positive
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+I only
+</td>
+<td style="text-align:right;">
+-633196.5
+</td>
+<td style="text-align:right;">
+3137
+</td>
+<td style="text-align:right;">
+1570
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+V only
+</td>
+<td style="text-align:right;">
+-567485.0
+</td>
+<td style="text-align:right;">
+5433
+</td>
+<td style="text-align:right;">
+2513
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+current
+</td>
+<td style="text-align:right;">
+-599388.7
+</td>
+<td style="text-align:right;">
+2776
+</td>
+<td style="text-align:right;">
+1341
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+true
+</td>
+<td style="text-align:right;">
+-553436.5
+</td>
+<td style="text-align:right;">
+457
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+</tbody>
+</table>
+<p>RRMSE:</p>
+<pre class="r"><code>tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.current), rrmse(simdata, m.true))
+barplot(tmp, names.arg = c(&#39;I only&#39;, &#39;V only&#39;, &#39;current&#39;, &#39;true&#39;))</code></pre>
+<p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The estimated weights using current method is</p>
+<pre class="r"><code>barplot(get_estimated_pi(m.current), las=2, cex.names = 0.7)</code></pre>
+<p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>ROC:</p>
+<pre class="r"><code>roc.seq = ROC.table(simdata$B, m.true)
+plot(roc.seq[,&#39;FPR&#39;], roc.seq[,&#39;TPR&#39;], type=&#39;l&#39;, xlab = &#39;FPR&#39;, ylab=&#39;TPR&#39;,
+       main=paste0(&#39; True Pos vs False Pos&#39;), cex=1.5, lwd = 1.5, col = &#39;cyan&#39;)
+roc.seq = ROC.table(simdata$B, m.current)
+lines(roc.seq[,&#39;FPR&#39;], roc.seq[,&#39;TPR&#39;], col=&#39;purple&#39;, lwd = 1.5)
+roc.seq = ROC.table(simdata$B, m.I)
+lines(roc.seq[,&#39;FPR&#39;], roc.seq[,&#39;TPR&#39;], col=&#39;red&#39;, lwd = 1.5)
+roc.seq = ROC.table(simdata$B, m.V)
+lines(roc.seq[,&#39;FPR&#39;], roc.seq[,&#39;TPR&#39;], col=&#39;darkolivegreen4&#39;, lwd = 1.5)
+legend(&#39;bottomright&#39;, c(&#39;oracle&#39;,&#39;current&#39;, &#39;I only&#39;, &#39;V only&#39;), col=c(&#39;cyan&#39;,&#39;purple&#39;,&#39;red&#39;,&#39;darkolivegreen4&#39;),
+           lty=c(1,1,1,1), lwd=c(1.5,1.5,1.5,1.5))</code></pre>
+<p><img src="figure/EstimateCorHeterR50.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS  10.14.1
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] mashr_0.2.19.0555 ashr_2.2-23       mvtnorm_1.0-8     kableExtra_0.9.0 
+[5] knitr_1.20       
+
+loaded via a namespace (and not attached):
+ [1] lattice_0.20-35   Rmosek_8.0.69     colorspace_1.3-2 
+ [4] htmltools_0.3.6   viridisLite_0.3.0 yaml_2.2.0       
+ [7] rlang_0.3.0.1     R.oo_1.22.0       pillar_1.3.0     
+[10] R.utils_2.7.0     REBayes_1.3       foreach_1.4.4    
+[13] plyr_1.8.4        stringr_1.3.1     munsell_0.5.0    
+[16] workflowr_1.1.1   rvest_0.3.2       R.methodsS3_1.7.1
+[19] codetools_0.2-15  evaluate_0.12     doParallel_1.0.14
+[22] pscl_1.5.2        parallel_3.5.1    highr_0.7        
+[25] Rcpp_1.0.0        readr_1.1.1       scales_1.0.0     
+[28] backports_1.1.2   rmeta_3.0         truncnorm_1.0-8  
+[31] abind_1.4-5       hms_0.4.2         digest_0.6.18    
+[34] stringi_1.2.4     grid_3.5.1        rprojroot_1.3-2  
+[37] tools_3.5.1       magrittr_1.5      tibble_1.4.2     
+[40] crayon_1.3.4      whisker_0.3-2     pkgconfig_2.0.2  
+[43] MASS_7.3-50       Matrix_1.2-14     SQUAREM_2017.10-1
+[46] xml2_1.2.0        assertthat_0.2.0  rmarkdown_1.10   
+[49] httr_1.3.1        rstudioapi_0.8    iterators_1.0.10 
+[52] R6_2.3.0          git2r_0.23.0      compiler_3.5.1   </code></pre>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
