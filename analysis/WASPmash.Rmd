@@ -4,7 +4,7 @@ author: "Yuxin Zou"
 date: "1/5/2019"
 output: 
   html_document:
-    code_folding: hide
+    code_folding: "hide"
 ---
 
 ```{r echo=FALSE}
