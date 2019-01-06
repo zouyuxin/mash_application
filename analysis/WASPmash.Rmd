@@ -1,0 +1,302 @@
+---
+title: "WASP mash analysis"
+author: "Yuxin Zou"
+date: "1/5/2019"
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r echo=FALSE}
+library(flashr)
+library(mixsqp)
+library(mashr)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+library(gridExtra)
+```
+
+```{r}
+dat = readRDS('../data/wasp_yuxin/fastqtl_to_mash_output/wasp.mash.rds')
+dat$strong.z[is.infinite(dat$strong.z)] = sign(dat$strong.z[is.infinite(dat$strong.z)]) * 10
+dat$random.z[is.infinite(dat$random.z)] = sign(dat$random.z[is.infinite(dat$random.z)]) * 10
+dat$strong.z = dat$strong.z[,c(1,8:16,2:7)]
+dat$random.z = dat$random.z[,c(1,8:16,2:7)]
+data.random = mash_set_data(dat$random.z)
+data.strong = mash_set_data(dat$strong.z)
+```
+
+## Data Driven Covariances
+
+Flash:
+```{r flash functions}
+my_init_fn <- function(Y, K = 1) {
+  ret = flashr:::udv_si(Y, K)
+  pos_sum = sum(ret$v[ret$v > 0])
+  neg_sum = -sum(ret$v[ret$v < 0])
+  if (neg_sum > pos_sum) {
+    return(list(u = -ret$u, d = ret$d, v = -ret$v))
+  } else
+    return(ret)
+}
+
+flash_pipeline = function(data, ...) {
+  ## current state-of-the art
+  ## suggested by Jason Willwerscheid
+  ## cf: discussion section of
+  ## https://willwerscheid.github.io/MASHvFLASH/MASHvFLASHnn2.html
+  ebnm_fn = "ebnm_ash"
+  ebnm_param = list(l = list(mixcompdist = "normal",
+                             optmethod = "mixSQP"),
+                    f = list(mixcompdist = "+uniform",
+                             optmethod = "mixSQP"))
+  ##
+  fl_g <- flashr:::flash_greedy_workhorse(data,
+                                          var_type = "constant",
+                                          ebnm_fn = ebnm_fn,
+                                          ebnm_param = ebnm_param,
+                                          init_fn = "my_init_fn",
+                                          stopping_rule = "factors",
+                                          tol = 1e-3,
+                                          verbose_output = "odF")
+  fl_b <- flashr:::flash_backfit_workhorse(data,
+                                           f_init = fl_g,
+                                           var_type = "constant",
+                                           ebnm_fn = ebnm_fn,
+                                           ebnm_param = ebnm_param,
+                                           stopping_rule = "factors",
+                                           tol = 1e-3,
+                                           verbose_output = "odF")
+  return(fl_b)
+}
+
+
+cov_flash = function(data, subset = NULL, non_canonical = FALSE, save_model = NULL) {
+  if(is.null(subset)) subset = 1:mashr:::n_effects(data)
+  b.center = apply(data$Bhat, 2, function(x) x - mean(x))
+  ## Only keep factors with at least two values greater than 1 / sqrt(n)
+  find_nonunique_effects <- function(fl) {
+    thresh <- 1/sqrt(ncol(fl$fitted_values))
+    vals_above_avg <- colSums(fl$ldf$f > thresh)
+    nonuniq_effects <- which(vals_above_avg > 1)
+    return(fl$ldf$f[, nonuniq_effects, drop = FALSE])
+  }
+  fmodel = flash_pipeline(b.center)
+  if (non_canonical)
+    flash_f = find_nonunique_effects(fmodel)
+  else 
+    flash_f = fmodel$ldf$f
+  ## row.names(flash_f) = colnames(b)
+  if (!is.null(save_model)) saveRDS(list(model=fmodel, factors=flash_f), save_model)
+  if(ncol(flash_f) == 0){
+    U.flash = list("tFLASH" = t(fmodel$fitted_values) %*% fmodel$fitted_values / nrow(fmodel$fitted_values))
+  } else{
+    U.flash = c(cov_from_factors(t(as.matrix(flash_f)), "FLASH"),
+  list("tFLASH" = t(fmodel$fitted_values) %*% fmodel$fitted_values / nrow(fmodel$fitted_values)))
+  }
+  
+  return(U.flash)
+}
+```
+
+```{r flash covariance, eval=FALSE}
+U.f = cov_flash(data.strong, non_canonical = TRUE, save_model = '../output/WASP/flash_model.rds')
+saveRDS(U.f, '../output/WASP/flash_cov.rds')
+```
+
+```{r flash factors plot, fig.align='center', fig.height=5,fig.width=15}
+fl_model = readRDS('../output/WASP/flash_model.rds')$model
+factors = readRDS('../output/WASP/flash_model.rds')$factors
+par(mfrow = c(1, 3))
+for(k in 1:3){
+  barplot(factors[,k], main=paste0("Factor ", k), names.arg = 0:15)
+}
+```
+
+```{r eval=FALSE}
+fll_model = flash_pipeline(fl_model$ldf$l)
+saveRDS(fll_model, '../output/WASP/flash_loading_model.rds')
+```
+
+```{r}
+U.pca = cov_pca(data.strong, 5)
+```
+
+```{r eval=FALSE}
+U.ed = cov_ed(data.strong, c(U.f, U.pca))
+```
+
+```{r}
+U.ed = readRDS('../output/WASP/Ued.rds')
+```
+
+```{r}
+U.c = cov_canonical(data.random)
+```
+
+## Mash model
+```{r eval=FALSE}
+m.ignore = mash(data.random, c(U.c, U.ed), outputlevel = 1)
+m.ignore$result = mash_compute_posterior_matrices(m.ignore, data.strong)
+```
+
+```{r}
+V.simple = estimate_null_correlation_simple(data.random)
+```
+
+```{r eval=FALSE}
+data.random.V.simple = mash_update_data(data.random, V = V.simple)
+m.simple = mash(data.random.V.simple, c(U.c, U.ed), outputlevel = 1)
+data.strong.V.simple = mash_update_data(data.strong, V = V.simple)
+m.simple$result = mash_compute_posterior_matrices(m.simple, data.strong.V.simple)
+```
+
+```{r eval=FALSE}
+set.seed(1)
+random.subset = sample(1:nrow(gtex$random.b),5000)
+data.random.s = mash_set_data(gtex$random.b[random.subset,], gtex$random.s[random.subset,])
+current = estimate_null_correlation(data.random.s, c(U.c, U.ed), max_iter = 20)
+V.current = current$V
+data.random.V.current = mash_update_data(data.random, V = V.current)
+m.current = mash(data.random.V.current, c(U.c, U.ed), outputlevel = 1)
+data.strong = mash_update_data(data.strong, V = V.current)
+m.current$result = mash_compute_posterior_matrices(m.current, data.strong)
+```
+
+```{r}
+# read model
+m_ignore = readRDS('../output/WASP/m_ignore_post.rds')
+m_simple = readRDS('../output/WASP/m_simple_post.rds')
+m_current = readRDS('../output/WASP/m_current_post.rds')
+```
+
+## Estimated null cor V
+
+```{r V, fig.align='center', fig.height=8,fig.width=8}
+colnames(V.simple) = 0:15
+row.names(V.simple) = 0:15
+corrplot::corrplot(V.simple, method='color', type='upper', tl.col="black", tl.srt=45, tl.cex = 0.7, diag = FALSE, col=colorRampPalette(c("blue", "white", "red"))(200), cl.lim = c(-1,1), title = 'Simple', mar=c(0,0,5,0))
+
+V.current = readRDS('../output/WASP/currentV.rds')
+V.current = V.current$V
+colnames(V.current) = 0:15
+row.names(V.current) = 0:15
+corrplot::corrplot(V.current, method='color', type='upper', tl.col="black", tl.srt=45, tl.cex = 0.7, diag = FALSE, col=colorRampPalette(c("blue", "white", "red"))(200), cl.lim = c(-1,1), title = 'Current', mar=c(0,0,5,0))
+```
+
+## Results
+
+```{r loglikelihood}
+tmp = cbind(c(get_loglik(m_ignore), get_loglik(m_simple), get_loglik(m_current)))
+row.names(tmp) = c('Ignore', 'Simple', 'Current')
+colnames(tmp) = 'log likelihood'
+tmp %>% kable() %>% kable_styling()
+```
+
+```{r plot weights, fig.align='center', fig.height=5,fig.width=20}
+par(mfrow=c(1,3))
+barplot(get_estimated_pi(m_ignore), las=2, cex.names = 0.7, main = 'Ignore')
+barplot(get_estimated_pi(m_simple), las=2, cex.names = 0.7, main = 'Simple')
+barplot(get_estimated_pi(m_current), las=2, cex.names = 0.7, main = 'Current')
+```
+
+Number of significant:
+```{r}
+numsig = c(length(get_significant_results(m_ignore)), 
+              length(get_significant_results(m_simple)), 
+              length(get_significant_results(m_current)))
+tmp = cbind(numsig)
+row.names(tmp) = c('Ignore', 'Simple', 'Current')
+colnames(tmp) = c('# significance')
+tmp %>% kable() %>% kable_styling()
+```
+
+The intersection of significance results:
+```{r}
+length(intersect(get_significant_results(m_simple), get_significant_results(m_current)))
+length(intersect(get_significant_results(m_ignore), get_significant_results(m_simple)))
+length(intersect(get_significant_results(m_current), get_significant_results(m_ignore)))
+```
+
+```{r fig.align='center', fig.width=15, fig.height=10}
+stronggene = data.frame(dat$strong.z[739,])
+colnames(stronggene) = 'EffectSize'
+stronggene$Group = 0:15
+stronggene$se = dat$strong.s[739,]
+p1 = ggplot(stronggene, aes(y = EffectSize, x = Group)) + 
+  geom_point(show.legend = FALSE) + coord_flip() + ggtitle('ENSG00000085491') + ylim(c(-10,-2)) + geom_errorbar(aes(ymin=EffectSize-1.96*se, ymax=EffectSize+1.96*se), width=0.4, show.legend = FALSE) + 
+  theme_bw(base_size=12) + theme(axis.text.y = element_text(size = 6))
+
+stronggeneSimple = data.frame(m_simple$result$PosteriorMean[739,])
+colnames(stronggeneSimple) = 'EffectSize'
+stronggeneSimple$Group = 0:15
+stronggeneSimple$se = m_simple$result$PosteriorSD[739,]
+p2 = ggplot(stronggeneSimple, aes(y = EffectSize, x = Group)) + 
+  geom_point(show.legend = FALSE) + coord_flip() + ggtitle('ENSG00000085491 Simple') + ylim(c(-10,-2)) + 
+  geom_errorbar(aes(ymin=EffectSize-1.96*se, ymax=EffectSize+1.96*se), width=0.4, show.legend = FALSE) + 
+  theme_bw(base_size=12) + theme(axis.text.y = element_text(size = 6))
+
+stronggeneCurrent = data.frame(m_current$result$PosteriorMean[739,])
+colnames(stronggeneCurrent) = 'EffectSize'
+stronggeneCurrent$Group = 0:15
+stronggeneCurrent$se = m_current$result$PosteriorSD[739,]
+p3 = ggplot(stronggeneCurrent, aes(y = EffectSize, x = Group)) + 
+  geom_point(show.legend = FALSE) + ylim(c(-10,-2)) + coord_flip() + ggtitle('ENSG00000085491 Current') + 
+  geom_errorbar(aes(ymin=EffectSize-1.96*se, ymax=EffectSize+1.96*se), width=0.4, show.legend = FALSE) + 
+  theme_bw(base_size=12) + theme(axis.text.y = element_text(size = 6))
+grid.arrange(p1, p2, p3, nrow = 1)
+```
+
+The gene significant in `simple`, not in `current`
+```{r fig.align='center', fig.width=15, fig.height=10}
+stronggene = data.frame(dat$strong.z[5111,])
+colnames(stronggene) = 'EffectSize'
+stronggene$Group = 0:15
+stronggene$se = dat$strong.s[5111,]
+p1 = ggplot(stronggene, aes(y = EffectSize, x = Group)) + 
+  geom_point(show.legend = FALSE) + coord_flip() + ggtitle('ENSG00000173473') + ylim(c(-6,3)) + geom_errorbar(aes(ymin=EffectSize-1.96*se, ymax=EffectSize+1.96*se), width=0.4, show.legend = FALSE) + 
+  theme_bw(base_size=12) + theme(axis.text.y = element_text(size = 6))
+
+stronggeneSimple = data.frame(m_simple$result$PosteriorMean[5111,])
+colnames(stronggeneSimple) = 'EffectSize'
+stronggeneSimple$Group = 0:15
+stronggeneSimple$se = m_simple$result$PosteriorSD[5111,]
+p2 = ggplot(stronggeneSimple, aes(y = EffectSize, x = Group)) + 
+  geom_point(show.legend = FALSE) + coord_flip() + ggtitle('ENSG00000173473 Simple') + ylim(c(-6,3)) + 
+  geom_errorbar(aes(ymin=EffectSize-1.96*se, ymax=EffectSize+1.96*se), width=0.4, show.legend = FALSE) + 
+  theme_bw(base_size=12) + theme(axis.text.y = element_text(size = 6))
+
+stronggeneCurrent = data.frame(m_current$result$PosteriorMean[5111,])
+colnames(stronggeneCurrent) = 'EffectSize'
+stronggeneCurrent$Group = 0:15
+stronggeneCurrent$se = m_current$result$PosteriorSD[5111,]
+p3 = ggplot(stronggeneCurrent, aes(y = EffectSize, x = Group)) + 
+  geom_point(show.legend = FALSE) + ylim(c(-6,3)) + coord_flip() + ggtitle('ENSG00000173473 Current') + 
+  geom_errorbar(aes(ymin=EffectSize-1.96*se, ymax=EffectSize+1.96*se), width=0.4, show.legend = FALSE) + 
+  theme_bw(base_size=12) + theme(axis.text.y = element_text(size = 6))
+grid.arrange(p1, p2, p3, nrow = 1)
+```
+
+The pairwise sharing by magnitude
+```{r fig.align='center',fig.height=15,fig.width=30}
+x           <- get_pairwise_sharing(m_ignore)
+colnames(x) <- 0:15
+rownames(x) <- 0:15
+clrs=colorRampPalette(rev(c('darkred', 'red','orange','yellow','cadetblue1', 'cyan', 'dodgerblue4', 'blue','darkorchid1','lightgreen','green', 'forestgreen','darkolivegreen')))(200)
+
+corrplot::corrplot(x, method='color', type='upper', tl.col="black", tl.srt=45, tl.cex = 0.7, diag = FALSE, col=clrs, cl.lim = c(0,1), title = 'Ignore', mar=c(0,0,5,0))
+
+x           <- get_pairwise_sharing(m_simple)
+colnames(x) <- 0:15
+rownames(x) <- 0:15
+
+corrplot::corrplot(x, method='color', type='upper', tl.col="black", tl.srt=45, tl.cex = 0.7, diag = FALSE, col=clrs, cl.lim = c(0,1), title = 'Simple', mar=c(0,0,5,0))
+
+x           <- get_pairwise_sharing(m_current)
+colnames(x) <- 0:15
+rownames(x) <- 0:15
+corrplot::corrplot(x, method='color', type='upper', tl.col="black", tl.srt=45, tl.cex = 0.7, diag = FALSE, col=clrs, cl.lim = c(0,1), title = 'Current', mar=c(0,0,5,0))
+```
+
+
