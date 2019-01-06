@@ -1,9 +1,9 @@
 ---
 title: "WASP mash analysis"
 author: "Yuxin Zou"
-date: "1/5/2019"
+date: 2019-01-05
 output: 
-  html_document:
+  workflowr::wflow_html:
     code_folding: "hide"
 ---
 
