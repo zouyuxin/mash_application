@@ -1,0 +1,82 @@
+---
+title: "Problem about ignoring null correlation"
+author: "Yuxin Zou"
+date: "1/23/2019"
+output: 
+  workflowr::wflow_html:
+    code_folding: hide
+---
+
+```{r}
+library(mashr)
+library(mvtnorm)
+library(knitr)
+library(kableExtra)
+```
+
+We simulate 1000 data from
+$$
+\hat{b}|b \sim N_{5}(\hat{b}; b, \left(\begin{matrix} 1 & & 0.3 & &\\
+                                                                & & \ddots & \\
+                                                                & & 0.3 & & 1 
+                                          \end{matrix}\right))
+$$
+
+$$
+b \sim \delta_{0}
+$$
+
+
+$\Rightarrow$
+$$
+\hat{b} \sim N_{5}(0, \left(\begin{matrix} 1 & & 0.3 & &\\
+                                                                & & \ddots & \\
+                                                                & & 0.3 & & 1 
+                                          \end{matrix}\right))
+$$
+
+```{r}
+set.seed(1)
+n = 1000; p = 5
+Sigma = matrix(0.3, p,p)
+diag(Sigma) = 1
+B = matrix(0,n,p)
+Bhat = rmvnorm(n, sigma = Sigma)
+simdata = list(B = B, Bhat = Bhat, Shat = 1)
+```
+
+```{r}
+data = mash_set_data(Bhat, Shat=1)
+U.c = cov_canonical(data)
+m.ignore = mash(data, U.c, verbose = FALSE, optmethod = 'mixSQP')
+
+V.simple = estimate_null_correlation_simple(data)
+data.simple = mash_update_data(data, V = V.simple)
+m.simple = mash(data.simple, U.c, verbose = FALSE, optmethod = 'mixSQP')
+
+V.current = estimate_null_correlation(data, Ulist = U.c)
+m.current = V.current$mash.model
+
+data.true = mash_update_data(data, V = Sigma)
+m.true = mash(data.true, U.c, verbose = FALSE, optmethod = 'mixSQP')
+```
+
+```{r}
+ign = c(get_loglik(m.ignore), length(get_significant_results(m.ignore)))
+
+simple = c(get_loglik(m.simple), length(get_significant_results(m.simple)))
+
+current = c(get_loglik(m.current), length(get_significant_results(m.current)))
+
+true = c(get_loglik(m.true), length(get_significant_results(m.true)))
+
+tmp = rbind(ign, simple, current, true)
+row.names(tmp) = c('ignore', 'simple', 'current', 'true')
+colnames(tmp) = c('loglik', '# signif')
+tmp %>% kable() %>% kable_styling()
+```
+```{r fig.align='center', fig.width=15, fig.height=7}
+par(mfrow= c(1,2))
+barplot(get_estimated_pi(m.ignore), las=2, cex.names = 0.7, main='Ignore')
+barplot(get_estimated_pi(m.true), las=2, cex.names = 0.7, main='True')
+```
