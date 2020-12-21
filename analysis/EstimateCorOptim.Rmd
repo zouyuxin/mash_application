@@ -152,7 +152,7 @@ optimize_pi_rho <- function(X, Ulist, init_rho=0, tol=1e-5, prior=c("nullbiased"
   matrix_llik <- lL - lfactors
   lL = list(loglik_matrix = matrix_llik,
             lfactors   = lfactors)
-  pi_s <- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod='mixIP')
+  pi_s <- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod='mixSQP')
 
   log_liks <- c()
   ll       <- compute.log.lik(lL, pi_s, prior)
@@ -172,7 +172,7 @@ optimize_pi_rho <- function(X, Ulist, init_rho=0, tol=1e-5, prior=c("nullbiased"
               lfactors   = lfactors)
 
     # max pi
-    pi_s <- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod='mixIP')
+    pi_s <- mashr:::optimize_pi(exp(lL$loglik_matrix),prior=prior,optmethod='mixSQP')
 
     # compute loglike
     ll <- compute.log.lik(lL, pi_s, prior)
