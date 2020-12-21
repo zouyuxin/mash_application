@@ -42,6 +42,7 @@ $$
 - \frac{1}{2}\log |\Sigma_{p}| - \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}, z_{j}=p}\left(\mathbf{b}_{j}^{T}\Sigma_{p}^{-1}\mathbf{b}_{j} \right)  \right]  + \sum_{p=1}^{P} (\lambda_{p}-1)\log \pi_{p}
 \end{align*}
 $$
+
 ## Fake M step
 
 We have constraint on V, the diagonal of V must be 1. Let $V = DCD$, C is the covariance matrix, D = $diag(1/sqrt(C_{jj}))$.
