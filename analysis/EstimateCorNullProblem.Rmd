@@ -45,6 +45,9 @@ Bhat = rmvnorm(n, sigma = Sigma)
 simdata = list(B = B, Bhat = Bhat, Shat = 1)
 ```
 
+
+We compare methods that ignoring the correlation, estimating the correlation using simple method (`estimate_null_correlation_simple`), estimating the correlation with em, and the truth.
+
 ```{r}
 data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
@@ -54,8 +57,8 @@ V.simple = estimate_null_correlation_simple(data)
 data.simple = mash_update_data(data, V = V.simple)
 m.simple = mash(data.simple, U.c, verbose = FALSE, optmethod = 'mixSQP')
 
-V.current = estimate_null_correlation(data, Ulist = U.c)
-m.current = V.current$mash.model
+V.em = estimate_null_correlation(data, Ulist = U.c, details = T)
+m.em = V.em$mash.model
 
 data.true = mash_update_data(data, V = Sigma)
 m.true = mash(data.true, U.c, verbose = FALSE, optmethod = 'mixSQP')
@@ -66,12 +69,12 @@ ign = c(get_loglik(m.ignore), length(get_significant_results(m.ignore)))
 
 simple = c(get_loglik(m.simple), length(get_significant_results(m.simple)))
 
-current = c(get_loglik(m.current), length(get_significant_results(m.current)))
+em = c(get_loglik(m.em), length(get_significant_results(m.em)))
 
 true = c(get_loglik(m.true), length(get_significant_results(m.true)))
 
-tmp = rbind(ign, simple, current, true)
-row.names(tmp) = c('ignore', 'simple', 'current', 'true')
+tmp = rbind(ign, simple, em, true)
+row.names(tmp) = c('ignore', 'simple', 'em', 'true')
 colnames(tmp) = c('loglik', '# signif')
 tmp %>% kable() %>% kable_styling()
 ```
