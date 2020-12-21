@@ -13,7 +13,7 @@ source('../code/generateDataV.R')
 source('../code/summary.R')
 ```
 
-We use EM algorithm to update $\rho$.
+We use EM algorithm to estimate V.
 
 B is the $n\times R$ true value matrix. $\mathbf{z}$ is a length n vector.
 
@@ -42,8 +42,7 @@ $$
 - \frac{1}{2}\log |\Sigma_{p}| - \frac{1}{2}\mathbb{E}_{\mathbf{b}_{j}|\hat{\mathbf{b}}_{j}, z_{j}=p}\left(\mathbf{b}_{j}^{T}\Sigma_{p}^{-1}\mathbf{b}_{j} \right)  \right]  + \sum_{p=1}^{P} (\lambda_{p}-1)\log \pi_{p}
 \end{align*}
 $$
-
-Maximize with respect to V: 
+## Fake M step
 
 We have constraint on V, the diagonal of V must be 1. Let $V = DCD$, C is the covariance matrix, D = $diag(1/sqrt(C_{jj}))$.
 
@@ -56,24 +55,18 @@ f(\mathbf{C})' &= \sum_{j=1}^{J} \sum_{p=1}^{P} \gamma_{jp}\left[ -\frac{1}{2} \
 &= \frac{1}{J} \mathbf{D}^{-1}\sum_{j=1}^{J} \mathbf{S}_{j}^{-1}\mathbb{E}\left((\hat{\mathbf{b}}_{j}-\mathbf{b}_{j}) (\hat{\mathbf{b}}_{j}-\mathbf{b}_{j})^{T}|\hat{\mathbf{b}}_{j}\right)\mathbf{S}_{j}^{-1}\mathbf{D}^{-1}
 \end{align*}
 $$
-
 We can update $\mathbf{C}$ and $\mathbf{V}$ as
 $$
 \hat{\mathbf{C}}_{(t+1)} =  \hat{\mathbf{D}}^{-1}_{(t)}\frac{1}{J} \left[\sum_{j=1}^{J} \mathbf{S}_{j}^{-1}\mathbb{E}\left[ (\hat{\mathbf{b}}_{j} - \mathbf{b}_{j})(\hat{\mathbf{b}}_{j} - \mathbf{b}_{j})^{T} | \hat{\mathbf{b}}_{j}\right]\mathbf{S}_{j}^{-1} \right] \hat{\mathbf{D}}^{-1}_{(t)} \\
 \hat{\mathbf{D}}_{(t+1)} = diag(1/\sqrt{\hat{\mathbf{C}}_{(t+1)jj}}) \\
 \hat{\mathbf{V}}_{(t+1)} = \hat{\mathbf{D}}_{(t+1)}\hat{\mathbf{C}}_{(t+1)}\hat{\mathbf{D}}_{(t+1)}
 $$
-
 The resulting $\hat{\mathbf{V}}_{(t+1)}$ is equivalent as
 $$
 \hat{\mathbf{C}}_{(t+1)} =\frac{1}{J} \left[\sum_{j=1}^{J} \mathbf{S}_{j}^{-1}\mathbb{E}\left[ (\hat{\mathbf{b}}_{j} - \mathbf{b}_{j})(\hat{\mathbf{b}}_{j} - \mathbf{b}_{j})^{T} | \hat{\mathbf{b}}_{j}\right]\mathbf{S}_{j}^{-1} \right] \\
 \hat{\mathbf{D}}_{(t+1)} = diag(1/\sqrt{\hat{\mathbf{C}}_{(t+1)jj}}) \\
 \hat{\mathbf{V}}_{(t+1)} = \hat{\mathbf{D}}_{(t+1)}\hat{\mathbf{C}}_{(t+1)}\hat{\mathbf{D}}_{(t+1)}
 $$
-
-The estimated V maximize the lower bound of the log likelihood. We estimate $\boldsymbol{\pi}$ from the log likelihood.
-
-Given V, we estimate $\boldsymbol{\pi}$ by max loglikelihood, which is a convex problem
 
 Algorithm: 
 ```{r, eval=FALSE, tindy = FALSE}
