@@ -112,18 +112,18 @@ m.data = mash_set_data(data$Bhat, data$Shat)
 U.c = cov_canonical(m.data)
 ```
 
-## Initialize V as I VS V.trun
+## Initialize V as I VS V.simple
 
 ```{r}
 result.mV.I <- mixture.MV(m.data, U.c)
-result.mV.trun <- mixture.MV(m.data, U.c, init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE))
+result.mV.simple <- mixture.MV(m.data, U.c, init_V = estimate_null_correlation_simple(m.data))
 ```
 
 ```{r}
 {
 plot(result.mV.I$loglik, xlab = 'iter', ylab = 'loglik')
-points(result.mV.trun$loglik, col='green')
-legend('bottomright', legend=c('I', 'trun'), col=c('black', 'green'), pch=c(1,1))
+points(result.mV.simple$loglik, col='green')
+legend('bottomright', legend=c('I', 'simple'), col=c('black', 'green'), pch=c(1,1))
 }
 ```
 
@@ -160,7 +160,7 @@ for(t in 1:10){
   U.ed = cov_ed(m.data, U.pca, subset = strong)
   U.c = cov_canonical(m.data)
   print('Method: mV')
-  Vhat.mV <- mixture.MV(m.data, c(U.c, U.ed), init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE),
+  Vhat.mV <- mixture.MV(m.data, c(U.c, U.ed), init_V = estimate_null_correlation_simple(m.data),
                         tol=1e-4, max_iter = 5, track_fit = TRUE)
   saveRDS(list(V.true = Vtrue, V.mV = Vhat.mV, data = data, strong=strong),
           paste0('../output/MASH.mV.result.',t,'.rds'))
@@ -190,21 +190,21 @@ for(i in 1:times){
   m.model.true = mash(m.data.true, c(U.c,U.ed), verbose = FALSE)
   
   # mV
-  result[[i]]$V.trun = result[[i]]$V.mV$trace[[1]]$V
+  result[[i]]$V.simple = result[[i]]$V.mV$trace[[1]]$V
   result[[i]]$V.mV1 = result[[i]]$V.mV$trace[[2]]$V
   result[[i]]$V.mV2 = result[[i]]$V.mV$trace[[3]]$V
   result[[i]]$V.mV3 = result[[i]]$V.mV$trace[[4]]$V
   result[[i]]$V.mV4 = result[[i]]$V.mV$trace[[5]]$V
   result[[i]]$V.mV5 = result[[i]]$V.mV$V
   
-  m.model.trun = result[[i]]$V.mV$trace[[1]]$mash.model
+  m.model.simple = result[[i]]$V.mV$trace[[1]]$mash.model
   m.model.mV1 = result[[i]]$V.mV$trace[[2]]$mash.model
   m.model.mV2 = result[[i]]$V.mV$trace[[3]]$mash.model
   m.model.mV3 = result[[i]]$V.mV$trace[[4]]$mash.model
   m.model.mV4 = result[[i]]$V.mV$trace[[5]]$mash.model
   m.model.mV5 = result[[i]]$V.mV$mash.model
   
-  result[[i]]$m.model = list(m.model.true = m.model.true, m.model.trun = m.model.trun, 
+  result[[i]]$m.model = list(m.model.true = m.model.true, m.model.simple = m.model.simple, 
                              m.model.mV1 = m.model.mV1, m.model.mV2 = m.model.mV2, m.model.mV3 = m.model.mV3,
                              m.model.mV4 = m.model.mV4, m.model.mV5 = m.model.mV5)
 }
@@ -217,17 +217,18 @@ The Frobenius norm is
 norm.type='F'
 temp = matrix(0,nrow = times, ncol = 6)
 for(i in 1:times){
-  temp[i, ] = c(norm(result[[i]]$V.trun - result[[i]]$V.true, type = norm.type), 
+  temp[i, ] = c(norm(result[[i]]$V.simple - result[[i]]$V.true, type = norm.type), 
                 norm(result[[i]]$V.mV1 - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV2 - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV3 - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV4 - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV5 - result[[i]]$V.true, type = norm.type))
 }
-colnames(temp) = c('Trunc','mV1','mV2','mV3','mV4','mV5')
+colnames(temp) = c('Simple','mViter1','mViter2','mViter3','mViter4','mViter5')
 temp = reshape2::melt(temp[])
 colnames(temp) = c('Data', 'Method', 'FrobError')
-ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()
+temp$Data = as.factor(temp$Data)
+ggplot(temp, aes(x = Data, y=FrobError, fill = Method)) + geom_bar(position="stack", stat="identity")
 ```
 
 The spectral norm is
@@ -235,17 +236,18 @@ The spectral norm is
 norm.type='2'
 temp = matrix(0,nrow = times, ncol = 6)
 for(i in 1:times){
-  temp[i, ] = c(norm(result[[i]]$V.trun - result[[i]]$V.true, type = norm.type), 
+  temp[i, ] = c(norm(result[[i]]$V.simple - result[[i]]$V.true, type = norm.type), 
                 norm(result[[i]]$V.mV1 - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV2 - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV3 - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV4 - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV5 - result[[i]]$V.true, type = norm.type))
 }
-colnames(temp) = c('Trunc','mV1','mV2','mV3','mV4','mV5')
+colnames(temp) = c('Simple','mViter1','mViter2','mViter3','mViter4','mViter5')
 temp = reshape2::melt(temp)
 colnames(temp) = c('Data', 'Method', 'SpecError')
-ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()
+temp$Data = as.factor(temp$Data)
+ggplot(temp, aes(x = Data, y=SpecError, fill = Method)) + geom_bar(position="stack", stat="identity")
 ```
 
 ### mash log likelihood
@@ -253,15 +255,17 @@ ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_
 ```{r}
 temp = matrix(0,nrow = times, ncol = 7)
 for(i in 1:times){
-  temp[i, ] = c(get_loglik(result[[i]]$m.model$m.model.true), get_loglik(result[[i]]$m.model$m.model.trun),
+  temp[i, ] = c(get_loglik(result[[i]]$m.model$m.model.true), get_loglik(result[[i]]$m.model$m.model.simple),
                 get_loglik(result[[i]]$m.model$m.model.mV1), get_loglik(result[[i]]$m.model$m.model.mV2), 
                 get_loglik(result[[i]]$m.model$m.model.mV3), get_loglik(result[[i]]$m.model$m.model.mV4),
                 get_loglik(result[[i]]$m.model$m.model.mV5))
 }
-colnames(temp) = c('True', 'Trunc','mV1', 'mV2', 'mV3', 'mV4', 'mV5')
+colnames(temp) = c('True', 'simple','mV1', 'mV2', 'mV3', 'mV4', 'mV5')
 temp = reshape2::melt(temp)
 colnames(temp) = c('Data', 'Method', 'loglikelihood')
-ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()
+temp$Data = as.factor(temp$Data)
+ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_point()
+# ggplot(temp, aes(x = Data, y=loglikelihood, fill = Method)) + geom_bar(position="stack", stat="identity")
 ```
 
 ### ROC
@@ -279,7 +283,7 @@ ROC.table = function(data, model){
   return(m.seq)
 }
 plotROC = function(data.true, result.model, title){
-  m.trun.seq = ROC.table(data.true, result.model$m.model.trun)
+  m.trun.seq = ROC.table(data.true, result.model$m.model.simple)
   m.mV1.seq = ROC.table(data.true, result.model$m.model.mV1)
   m.mV2.seq = ROC.table(data.true, result.model$m.model.mV2)
   m.mV3.seq = ROC.table(data.true, result.model$m.model.mV3)
@@ -295,7 +299,7 @@ plotROC = function(data.true, result.model, title){
   lines(m.mV3.seq[,'FPR'], m.mV3.seq[,'TPR'], col='blue', lwd = 1.5)
   lines(m.mV4.seq[,'FPR'], m.mV4.seq[,'TPR'], col='cyan', lwd = 1.5)
   lines(m.mV5.seq[,'FPR'], m.mV5.seq[,'TPR'], col='green', lwd = 1.5)
-  legend('bottomright', c('True','Trun', 'mV1', 'mV2', 'mV3', 'mV4', 'mV5'),col=c('black','red','darkorchid','darkgoldenrod', 'blue','cyan', 'green'),
+  legend('bottomright', c('True','simple', 'mViter1', 'mViter2', 'mViter3', 'mViter4', 'mViter5'),col=c('black','red','darkorchid','darkgoldenrod', 'blue','cyan', 'green'),
            lty=c(1,1,1,1,1,1,1), lwd=c(1.5,1.5,1.5,1.5,1.5,1.5,1.5))
 }
 ```
