@@ -47,20 +47,20 @@ U.c = cov_canonical(m.data)
 ```
 
 ```{r}
-samples = sample(1:n, 1000)
+samples = c(2000:2100)
 m.data.subset = mash_set_data(Bhat = data$Bhat[samples,], Shat = data$Shat)
 ```
 
 ## Full data vs Subset
 
 ```{r}
-result.mV.full <- estimate_null_correlation(m.data, U.c, tol=1e-3)
+result.mV.full <- estimate_null_correlation(m.data, U.c, tol=1e-3, details = TRUE)
 result.mV.subset <- estimate_null_correlation(m.data.subset, U.c, tol=1e-3)
 ```
 
 Fit full mash model using estimated V
 ```{r}
-m.data.subset.V = mash_update_data(m.data, V=result.mV.subset$V)
+m.data.subset.V = mash_update_data(m.data, V=result.mV.subset)
 model.subset = mash(m.data.subset.V, U.c)
 ```
 
@@ -82,6 +82,31 @@ b_{j}\sim\frac{1}{4}\delta_{0} + \frac{1}{4}N_{5}(0,\left(\begin{matrix} 1 & \ma
 $$
 
 ```{r, warning=FALSE, eval=FALSE}
+generate_data = function(n, p, V, Utrue){
+  if (is.null(pi)) {
+    pi = rep(1, length(Utrue)) # default to uniform distribution
+  }
+  assertthat::are_equal(length(pi), length(Utrue))
+
+  for (j in 1:length(Utrue)) {
+    assertthat::are_equal(dim(Utrue[j]), c(p, p))
+  }
+
+  pi <- pi / sum(pi) # normalize pi to sum to one
+  which_U <- sample(1:length(pi), n, replace=TRUE, prob=pi)
+
+  Beta = matrix(0, nrow=n, ncol=p)
+  Beta[1:(n/4),] = MASS::mvrnorm(n/4, rep(0, p), Utrue[[1]])
+  Beta[((n/4)+1):(2* n/4),] = MASS::mvrnorm(n/4, rep(0, p), Utrue[[2]])
+  Beta[(2*(n/4)+1):(3* n/4),] = MASS::mvrnorm(n/4, rep(0, p), Utrue[[3]])
+  Beta[(3*(n/4)+1):(n),] = MASS::mvrnorm(n/4, rep(0, p), Utrue[[4]])
+
+  E = MASS::mvrnorm(n, rep(0, p), V)
+  Bhat = Beta + E
+  Shat = 1
+  return(list(B = Beta, Bhat=Bhat, Shat = Shat))
+}
+
 set.seed(20181124)
 n=4000; p = 5
 U0 = matrix(0,p,p)
@@ -89,7 +114,6 @@ U1 = U0; U1[1,1] = 1
 U2 = U0; U2[c(1:2), c(1:2)] = 1
 U3 = matrix(1, p,p)
 Utrue = list(U0 = U0, U1 = U1, U2 = U2, U3 = U3)
-
 for(t in 1:10){
   print(paste0('Data: ', t))
   Vtrue = clusterGeneration::rcorrmatrix(p)
@@ -103,16 +127,16 @@ for(t in 1:10){
   U.ed = cov_ed(m.data, U.pca, subset = strong)
   U.c = cov_canonical(m.data)
   
-  samples = sample(1:n, 1000)
+  samples = c(sample(1:1000, 200))
   m.data.subset = mash_set_data(Bhat = data$Bhat[samples,], Shat = data$Shat)
   print('Method: mV')
   print('Full')
   Vhat.full <- estimate_null_correlation(m.data, c(U.c, U.ed),
-                        tol=1e-3, max_iter = 5)
+                        tol=1e-3, max_iter = 5, details=TRUE)
   print('Subset')
   Vhat.subset <- estimate_null_correlation(m.data.subset, c(U.c, U.ed),
                         tol=1e-3, max_iter = 5)
-  m.data.subset.V = mash_update_data(m.data, V = Vhat.subset$V)
+  m.data.subset.V = mash_update_data(m.data, V = Vhat.subset)
   model.subset = mash(m.data.subset.V, c(U.c,U.ed))
   saveRDS(list(V.true = Vtrue, V.mV.Full = Vhat.full, V.mV.subset = Vhat.subset, 
                model.subset = model.subset, data = data, strong=strong),
@@ -146,7 +170,7 @@ for(i in 1:times){
   # mV
   result_wrap[[i]]$V.true = result[[i]]$V.true
   result_wrap[[i]]$V.full = result[[i]]$V.mV.Full$V
-  result_wrap[[i]]$V.subset = result[[i]]$V.mV.subset$V
+  result_wrap[[i]]$V.subset = result[[i]]$V.mV.subset
   
   result_wrap[[i]]$m.model = list(m.model.true = m.model.true, m.model.full = result[[i]]$V.mV.Full$mash.model,
                              m.model.subset = result[[i]]$model.subset)
@@ -166,7 +190,7 @@ for(i in 1:times){
 colnames(temp) = c('Full','Subset')
 temp = reshape2::melt(temp[])
 colnames(temp) = c('Data', 'Method', 'FrobError')
-ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()
+ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_point()
 ```
 
 The spectral norm is
@@ -180,7 +204,7 @@ for(i in 1:times){
 colnames(temp) = c('Full','Subset')
 temp = reshape2::melt(temp[])
 colnames(temp) = c('Data', 'Method', 'SpecError')
-ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()
+ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_point()
 ```
 
 ### mash log likelihood
@@ -194,7 +218,7 @@ for(i in 1:times){
 colnames(temp) = c('True', 'Full','Subset')
 temp = reshape2::melt(temp)
 colnames(temp) = c('Data', 'Method', 'loglikelihood')
-ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()
+ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_point()
 ```
 
 ### ROC
