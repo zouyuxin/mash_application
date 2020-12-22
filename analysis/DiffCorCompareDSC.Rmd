@@ -18,9 +18,9 @@ $$
 
 ```{r eval=FALSE, echo=FALSE}
 for(i in 1:20){
-  cur = readRDS(paste0('../output/diff_v/current/simulate_simple_',i,'_current_1.rds'))
-  mle = readRDS(paste0('../output/diff_v/mle/simulate_simple_',i,'_mle_1.rds'))
-  tmp = data.frame(loglik = c(cur$V$loglik, mle$V$loglik), estimate = c(rep('current', length(cur$V$loglik)), rep('mle', length(mle$V$loglik))), iter = c(1:length(cur$V$loglik), 1:length(mle$V$loglik)))
+  mV = readRDS(paste0('../output/diff_v/current/simulate_simple_',i,'_current_1.rds'))
+  mVexact = readRDS(paste0('../output/diff_v/mle/simulate_simple_',i,'_mle_1.rds'))
+  tmp = data.frame(loglik = c(mV$V$loglik, mVexact$V$loglik), estimate = c(rep('mV', length(mV$V$loglik)), rep('mVexact', length(mVexact$V$loglik))), iter = c(1:length(mV$V$loglik), 1:length(mVexact$V$loglik)))
   
   ggplot(tmp, aes(x = iter, y = loglik, group = estimate, color = estimate)) + geom_line() + ggtitle(paste0("Data ", i)) +
     xlab("iteration") + ylab("log likelihood")
@@ -37,8 +37,11 @@ Summary = readRDS('../output/diff_v/summary.rds')
 
 The total running time for each matrix is
 ```{r}
+Summary$estimate[Summary$estimate == 'current'] = 'mV'
+Summary$estimate[Summary$estimate == 'mle'] = 'mVexact'
+Summary$DSC = as.factor(Summary$DSC)
 Time = Summary[,c('DSC','estimate', 'estimate.DSC_TIME')]
-ggplot(Time, aes(x = DSC, y=estimate.DSC_TIME, group = estimate, color = estimate)) + geom_line()
+ggplot(Time, aes(x = DSC, y=estimate.DSC_TIME, group = estimate, color = estimate)) + geom_point()
 ```
 
 
@@ -46,24 +49,24 @@ ggplot(Time, aes(x = DSC, y=estimate.DSC_TIME, group = estimate, color = estimat
 
 ```{r}
 loglike = Summary[Summary$summary == 'mashloglik', c('DSC','estimate', 'summary.score', 'summary')]
-ggplot(loglike, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+ggplot(loglike, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_point() + ylab('mash log likelihood')
 loglike_ora = loglike[-which(loglike$estimate == 'oracle'), ]
-ggplot(loglike_ora, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+ggplot(loglike_ora, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_point() + ylab('mash log likelihood')
 ```
 
 ### RRMSE
 
 ```{r}
 RRMSE = Summary[Summary$summary == 'RRMSE', c('DSC','estimate', 'summary.score', 'summary')]
-ggplot(RRMSE, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+ggplot(RRMSE, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_point()+ ylab('RRMSE')
 RRMSE_ora = RRMSE[-which(RRMSE$estimate == 'oracle'), ]
-ggplot(RRMSE_ora, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+ggplot(RRMSE_ora, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_point()+ ylab('RRMSE')
 ```
 
 ### False Discovery
 
 ```{r}
 fd = Summary[Summary$summary == 'FalseDiscovery', c('DSC','estimate', 'summary.score', 'summary')]
-ggplot(fd, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()
+ggplot(fd, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_point() + ylab('False Discovery')
 ```
 
