@@ -46,32 +46,32 @@ simdata = list(B = B, Bhat = Bhat, Shat = 1)
 ```{r}
 data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
-m.ignore = mash(data, U.c, verbose = FALSE, optmethod = 'mixSQP')
+m.ignore = mash(data, U.c, verbose = FALSE)
 
-V.current = estimate_null_correlation(data, U.c, optmethod = 'mixSQP')
-m.current = V.current$mash.model
+V.mV = estimate_null_correlation(data, U.c, details = T)
+m.mV = V.mV$mash.model
 
 data.true = mash_update_data(data, V = V)
-m.true = mash(data.true, U.c, verbose = FALSE, optmethod = 'mixSQP')
+m.true = mash(data.true, U.c, verbose = FALSE)
 ```
 
 ```{r}
 ign = c(get_loglik(m.ignore), length(get_significant_results(m.ignore)))
 
-current = c(get_loglik(m.current), length(get_significant_results(m.current)))
+mV = c(get_loglik(m.mV), length(get_significant_results(m.mV)))
 
 true = c(get_loglik(m.true), length(get_significant_results(m.true)))
 
-tmp = rbind(ign, current, true)
-row.names(tmp) = c('ignore', 'current', 'true')
+tmp = rbind(ign, mV, true)
+row.names(tmp) = c('ignore', 'mV', 'true')
 colnames(tmp) = c('loglik', '# signif')
 tmp %>% kable() %>% kable_styling()
 ```
 
 RRMSE:
 ```{r}
-tmp = c(rrmse(simdata, m.ignore), rrmse(simdata, m.current), rrmse(simdata, m.true))
-barplot(tmp, names.arg = c('ignore', 'current', 'true'))
+tmp = c(rrmse(simdata, m.ignore), rrmse(simdata, m.mV), rrmse(simdata, m.true))
+barplot(tmp, names.arg = c('ignore', 'mV', 'true'))
 ```
 
 ## Two different noise correlations
@@ -85,24 +85,24 @@ simdata = list(B = B, Bhat = Bhat, Shat = 1)
 
 data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
-m.I = mash(data, U.c, verbose = FALSE, optmethod = 'mixSQP')
+m.I = mash(data, U.c, verbose = FALSE)
 
 data.V = mash_update_data(data, V = V)
-m.V = mash(data.V, U.c, verbose = FALSE, optmethod = 'mixSQP')
+m.V = mash(data.V, U.c, verbose = FALSE)
 
-V.current = estimate_null_correlation(data, U.c, optmethod = 'mixSQP')
-m.current = V.current$mash.model
+V.mV = estimate_null_correlation(data, U.c, details = T)
+m.mV = V.mV$mash.model
 
 Vtrue = array(0,dim=c(p,p,n))
 Vtrue[,,1:(n/2)] = diag(p)
 Vtrue[,,(n/2+1): n] = V
 data.true = mash_update_data(data, V = Vtrue)
-m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R', optmethod = 'mixSQP')
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R')
 ```
 
 The estimated V is
 ```{r}
-V.current$V
+V.mV$V
 ```
 
 ```{r}
@@ -110,20 +110,20 @@ Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)))
 
 Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)))
 
-current = c(get_loglik(m.current), length(get_significant_results(m.current)))
+mV = c(get_loglik(m.mV), length(get_significant_results(m.mV)))
 
 true = c(get_loglik(m.true), length(get_significant_results(m.true)))
 
-tmp = rbind(Ionly, Vonly, current, true)
-row.names(tmp) = c('I only', 'V only', 'current', 'true')
+tmp = rbind(Ionly, Vonly, mV, true)
+row.names(tmp) = c('I only', 'V only', 'mV', 'true')
 colnames(tmp) = c('loglik', '# signif')
 tmp %>% kable() %>% kable_styling()
 ```
 
 RRMSE:
 ```{r}
-tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.current), rrmse(simdata, m.true))
-barplot(tmp, names.arg = c('I only', 'V only', 'current', 'true'))
+tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.mV), rrmse(simdata, m.true))
+barplot(tmp, names.arg = c('I only', 'V only', 'mV', 'true'))
 ```
 
 ## Data with signals
@@ -151,21 +151,21 @@ simdata = list(B = B, Bhat=Bhat, Shat = 1)
 ```{r}
 data = mash_set_data(Bhat, Shat=1)
 U.c = cov_canonical(data)
-m.I = mash(data, U.c, verbose = FALSE, optmethod = 'mixSQP')
+m.I = mash(data, U.c, verbose = FALSE)
 
 data.V = mash_update_data(data, V = V)
-m.V = mash(data.V, U.c, verbose = FALSE, optmethod = 'mixSQP')
+m.V = mash(data.V, U.c, verbose = FALSE)
 
-V.current = estimate_null_correlation(data, U.c, optmethod = 'mixSQP')
-m.current = V.current$mash.model
+V.mV = estimate_null_correlation(data, U.c, details=TRUE)
+m.mV = V.mV$mash.model
 
 data.true = mash_update_data(data, V = V.random)
-m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R', optmethod = 'mixSQP')
+m.true = mash(data.true, U.c, verbose = FALSE, algorithm.version = 'R')
 ```
 
 The estimated V is
 ```{r}
-V.current$V
+V.mV$V
 ```
 
 ```{r}
@@ -173,20 +173,20 @@ Ionly = c(get_loglik(m.I), length(get_significant_results(m.I)), sum(get_signifi
 
 Vonly = c(get_loglik(m.V), length(get_significant_results(m.V)), sum(get_significant_results(m.V) <= n/2))
 
-current = c(get_loglik(m.current), length(get_significant_results(m.current)), sum(get_significant_results(m.current) <= n/2))
+mV = c(get_loglik(m.mV), length(get_significant_results(m.mV)), sum(get_significant_results(m.mV) <= n/2))
 
 true = c(get_loglik(m.true), length(get_significant_results(m.true)), sum(get_significant_results(m.true) <= n/2))
 
-tmp = rbind(Ionly, Vonly, current, true)
-row.names(tmp) = c('I only', 'V only', 'current', 'true')
+tmp = rbind(Ionly, Vonly, mV, true)
+row.names(tmp) = c('I only', 'V only', 'mV', 'true')
 colnames(tmp) = c('loglik', '# signif', 'false positive')
 tmp %>% kable() %>% kable_styling()
 ```
 
 RRMSE:
 ```{r}
-tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.current), rrmse(simdata, m.true))
-barplot(tmp, names.arg = c('I only', 'V only', 'current', 'true'))
+tmp = c(rrmse(simdata, m.I), rrmse(simdata, m.V), rrmse(simdata, m.mV), rrmse(simdata, m.true))
+barplot(tmp, names.arg = c('I only', 'V only', 'mV', 'true'))
 ```
 
 ROC:
@@ -194,12 +194,12 @@ ROC:
 roc.seq = ROC.table(simdata$B, m.true)
 plot(roc.seq[,'FPR'], roc.seq[,'TPR'], type='l', xlab = 'FPR', ylab='TPR',
        main=paste0(' True Pos vs False Pos'), cex=1.5, lwd = 1.5, col = 'cyan')
-roc.seq = ROC.table(simdata$B, m.current)
+roc.seq = ROC.table(simdata$B, m.mV)
 lines(roc.seq[,'FPR'], roc.seq[,'TPR'], col='purple', lwd = 1.5)
 roc.seq = ROC.table(simdata$B, m.I)
 lines(roc.seq[,'FPR'], roc.seq[,'TPR'], col='red', lwd = 1.5)
 roc.seq = ROC.table(simdata$B, m.V)
 lines(roc.seq[,'FPR'], roc.seq[,'TPR'], col='darkolivegreen4', lwd = 1.5)
-legend('bottomright', c('oracle','current', 'I only', 'V only'), col=c('cyan','purple','red','darkolivegreen4'),
+legend('bottomright', c('oracle','mV', 'I only', 'V only'), col=c('cyan','purple','red','darkolivegreen4'),
            lty=c(1,1,1,1), lwd=c(1.5,1.5,1.5,1.5))
 ```
