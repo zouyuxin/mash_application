@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Yuxin Zou" />
@@ -28,9 +28,27 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
-<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
-<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -78,9 +96,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -94,7 +110,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -104,6 +119,9 @@ img {
 }
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -119,7 +137,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -139,6 +156,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -160,55 +214,69 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
 <!-- code folding -->
 <style type="text/css">
 .code-folding-btn { margin-bottom: 4px; }
 </style>
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
-});
-</script>
 
 
-
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -222,6 +290,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -257,8 +331,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -267,6 +339,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -314,13 +396,6 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<!-- Add a small amount of space between sections. -->
-<style type="text/css">
-div.section {
-  padding-top: 12px;
-}
-</style>
-
 <div class="fluid-row" id="header">
 
 <div class="btn-group pull-right">
@@ -334,38 +409,137 @@ div.section {
 
 
 <h1 class="title toc-ignore">mash estimate null correlation problem</h1>
-<h4 class="author"><em>Yuxin Zou</em></h4>
-<h4 class="date"><em>2018-11-25</em></h4>
+<h4 class="author">Yuxin Zou</h4>
+<h4 class="date">2018-11-25</h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-11-29</p>
-<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
-<ul>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-12-22
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>mash_application/analysis/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
 <p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
 <p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
-<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed1code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(1)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed1code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
 <p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/521f70b0141a313251108db3aca2b4a74fa68806" target="_blank">521f70b</a> </summary></p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzouyuxinmashapplicationtreed93593754a4831edc6b7e3f2348c89024deb8b88targetblankd935937a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/d93593754a4831edc6b7e3f2348c89024deb8b88" target="_blank">d935937</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzouyuxinmashapplicationtreed93593754a4831edc6b7e3f2348c89024deb8b88targetblankd935937a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/zouyuxin/mash_application/tree/d93593754a4831edc6b7e3f2348c89024deb8b88" target="_blank">d935937</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
 <pre><code>
 Ignored files:
     Ignored:    .DS_Store
@@ -376,19 +550,15 @@ Ignored files:
     Ignored:    analysis/include/.DS_Store
     Ignored:    code/.DS_Store
     Ignored:    data/.DS_Store
-    Ignored:    docs/.DS_Store
     Ignored:    output/.DS_Store
+    Ignored:    output/.sos/
 
 Untracked files:
     Untracked:  analysis/Classify.Rmd
-    Untracked:  analysis/EstimateCorMLECompare.Rmd
     Untracked:  analysis/EstimateCorMash.Rmd
-    Untracked:  analysis/EstimateCorMaxGD.Rmd
     Untracked:  analysis/EstimateCorMaxMCMash.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
     Untracked:  analysis/MashLowSignalGTEx4.Rmd
-    Untracked:  analysis/Mash_GTEx.Rmd
-    Untracked:  analysis/MeanAsh.Rmd
     Untracked:  analysis/OutlierDetection.Rmd
     Untracked:  analysis/OutlierDetection2.Rmd
     Untracked:  analysis/OutlierDetection3.Rmd
@@ -402,21 +572,18 @@ Untracked files:
     Untracked:  code/MashSource.R
     Untracked:  code/Weight_plot.R
     Untracked:  code/addemV.R
+    Untracked:  code/dsc-differentV/
+    Untracked:  code/dsc-differentV_signal/
     Untracked:  code/estimate_cor.R
     Untracked:  code/generateDataV.R
     Untracked:  code/johnprocess.R
     Untracked:  code/mV.R
+    Untracked:  code/mVexact.R
     Untracked:  code/sim_mean_sig.R
     Untracked:  code/summary.R
     Untracked:  data/Blischak_et_al_2015/
     Untracked:  data/scale_data.rds
-    Untracked:  docs/figure/Classify.Rmd/
-    Untracked:  docs/figure/OutlierDetection.Rmd/
-    Untracked:  docs/figure/OutlierDetection2.Rmd/
-    Untracked:  docs/figure/OutlierDetection3.Rmd/
-    Untracked:  docs/figure/Test.Rmd/
-    Untracked:  docs/figure/mash_missing_whole_row_5.Rmd/
-    Untracked:  docs/include/
+    Untracked:  data/wasp_yuxin/
     Untracked:  output/AddEMV/
     Untracked:  output/CovED_UKBio_strong.rds
     Untracked:  output/CovED_UKBio_strong_Z.rds
@@ -448,75 +615,123 @@ Untracked files:
     Untracked:  output/MashCorSim--midway/
     Untracked:  output/Mash_EE_Cov_0_plusR1.rds
     Untracked:  output/UKBio_mash_model.rds
+    Untracked:  output/WASP/
+    Untracked:  output/diff_v/
+    Untracked:  output/diff_v_signal/
+    Untracked:  output/dsc-mashr-est_v/
     Untracked:  output/mVIterations/
     Untracked:  output/mVMLEsubset/
     Untracked:  output/mVUlist/
+    Untracked:  output/mVsubset/
     Untracked:  output/result.em.rds
 
 Unstaged changes:
-    Modified:   analysis/EstimateCorMaxMVSample.Rmd
-    Modified:   analysis/Mash_UKBio.Rmd
-    Modified:   analysis/mash_missing_samplesize.Rmd
+    Modified:   analysis/EstimateCor.Rmd
+    Modified:   analysis/EstimateCorHeterR50.Rmd
+    Modified:   analysis/EstimateCorIndex.Rmd
+    Modified:   analysis/WASPmash.Rmd
     Modified:   output/Flash_T2_0.rds
     Modified:   output/Flash_T2_0_mclust.rds
     Modified:   output/Mash_model_0_plusR1.rds
     Modified:   output/PresiAddVarCol.rds
 
 </code></pre>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
-</li>
-</ul>
-<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
-<ul>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/EstimateCorMaxMVProblem.Rmd</code>) and HTML (<code>docs/EstimateCorMaxMVProblem.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 File
 </th>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
-<th style="text-align:left;">
+<th>
 Message
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/521f70b0141a313251108db3aca2b4a74fa68806/analysis/EstimateCorMaxMVProblem.Rmd" target="_blank">521f70b</a>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/d93593754a4831edc6b7e3f2348c89024deb8b88/analysis/EstimateCorMaxMVProblem.Rmd" target="_blank">d935937</a>
 </td>
-<td style="text-align:left;">
+<td>
 zouyuxin
 </td>
-<td style="text-align:left;">
+<td>
+2020-12-22
+</td>
+<td>
+wflow_publish(“analysis/EstimateCorMaxMVProblem.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zouyuxin/mash_application/83f26ea9571c55beecdcea4245fab9e29febbb98/docs/EstimateCorMaxMVProblem.html" target="_blank">83f26ea</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-11-30
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/521f70b0141a313251108db3aca2b4a74fa68806/analysis/EstimateCorMaxMVProblem.Rmd" target="_blank">521f70b</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
 2018-11-29
 </td>
-<td style="text-align:left;">
+<td>
 wflow_publish(“analysis/EstimateCorMaxMVProblem.Rmd”)
 </td>
 </tr>
 </tbody>
 </table>
-</ul>
-<p></details></p>
-<hr />
-<p>A brief introduction of the algorithm to estimate the null correlation matrix <span class="math inline">\(V\)</span> is in <a href="Estimate_Null_Cor_Old.pdf">pdf</a>. This is the current algorithm we used in <code>mash</code>. However, I encountered a problem with one simulated dataset. The log likelihood decreases during the update of parameters.</p>
-<p>The simulated data is <span class="math display">\[
-\hat{\mathbf{c}}_{j} | \mathbf{c}_{j} \sim N_{10}(\mathbf{c}_{j}, I) \\
-\mathbf{c}_{j} = \mu_{j}\mathbf{1}
-\]</span> We subtract the median from each observation, and estimate <span class="math inline">\(V\)</span>.</p>
-<pre class="r"><code>library(mashr)</code></pre>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<p>A brief introduction of the algorithm to estimate the null correlation matrix <span class="math inline">\(V\)</span> is in <a href="Estimate_Null_Cor_in_MASH.pdf">pdf</a> Section 2. This is the algorithm we used in <code>mash</code>. In the M step, the update doesn’t maximize the objective function. The log likelihood decreases during the update of parameters.</p>
+<pre class="r"><code>source(&#39;../code/mV.R&#39;)</code></pre>
 <pre><code>Loading required package: ashr</code></pre>
 <pre class="r"><code>set.seed(1)
 data = sim_contrast1(nsamp = 10000, ncond = 10, err_sd = 1)
@@ -526,43 +741,27 @@ delta.median = t(apply(data$C, 1, function(x) x - median(x)))
 deltahat.median = t(apply(data$Chat, 1, function(x) x - median(x)))
 
 data.median = mash_set_data(deltahat.median, Shat = 1, alpha = 1)
-U.c = cov_canonical(data.median)</code></pre>
-<p>Using the current algorithm, the log likelihood decreases.</p>
-<pre class="r"><code>estV.orig = estimate_null_correlation(data.median, U.c)
-plot(estV.orig$loglik)</code></pre>
-<p><img src="figure/EstimateCorMaxMVProblem.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>The problem is the EM step to update V.</p>
-<div id="one-more-example" class="section level2">
-<h2>One more example</h2>
-<pre class="r"><code>source(&#39;../code/generateDataV.R&#39;)
-set.seed(1)
-Sigma = cbind(c(1,0.7,0.2), c(0.7,1,0.4), c(0.2,0.4,1))
-U0 = matrix(0,3,3)
-U1 = matrix(0,3,3); U1[1,1] = 1
-U2 = diag(3); U2[3,3] = 0
-U3 = matrix(1,3,3)
-data = generate_data(n=4000, p=3, V=Sigma, Utrue = list(U0=U0, U1=U1,U2=U2,U3=U3))</code></pre>
-<pre class="r"><code>m.data = mash_set_data(data$Bhat, data$Shat)
-m.1by1 = mash_1by1(m.data)
-strong = get_significant_results(m.1by1)
+U.c = cov_canonical(data.median)
 
-U.pca = cov_pca(m.data, 3, subset = strong)
-U.ed = cov_ed(m.data, U.pca, subset = strong)
-U.c = cov_canonical(m.data)</code></pre>
-<pre class="r"><code>Vhat = estimate_null_correlation(m.data, c(U.c,U.ed), max_iter = 100, tol=1e-2)</code></pre>
-<pre class="r"><code>plot(Vhat$loglik)</code></pre>
-<p><img src="figure/EstimateCorMaxMVProblem.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-<div id="session-information" class="section level2">
-<h2>Session information</h2>
+estV.orig = estimate_null_correlation(data.median, U.c, details = T)
+plot(estV.orig$loglik)</code></pre>
+<p><img src="figure/EstimateCorMaxMVProblem.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The exact computation using reparametrization is described in Section 3, and the implementation is in <a href="../code/mVexact.R">code</a></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.5.1 (2018-07-02)
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS  10.14.1
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Big Sur 10.16
 
 Matrix products: default
-BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -571,23 +770,22 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] mashr_0.2.19.0547 ashr_2.2-23      
+[1] plyr_1.8.6      mashr_0.2.40    ashr_2.2-51     workflowr_1.6.2
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.0        knitr_1.20        whisker_0.3-2    
- [4] magrittr_1.5      workflowr_1.1.1   REBayes_1.3      
- [7] MASS_7.3-50       pscl_1.5.2        doParallel_1.0.14
-[10] SQUAREM_2017.10-1 lattice_0.20-35   foreach_1.4.4    
-[13] plyr_1.8.4        stringr_1.3.1     tools_3.5.1      
-[16] parallel_3.5.1    grid_3.5.1        R.oo_1.22.0      
-[19] rmeta_3.0         git2r_0.23.0      htmltools_0.3.6  
-[22] iterators_1.0.10  assertthat_0.2.0  abind_1.4-5      
-[25] yaml_2.2.0        rprojroot_1.3-2   digest_0.6.18    
-[28] Matrix_1.2-14     codetools_0.2-15  R.utils_2.7.0    
-[31] evaluate_0.12     rmarkdown_1.10    stringi_1.2.4    
-[34] compiler_3.5.1    Rmosek_8.0.69     backports_1.1.2  
-[37] R.methodsS3_1.7.1 mvtnorm_1.0-8     truncnorm_1.0-8  </code></pre>
+ [1] Rcpp_1.0.5       pillar_1.4.7     compiler_4.0.3   later_1.1.0.1   
+ [5] git2r_0.27.1     tools_4.0.3      digest_0.6.27    evaluate_0.14   
+ [9] lifecycle_0.2.0  tibble_3.0.4     lattice_0.20-41  pkgconfig_2.0.3 
+[13] rlang_0.4.9      Matrix_1.2-18    rstudioapi_0.13  yaml_2.2.1      
+[17] mvtnorm_1.1-1    xfun_0.19        invgamma_1.1     stringr_1.4.0   
+[21] knitr_1.30       fs_1.5.0         vctrs_0.3.6      rprojroot_2.0.2 
+[25] grid_4.0.3       glue_1.4.2       R6_2.5.0         rmarkdown_2.5   
+[29] mixsqp_0.3-46    rmeta_3.0        irlba_2.3.3      magrittr_2.0.1  
+[33] whisker_0.4      promises_1.1.1   ellipsis_0.3.1   htmltools_0.5.0 
+[37] assertthat_0.2.1 abind_1.4-5      httpuv_1.5.4     stringi_1.5.3   
+[41] truncnorm_1.0-8  SQUAREM_2020.5   crayon_1.3.4    </code></pre>
 </div>
+
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
@@ -601,14 +799,6 @@ footer is added to webpages before the MathJax javascript. -->
   });
 </script>
 
-<hr>
-<p>
-  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
-  analysis was created with
-  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
-</p>
-<hr>
-
 
 </div>
 </div>
@@ -619,13 +809,61 @@ footer is added to webpages before the MathJax javascript. -->
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
