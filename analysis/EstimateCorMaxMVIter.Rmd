@@ -228,7 +228,7 @@ colnames(temp) = c('Simple','mViter1','mViter2','mViter3','mViter4','mViter5')
 temp = reshape2::melt(temp[])
 colnames(temp) = c('Data', 'Method', 'FrobError')
 temp$Data = as.factor(temp$Data)
-ggplot(temp, aes(x = Data, y=FrobError, fill = Method)) + geom_bar(position="stack", stat="identity")
+ggplot(temp, aes(x = Data, y=FrobError, fill = Method)) + geom_point()
 ```
 
 The spectral norm is
@@ -247,7 +247,7 @@ colnames(temp) = c('Simple','mViter1','mViter2','mViter3','mViter4','mViter5')
 temp = reshape2::melt(temp)
 colnames(temp) = c('Data', 'Method', 'SpecError')
 temp$Data = as.factor(temp$Data)
-ggplot(temp, aes(x = Data, y=SpecError, fill = Method)) + geom_bar(position="stack", stat="identity")
+ggplot(temp, aes(x = Data, y=SpecError, fill = Method)) + geom_point()
 ```
 
 ### mash log likelihood

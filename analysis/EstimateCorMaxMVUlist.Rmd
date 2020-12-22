@@ -119,8 +119,8 @@ U.c.redu = cov_canonical(m.data, cov_methods = "simple_het")
 The reduced Ulist only contains simple_het.
 
 ```{r}
-result.mV.full <- mixture.MV(m.data, U.c.full, init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE))
-result.mV.redu <- mixture.MV(m.data, U.c.redu, init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE))
+result.mV.full <- mixture.MV(m.data, U.c.full, init_V = estimate_null_correlation_simple(m.data))
+result.mV.redu <- mixture.MV(m.data, U.c.redu, init_V = estimate_null_correlation_simple(m.data))
 ```
 
 ```{r}
@@ -188,7 +188,7 @@ for(t in 1:10){
   full.time = system.time(Vhat.mV.full <- mixture.MV(m.data, c(U.c, U.ed), init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE),
                         tol=1e-4, track_fit = FALSE))['elapsed']
   reduce.time = system.time(Vhat.mV.redu <- mixture.MV(m.data, cov_canonical(m.data, cov_methods = c("identity", "singletons")),
-                            init_V = estimate_null_correlation(m.data, apply_lower_bound = FALSE),
+                            init_V = estimate_null_correlation_simple(m.dat),
                             tol=1e-4, track_fit = FALSE))['elapsed']
   saveRDS(list(V.true = Vtrue, V.mV.full = Vhat.mV.full, V.mV.redu = Vhat.mV.redu, data = data, strong=strong,
                full.time = full.time, reduce.time = reduce.time),
@@ -208,7 +208,7 @@ for(i in 1:times) {
 ```{r warning=FALSE}
 for(i in 1:times){
   m.data = mash_set_data(result[[i]]$data$Bhat, result[[i]]$data$Shat)
-  result[[i]]$V.trun = estimate_null_correlation(m.data, apply_lower_bound = FALSE)
+  result[[i]]$V.simple = estimate_null_correlation_simple(m.data)
   
   m.1by1 = mash_1by1(m.data)
   strong = get_significant_results(m.1by1)
@@ -220,8 +220,8 @@ for(i in 1:times){
   m.data.true = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.true)
   m.model.true = mash(m.data.true, c(U.c,U.ed), verbose = FALSE)
   
-  m.data.trun = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.trun)
-  m.model.trun = mash(m.data.trun, c(U.c,U.ed), verbose = FALSE)
+  m.data.simple = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.simple)
+  m.model.simple = mash(m.data.simple, c(U.c,U.ed), verbose = FALSE)
   
   # mV
   # full
@@ -232,7 +232,7 @@ for(i in 1:times){
   m.data.redu = mash_set_data(Bhat = m.data$Bhat, Shat = m.data$Shat, V = result[[i]]$V.mV.redu$V)
   m.model.redu.full = mash(m.data.redu, c(U.c,U.ed), verbose = FALSE)
   
-  result[[i]]$m.model = list(m.model.true = m.model.true, m.model.trun = m.model.trun,
+  result[[i]]$m.model = list(m.model.true = m.model.true, m.model.simple = m.model.simple,
                              m.model.full = m.model.full,
                              m.model.redu = m.model.redu, m.model.redu.full = m.model.redu.full)
 }
@@ -245,14 +245,15 @@ The Frobenius norm is
 norm.type='F'
 temp = matrix(0,nrow = times, ncol = 3)
 for(i in 1:times){
-  temp[i, ] = c(norm(result[[i]]$V.trun - result[[i]]$V.true, type = norm.type),
+  temp[i, ] = c(norm(result[[i]]$V.simple - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV.full$V - result[[i]]$V.true, type = norm.type), 
                 norm(result[[i]]$V.mV.redu$V - result[[i]]$V.true, type = norm.type))
 }
-colnames(temp) = c('Trun', 'Full','Reduce')
+colnames(temp) = c('simple', 'Full','Reduce')
 temp = reshape2::melt(temp[])
 colnames(temp) = c('Data', 'Method', 'FrobError')
-ggplot(temp, aes(x = Data, y=FrobError, group = Method, color = Method)) + geom_line()
+temp$Data = as.factor(temp$Data)
+ggplot(temp, aes(x = Data, y=FrobError, color = Method)) + geom_point()
 ```
 
 The spectral norm is
@@ -260,14 +261,15 @@ The spectral norm is
 norm.type='2'
 temp = matrix(0,nrow = times, ncol = 3)
 for(i in 1:times){
-  temp[i, ] = c(norm(result[[i]]$V.trun - result[[i]]$V.true, type = norm.type),
+  temp[i, ] = c(norm(result[[i]]$V.simple - result[[i]]$V.true, type = norm.type),
                 norm(result[[i]]$V.mV.full$V - result[[i]]$V.true, type = norm.type), 
                 norm(result[[i]]$V.mV.redu$V - result[[i]]$V.true, type = norm.type))
 }
-colnames(temp) = c('Trun', 'Full','Reduce')
+colnames(temp) = c('simple', 'Full','Reduce')
 temp = reshape2::melt(temp)
 colnames(temp) = c('Data', 'Method', 'SpecError')
-ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_line()
+temp$Data = as.factor(temp$Data)
+ggplot(temp, aes(x = Data, y=SpecError, group = Method, color = Method)) + geom_point()
 ```
 
 ### Time
@@ -285,7 +287,8 @@ row.names(temp) = 1:10
 
 temp = reshape2::melt(temp)
 colnames(temp) = c('Data', 'Method', 'Time')
-ggplot(temp, aes(x = Data, y=Time, group = Method, color = Method)) + geom_line()
+temp$Data = as.factor(temp$Data)
+ggplot(temp, aes(x = Data, y=Time, group = Method, color = Method)) + geom_point()
 ```
 
 ### mash log likelihood
@@ -294,15 +297,15 @@ ggplot(temp, aes(x = Data, y=Time, group = Method, color = Method)) + geom_line(
 temp = matrix(0,nrow = times, ncol = 5)
 for(i in 1:times){
   temp[i, ] = c(get_loglik(result[[i]]$m.model$m.model.true),
-                get_loglik(result[[i]]$m.model$m.model.trun),
+                get_loglik(result[[i]]$m.model$m.model.simple),
                 get_loglik(result[[i]]$m.model$m.model.full),
                 get_loglik(result[[i]]$m.model$m.model.redu), 
                 get_loglik(result[[i]]$m.model$m.model.redu.full))
 }
-colnames(temp) = c('True','Trun', 'Full','Reduce', 'Reduce+Full')
+colnames(temp) = c('True','simple', 'Full','Reduce', 'Reduce+Full')
 temp = reshape2::melt(temp)
 colnames(temp) = c('Data', 'Method', 'loglikelihood')
-ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_line()
+ggplot(temp, aes(x = Data, y=loglikelihood, group = Method, color = Method)) + geom_point()
 ```
 
 ### ROC
@@ -321,7 +324,7 @@ ROC.table = function(data, model){
 }
 plotROC = function(data.true, result.model, title){
   m.true.seq = ROC.table(data.true, result.model$m.model.true)
-  m.trun.seq = ROC.table(data.true, result.model$m.model.trun)
+  m.simple.seq = ROC.table(data.true, result.model$m.model.simple)
   m.mV.full.seq = ROC.table(data.true, result.model$m.model.full)
   m.mV.reduce.seq = ROC.table(data.true, result.model$m.model.redu)
   m.mV.reduce.full.seq = ROC.table(data.true, result.model$m.model.redu.full)
@@ -331,8 +334,8 @@ plotROC = function(data.true, result.model, title){
   lines(m.mV.full.seq[,'FPR'], m.mV.full.seq[,'TPR'], col='red', lwd = 1.5)
   lines(m.mV.reduce.seq[,'FPR'], m.mV.reduce.seq[,'TPR'], col='darkorchid', lwd = 1.5)
   lines(m.mV.reduce.full.seq[,'FPR'], m.mV.reduce.full.seq[,'TPR'], col='darkgoldenrod', lwd = 1.5)
-  lines(m.trun.seq[,'FPR'], m.trun.seq[,'TPR'], col='blue', lwd = 1.5)
-  legend('bottomright', c('True','Trun', 'Full', 'Reduce', 'Reduce+Full'),col=c('black','blue', 'red','darkorchid','darkgoldenrod'),
+  lines(m.simple.seq[,'FPR'], m.simple.seq[,'TPR'], col='blue', lwd = 1.5)
+  legend('bottomright', c('True','simple', 'Full', 'Reduce', 'Reduce+Full'),col=c('black','blue', 'red','darkorchid','darkgoldenrod'),
            lty=c(1,1,1,1,1), lwd=c(1.5,1.5,1.5,1.5,1.5))
 }
 ```
