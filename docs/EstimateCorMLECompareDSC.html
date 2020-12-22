@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 <meta name="author" content="Yuxin Zou" />
@@ -27,9 +27,27 @@
 <script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
-<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
-<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -77,9 +95,7 @@ h6 {
 </style>
 
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -93,7 +109,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -103,6 +118,9 @@ img {
 }
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -118,7 +136,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -138,6 +155,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -159,55 +213,69 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
 
 <!-- code folding -->
 <style type="text/css">
 .code-folding-btn { margin-bottom: 4px; }
 </style>
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
-});
-</script>
 
 
-
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -221,6 +289,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -256,8 +330,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -266,6 +338,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -313,13 +395,6 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<!-- Add a small amount of space between sections. -->
-<style type="text/css">
-div.section {
-  padding-top: 12px;
-}
-</style>
-
 <div class="fluid-row" id="header">
 
 <div class="btn-group pull-right">
@@ -333,38 +408,137 @@ div.section {
 
 
 <h1 class="title toc-ignore">Estiamte null correlation DSC</h1>
-<h4 class="author"><em>Yuxin Zou</em></h4>
-<h4 class="date"><em>2018-12-6</em></h4>
+<h4 class="author">Yuxin Zou</h4>
+<h4 class="date">2018-12-6</h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-12-09</p>
-<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
-<ul>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2020-12-22
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>mash_application/analysis/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
 <p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
 <p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(1)</code> </summary></p>
-<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed1code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(1)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed1code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(1)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
 <p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
-</details>
-</li>
-<li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/627ff5ac8b056382ba831155524265c324eca61a" target="_blank">627ff5a</a> </summary></p>
-Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomzouyuxinmashapplicationtree22da0ea88ee11a33d0ef23246a5d937ce0d296b1targetblank22da0eaa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/zouyuxin/mash_application/tree/22da0ea88ee11a33d0ef23246a5d937ce0d296b1" target="_blank">22da0ea</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomzouyuxinmashapplicationtree22da0ea88ee11a33d0ef23246a5d937ce0d296b1targetblank22da0eaa" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/zouyuxin/mash_application/tree/22da0ea88ee11a33d0ef23246a5d937ce0d296b1" target="_blank">22da0ea</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
 <pre><code>
 Ignored files:
     Ignored:    .DS_Store
@@ -375,19 +549,15 @@ Ignored files:
     Ignored:    analysis/include/.DS_Store
     Ignored:    code/.DS_Store
     Ignored:    data/.DS_Store
-    Ignored:    docs/.DS_Store
     Ignored:    output/.DS_Store
     Ignored:    output/.sos/
 
 Untracked files:
     Untracked:  analysis/Classify.Rmd
     Untracked:  analysis/EstimateCorMash.Rmd
-    Untracked:  analysis/EstimateCorMaxGD.Rmd
     Untracked:  analysis/EstimateCorMaxMCMash.Rmd
     Untracked:  analysis/HierarchicalFlashSim.Rmd
     Untracked:  analysis/MashLowSignalGTEx4.Rmd
-    Untracked:  analysis/Mash_GTEx.Rmd
-    Untracked:  analysis/MeanAsh.Rmd
     Untracked:  analysis/OutlierDetection.Rmd
     Untracked:  analysis/OutlierDetection2.Rmd
     Untracked:  analysis/OutlierDetection3.Rmd
@@ -402,6 +572,7 @@ Untracked files:
     Untracked:  code/Weight_plot.R
     Untracked:  code/addemV.R
     Untracked:  code/dsc-differentV/
+    Untracked:  code/dsc-differentV_signal/
     Untracked:  code/estimate_cor.R
     Untracked:  code/generateDataV.R
     Untracked:  code/johnprocess.R
@@ -410,13 +581,7 @@ Untracked files:
     Untracked:  code/summary.R
     Untracked:  data/Blischak_et_al_2015/
     Untracked:  data/scale_data.rds
-    Untracked:  docs/figure/Classify.Rmd/
-    Untracked:  docs/figure/OutlierDetection.Rmd/
-    Untracked:  docs/figure/OutlierDetection2.Rmd/
-    Untracked:  docs/figure/OutlierDetection3.Rmd/
-    Untracked:  docs/figure/Test.Rmd/
-    Untracked:  docs/figure/mash_missing_whole_row_5.Rmd/
-    Untracked:  docs/include/
+    Untracked:  data/wasp_yuxin/
     Untracked:  output/AddEMV/
     Untracked:  output/CovED_UKBio_strong.rds
     Untracked:  output/CovED_UKBio_strong_Z.rds
@@ -448,71 +613,119 @@ Untracked files:
     Untracked:  output/MashCorSim--midway/
     Untracked:  output/Mash_EE_Cov_0_plusR1.rds
     Untracked:  output/UKBio_mash_model.rds
+    Untracked:  output/WASP/
+    Untracked:  output/diff_v/
+    Untracked:  output/diff_v_signal/
     Untracked:  output/dsc-mashr-est_v/
     Untracked:  output/mVIterations/
     Untracked:  output/mVMLEsubset/
     Untracked:  output/mVUlist/
+    Untracked:  output/mVsubset/
     Untracked:  output/result.em.rds
 
 Unstaged changes:
-    Modified:   analysis/EstimateCorHeter.Rmd
-    Modified:   analysis/EstimateCorMaxMVSample.Rmd
-    Modified:   analysis/Mash_UKBio.Rmd
-    Modified:   analysis/mash_missing_samplesize.Rmd
+    Modified:   analysis/EstimateCor.Rmd
+    Modified:   analysis/WASPmash.Rmd
     Modified:   output/Flash_T2_0.rds
     Modified:   output/Flash_T2_0_mclust.rds
     Modified:   output/Mash_model_0_plusR1.rds
     Modified:   output/PresiAddVarCol.rds
 
 </code></pre>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
-</li>
-</ul>
-<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
-<ul>
-<table style="border-collapse:separate; border-spacing:5px;">
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/EstimateCorMLECompareDSC.Rmd</code>) and HTML (<code>docs/EstimateCorMLECompareDSC.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
 <thead>
 <tr>
-<th style="text-align:left;">
+<th>
 File
 </th>
-<th style="text-align:left;">
+<th>
 Version
 </th>
-<th style="text-align:left;">
+<th>
 Author
 </th>
-<th style="text-align:left;">
+<th>
 Date
 </th>
-<th style="text-align:left;">
+<th>
 Message
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;">
+<td>
 Rmd
 </td>
-<td style="text-align:left;">
-<a href="https://github.com/zouyuxin/mash_application/blob/627ff5ac8b056382ba831155524265c324eca61a/analysis/EstimateCorMLECompareDSC.Rmd" target="_blank">627ff5a</a>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/22da0ea88ee11a33d0ef23246a5d937ce0d296b1/analysis/EstimateCorMLECompareDSC.Rmd" target="_blank">22da0ea</a>
 </td>
-<td style="text-align:left;">
+<td>
 zouyuxin
 </td>
-<td style="text-align:left;">
+<td>
+2020-12-22
+</td>
+<td>
+wflow_publish(“analysis/EstimateCorMLECompareDSC.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/zouyuxin/mash_application/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/EstimateCorMLECompareDSC.html" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
 2018-12-09
 </td>
-<td style="text-align:left;">
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/627ff5ac8b056382ba831155524265c324eca61a/analysis/EstimateCorMLECompareDSC.Rmd" target="_blank">627ff5a</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+<td>
 wflow_publish(“analysis/EstimateCorMLECompareDSC.Rmd”)
 </td>
 </tr>
 </tbody>
 </table>
-</ul>
-<p></details></p>
-<hr />
+</div>
+<hr>
+</div>
+</div>
+</div>
 <p>I randomly generate 20 positive definite correlation matrices, V. The sample size is 4000.</p>
 <p><span class="math display">\[
 \hat{z}_j|z_j \sim N_{5}(z_j, V)
@@ -525,29 +738,180 @@ Summary = readRDS(&#39;../output/dsc-mashr-est_v/Summary.rds&#39;)</code></pre>
 <div id="time" class="section level3">
 <h3>Time</h3>
 <p>The total running time for each matrix is</p>
-<pre class="r"><code>Time = Summary[,c(&#39;DSC&#39;,&#39;estimate&#39;, &#39;estimate.DSC_TIME&#39;)]
-ggplot(Time, aes(x = DSC, y=estimate.DSC_TIME, group = estimate, color = estimate)) + geom_line()</code></pre>
+<pre class="r"><code>Summary$estimate[Summary$estimate == &#39;current&#39;] = &#39;mV&#39;
+Summary$estimate[Summary$estimate == &#39;mle&#39;] = &#39;mVexact&#39;
+Summary$DSC = as.factor(Summary$DSC)
+Time = Summary[,c(&#39;DSC&#39;,&#39;estimate&#39;, &#39;estimate.DSC_TIME&#39;)]
+ggplot(Time, aes(x = DSC, y=estimate.DSC_TIME, group = estimate, color = estimate)) + geom_point()</code></pre>
 <p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-3-1.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="error" class="section level3">
 <h3>Error</h3>
 <p>The Frobenius norm is</p>
 <pre class="r"><code>library(ggplot2)
 Error = Summary[Summary$summary == &#39;FrobeniusNorm&#39;, c(&#39;DSC&#39;,&#39;estimate&#39;, &#39;summary.score&#39;, &#39;summary&#39;)]
-ggplot(Error, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()</code></pre>
+ggplot(Error, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_point()</code></pre>
 <p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-4-1.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="mash-log-likelihood" class="section level3">
 <h3>mash log likelihood</h3>
 <pre class="r"><code>loglike = Summary[Summary$summary == &#39;mashloglik&#39;, c(&#39;DSC&#39;,&#39;estimate&#39;, &#39;summary.score&#39;, &#39;summary&#39;)]
-ggplot(loglike, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()</code></pre>
+ggplot(loglike, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_point()</code></pre>
 <p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-5-1.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="rrmse" class="section level3">
 <h3>RRMSE</h3>
 <pre class="r"><code>RRMSE = Summary[Summary$summary == &#39;RRMSE&#39;, c(&#39;DSC&#39;,&#39;estimate&#39;, &#39;summary.score&#39;, &#39;summary&#39;)]
-ggplot(RRMSE, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_line()</code></pre>
+ggplot(RRMSE, aes(x = DSC, y=summary.score, group = estimate, color = estimate)) + geom_point()</code></pre>
 <p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
+Past versions of unnamed-chunk-6-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-6-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-6-1.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="roc" class="section level3">
 <h3>ROC</h3>
@@ -564,21 +928,404 @@ for(i in 1:20){
   lines(ROC.seq$data[,&#39;FPR&#39;], ROC.seq$data[,&#39;TPR&#39;], col=&#39;red&#39;, lwd = 1.5)
   ROC.seq = readRDS(paste(&quot;../output/dsc-mashr-est_v/&quot;, ROCdir$ROC.output.file[ind[4]], &#39;.rds&#39;, sep=&quot;&quot;))
   lines(ROC.seq$data[,&#39;FPR&#39;], ROC.seq$data[,&#39;TPR&#39;], col=&#39;darkolivegreen4&#39;, lwd = 1.5)
-  legend(&#39;bottomright&#39;, c(&#39;oracle&#39;,&#39;simple&#39;, &#39;current&#39;, &#39;mle&#39;),col=c(&#39;cyan&#39;,&#39;purple&#39;,&#39;red&#39;,&#39;darkolivegreen4&#39;),
+  legend(&#39;bottomright&#39;, c(&#39;oracle&#39;,&#39;simple&#39;, &#39;mV&#39;, &#39;mVexact&#39;),col=c(&#39;cyan&#39;,&#39;purple&#39;,&#39;red&#39;,&#39;darkolivegreen4&#39;),
            lty=c(1,1,1,1), lwd=c(1.5,1.5,1.5,1.5))
 }</code></pre>
-<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-10.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-1.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div id="session-information" class="section level2">
-<h2>Session information</h2>
+</div>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-2">
+Past versions of unnamed-chunk-7-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-2.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-3">
+Past versions of unnamed-chunk-7-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-3.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-4">
+Past versions of unnamed-chunk-7-4.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-4.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-5">
+Past versions of unnamed-chunk-7-5.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-5.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-6">
+Past versions of unnamed-chunk-7-6.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-6.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-7">
+Past versions of unnamed-chunk-7-7.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-7.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-8.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-8">
+Past versions of unnamed-chunk-7-8.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-8" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-8.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-9.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-9">
+Past versions of unnamed-chunk-7-9.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-9" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-9.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><img src="figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-10.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-10">
+Past versions of unnamed-chunk-7-10.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-10" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/zouyuxin/mash_application/blob/727ea2c81ce0c7c4357090445b9a7a705f53e2f7/docs/figure/EstimateCorMLECompareDSC.Rmd/unnamed-chunk-7-10.png" target="_blank">727ea2c</a>
+</td>
+<td>
+zouyuxin
+</td>
+<td>
+2018-12-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.5.1 (2018-07-02)
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS  10.14.1
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Big Sur 10.16
 
 Matrix products: default
-BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 
 locale:
 [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -587,24 +1334,23 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] ggplot2_3.1.0
+[1] ggplot2_3.3.2   workflowr_1.6.2
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.0        compiler_3.5.1    pillar_1.3.0     
- [4] git2r_0.23.0      plyr_1.8.4        workflowr_1.1.1  
- [7] bindr_0.1.1       R.methodsS3_1.7.1 R.utils_2.7.0    
-[10] tools_3.5.1       digest_0.6.18     evaluate_0.12    
-[13] tibble_1.4.2      gtable_0.2.0      pkgconfig_2.0.2  
-[16] rlang_0.3.0.1     yaml_2.2.0        bindrcpp_0.2.2   
-[19] withr_2.1.2       stringr_1.3.1     dplyr_0.7.6      
-[22] knitr_1.20        rprojroot_1.3-2   grid_3.5.1       
-[25] tidyselect_0.2.5  glue_1.3.0        R6_2.3.0         
-[28] rmarkdown_1.10    purrr_0.2.5       magrittr_1.5     
-[31] whisker_0.3-2     backports_1.1.2   scales_1.0.0     
-[34] htmltools_0.3.6   assertthat_0.2.0  colorspace_1.3-2 
-[37] labeling_0.3      stringi_1.2.4     lazyeval_0.2.1   
-[40] munsell_0.5.0     crayon_1.3.4      R.oo_1.22.0      </code></pre>
+ [1] Rcpp_1.0.5       pillar_1.4.7     compiler_4.0.3   later_1.1.0.1   
+ [5] git2r_0.27.1     tools_4.0.3      digest_0.6.27    evaluate_0.14   
+ [9] lifecycle_0.2.0  tibble_3.0.4     gtable_0.3.0     pkgconfig_2.0.3 
+[13] rlang_0.4.9      rstudioapi_0.13  yaml_2.2.1       xfun_0.19       
+[17] withr_2.3.0      stringr_1.4.0    dplyr_1.0.2      knitr_1.30      
+[21] generics_0.1.0   fs_1.5.0         vctrs_0.3.6      rprojroot_2.0.2 
+[25] grid_4.0.3       tidyselect_1.1.0 glue_1.4.2       R6_2.5.0        
+[29] rmarkdown_2.5    farver_2.0.3     purrr_0.3.4      magrittr_2.0.1  
+[33] whisker_0.4      scales_1.1.1     promises_1.1.1   ellipsis_0.3.1  
+[37] htmltools_0.5.0  colorspace_2.0-0 httpuv_1.5.4     labeling_0.4.2  
+[41] stringi_1.5.3    munsell_0.5.0    crayon_1.3.4    </code></pre>
 </div>
+</div>
+
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
 TeX fonts only; see
@@ -618,14 +1364,6 @@ footer is added to webpages before the MathJax javascript. -->
   });
 </script>
 
-<hr>
-<p>
-  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
-  analysis was created with
-  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
-</p>
-<hr>
-
 
 </div>
 </div>
@@ -636,13 +1374,61 @@ footer is added to webpages before the MathJax javascript. -->
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
