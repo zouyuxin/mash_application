@@ -9,9 +9,9 @@ output:
 
 * [Estimate cor problem](EstimateCor.html)
     
-* Using `optim` function to estimate cor: [Estimate cor optim](EstimateCorOptim.html)
+* Using `optim` function to estimate cor: [Estimate cor optim](EstimateCorOptim.html) (Discarded)
 
-* Using EM to estimate cor ($\rho$): 
+* Using EM to estimate cor ($\rho$): (Discarded)
 
     [Estimate cor EM optim](EstimateCorEM.html)
     
@@ -19,7 +19,7 @@ output:
 
 * Using EM to estimate cor ($V$): [Estimate cor EM V](EstimateCorMaxMV.html)
 
-* The examples above are in $\mathcal{R}^{2}$. Here are more simulations to compare different methods for $R > 2$ : [Estimate cor in mash](EstimateCorMaxMash.html)
+* The examples above are in $\mathcal{R}^{2}$. Here are more simulations to compare different methods for $R > 2$ : [Estimate cor in mash](EstimateCorMaxMash.html) (Discarded)
 
 * Fewer iteration: [Estimate cor EM V fewer iteration](EstimateCorMaxMVIter.html) (niter = 3)
 
